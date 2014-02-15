@@ -12,7 +12,7 @@ location = lambda x: os.path.join(PROJECT_DIR, x)
 ADMINS = (
     ('dani Herrera', 'ctrl.alt.d@gmail.com'),
 )
-
+# Django
 LOGIN_URL="/usuaris/login"
 
 LICENSE_FILE = location( r'../LICENSE' )
