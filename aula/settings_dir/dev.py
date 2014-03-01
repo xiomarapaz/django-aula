@@ -33,7 +33,7 @@ DATABASES = {
 # }
 
 INSTALLED_APPS = [
-    'debug_toolbar',
+    #'debug_toolbar',
     'demo',
 ] + INSTALLED_APPS
 

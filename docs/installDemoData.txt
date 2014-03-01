@@ -1,3 +1,4 @@
+requirements.txt:
 # Development
 appy==0.8.4
 django>=1.5.1,<1.6
@@ -11,3 +12,11 @@ django-debug-toolbar
 #python-lxml
 python-dateutil
 django-tables2>=0.15
+
+dev.py:
+[...]
+INSTALLED_APPS = [
+    #'debug_toolbar',
+    'demo',
+] + INSTALLED_APPS
+[...]
