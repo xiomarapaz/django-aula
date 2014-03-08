@@ -9,12 +9,11 @@ SQL_DEBUG = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': location( 'db.sqlite'),
-        'USER': '',
-        'PASSWORD': '',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'djangoaula',
+        'USER': 'userdjangoaula',
+        'PASSWORD': 'i',
         'HOST': '',
-        'PORT': '',
     }
 }
 
