@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+ 
+{% block content  %}
+<h1>Llista de tots els SMS</h1>
+
+    {% for form in formularis %}
+    <form action="" method="POST">{% csrf_token %}
+        {{ form.as_p }}
+    <button>Envia SMSs</button>
+    </form>
+
+        {% empty %}
+        <p>NO HI HAN SMS PREMOH!!</p>
+    {% endfor %}
+{% endblock %}
