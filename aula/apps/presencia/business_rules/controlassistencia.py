@@ -112,7 +112,7 @@ def controlAssistencia_post_save(sender, instance, created, **kwargs):
                 incidencia_despres_de_posar( i )                                       #TODO: Passar-ho a post-save!!!!
             except:
                 pass
-            
+
     else:
         try:
             Incidencia.objects.filter( 
@@ -122,5 +122,26 @@ def controlAssistencia_post_save(sender, instance, created, **kwargs):
                                                           es_informativa = False ,).delete()
         except:
             pass
-            
+
+    #Executar això només si està activada l'app de extSMS
+
+
+
+    try:
+        #Els SMS estàn activats
+        extSMS = get_model('extSMS', 'extSMS')
+        if instance.estat and instance.estat.codi_estat == 'F':
+            ja_hi_es = extSMS.objects.filter(falta = instance).exists()
+            if not ja_hi_es:
+                extSMS.objects.create(falta = instance)
+
+        elif instance.estat:
+            try:
+                extSMS.objects.get(falta = instance).delete()
+            except:
+                pass
+    except:
+        pass
+
+
  

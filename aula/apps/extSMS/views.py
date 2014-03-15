@@ -25,7 +25,9 @@ def llistaSMS(request):
     formularis = []
     #Crear el formulari per cada sms i fotre'l al array
     for sms in totsSMS:
-        formularis.append(smsForm(instance=sms))
+        form = smsForm(instance=sms)
+        form.fields['falta'].label = unicode( sms.falta.alumne ) + " el dia " + unicode( sms.falta.impartir.dia_impartir) + " a l'hora " + unicode( sms.falta.impartir.diaHora())
+        formularis.append(form)
 
 
     return render(request, 'mostraSMS.html', {'formularis': formularis})
