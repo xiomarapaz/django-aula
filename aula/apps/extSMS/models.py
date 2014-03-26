@@ -2,10 +2,8 @@ from django.contrib import messages
 from django.db import models
 
 # Create your models here.
-from django.db.models.signals import post_save, post_delete, pre_delete
-from django.dispatch import receiver
-from aula.apps.presencia.models import ControlAssistencia
-
+from aula.apps.alumnes.models import Alumne
+from aula.apps.presencia.models import Impartir
 
 OPCIONS = (
     ('enviar','enviar'),
@@ -14,8 +12,12 @@ OPCIONS = (
 )
 
 class extSMS(models.Model):
-    falta = models.ForeignKey(ControlAssistencia)
-    estat = models.CharField(max_length=20, choices=OPCIONS)
+    Alumne = models.ForeignKey(Alumne)
+    Dia = models.DateField(db_index=True)
+    faltes = models.IntegerField(default=1)
+    estat = models.CharField(max_length=20, choices=OPCIONS, default='res')
+    intents = models.IntegerField(default=0)
+    enviat = models.BooleanField(default=False)
 
 
 
