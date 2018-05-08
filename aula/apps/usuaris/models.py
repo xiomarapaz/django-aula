@@ -38,7 +38,42 @@ class AlumneUser(User):
     def __unicode__(self):
         return unicode( self.getAlumne() )
 
-    # ----------------------------------------------------------------------------------------------
+class PortalUser(User):
+    objects = AlumneUserManager()
+    class Meta:
+        proxy = True
+        ordering = ['last_name','first_name','username']
+
+    def getUser(self):
+        return User.objects.get( pk = self.pk )
+
+class PortalTokenUser(User):
+    usuari_del_token = models.OneToOneField( User,
+                                related_name = "portal_token_user_set",
+                                related_query_name = "portal_token_user",  )
+    data_creacio = models.DateField( auto_now_add=True )
+    clau = models.CharField(max_length=120, blank=False )
+
+class AlumnePortalUser(User):
+    PARE = 'PARE'
+    MARE = 'MARE'
+    APP = 'APP'
+    ALTRES = 'ALTRES'
+    RELACIO_TUTOR_CHOICES = (
+        (PARE,"Pare",),
+        (MARE,"Mare",),
+        (ALTRES,"Altres",),
+        (APP,"Usuari APP",),
+    )
+    alumne_relacionat = models.ForeignKey("alumnes.Alumne")
+    usuari_relacionat = models.ForeignKey( PortalUser,
+                                related_name = "alumne_portal_user_set",
+                                related_query_name = "alumne_portal_user",  )
+    data_creacio = models.DateField( auto_now_add=True )
+    relacio_amb_l_alumne = models.CharField(choices=RELACIO_TUTOR_CHOICES,
+                                            max_length=7, blank=True)
+    
+# ----------------------------------------------------------------------------------------------
 
 class ProfessorManager(models.Manager):
     def get_queryset(self):

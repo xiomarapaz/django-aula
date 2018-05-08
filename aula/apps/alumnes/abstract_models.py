@@ -3,7 +3,7 @@
 from django.db import models
 from datetime import date
 from django.utils.datetime_safe import datetime
-from aula.apps.usuaris.models import Professor, AlumneUser
+from aula.apps.usuaris.models import Professor, AlumneUser, PortalUser
 from aula.apps.tutoria.models import SeguimentTutorial
 from aula.apps.alumnes.named_instances import Nivells_no_obligatoris, Cursa_nivell
 from django.utils import timezone
@@ -126,7 +126,13 @@ class AbstractAlumne(models.Model):
     data_alta = models.DateField( default = timezone.now, null=False )
     data_baixa = models.DateField( null=True, blank = True )
     
+    #toberemoved
     user_associat = models.OneToOneField(  AlumneUser , null=True, on_delete=models.SET_NULL,  )
+
+    usuaris_associats = models.ManyToManyField( PortalUser, blank=True, 
+                                                through="usuaris.AlumnePortalUser",
+                                                related_name = "alumnes_associats",
+                                                related_query_name = "alumnes_associats",  )
     
     relacio_familia_darrera_notificacio = models.DateTimeField( null=True, blank = True )
     
