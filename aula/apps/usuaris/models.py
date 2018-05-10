@@ -4,7 +4,7 @@ from django.db import models
 #from django.db.models import get_model
 from django.contrib.auth.models import User, Group
 from aula.apps.usuaris.abstract_usuaris import AbstractDepartament,\
-    AbstractAccio, AbstractLoginUsuari, AbstractOneTimePasswd
+    AbstractAccio, AbstractLoginUsuari, AbstractOneTimePasswd, AbstractQRPortal
 
 #-------------------------------------------------------------
 
@@ -153,3 +153,5 @@ class LoginUsuari(AbstractLoginUsuari):
 class OneTimePasswd(AbstractOneTimePasswd):
     pass
 
+class QRPortal(AbstractQRPortal):
+    pass

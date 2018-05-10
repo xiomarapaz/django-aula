@@ -7,6 +7,7 @@ from aula.apps.usuaris.models import Professor, AlumneUser
 from aula.apps.tutoria.models import SeguimentTutorial
 from aula.apps.alumnes.named_instances import Nivells_no_obligatoris, Cursa_nivell
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class AbstractNivell(models.Model):
     nom_nivell = models.CharField("Nom nivell",max_length=45, unique=True)
@@ -127,6 +128,10 @@ class AbstractAlumne(models.Model):
     data_baixa = models.DateField( null=True, blank = True )
     
     user_associat = models.OneToOneField(  AlumneUser , null=True, on_delete=models.SET_NULL,  )
+
+    usuaris_app_associats = models.ManyToManyField( User, through= "usuaris.QRPortal",
+                                            related_name="alumne_app_set",
+                                            related_query_name="alumne_app" ) 
     
     relacio_familia_darrera_notificacio = models.DateTimeField( null=True, blank = True )
     
