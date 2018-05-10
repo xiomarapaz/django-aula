@@ -6,5 +6,6 @@ urlpatterns = [
         name='mblapp__hello__api'),
     url(r'^hello_api_login/$', mblapp_views.hello_api_login,
         name='mblapp__hello__apilogin'),
-        
+    url(r'^hello_api_login_app/$', mblapp_views.hello_api_login_app,
+        name='mblapp__hello__apiloginapp'),        
 ]
