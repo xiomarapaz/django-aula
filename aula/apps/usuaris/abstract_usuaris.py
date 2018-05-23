@@ -78,7 +78,7 @@ class AbstractQRPortal(models.Model):
                                             related_query_name="qr_portal" )
     usuari_referenciat = models.ForeignKey( User, db_index = True, blank = True, null = True)
     moment_expedicio = models.DateTimeField( auto_now_add = True )
-    moment_captura = models.DateTimeField( blank = True, null = True )
+    moment_captura = models.DateTimeField( blank = True, null = True, unique = True )
     moment_confirmat_pel_tutor = models.DateTimeField( blank = True, null = True )    
     clau = models.CharField(max_length=40, db_index = True )
     numero_de_mobil = models.CharField(max_length=40, blank = True )
