@@ -309,7 +309,15 @@ def calcula_menu( user , path ):
                ),                            
                          )
     
-    arbre = arbre1 + arbreSortides + arbre2
+    if hasattr(settings, 'CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU' ) and settings.CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU:
+        arbrePresenciaSetmanal = \
+        ('presencia_setmanal', 'Presencia setmanal', 'presencia_setmanal__index__index', tots, None,
+            (
+                (u"Índex", 'presencia_setmanal__index__index', di or so, None, None ),
+            )
+        ),
+
+    arbre = arbre1 + arbreSortides + arbrePresenciaSetmanal + arbre2
     
     for item_id, item_label, item_url, item_condicio, alerta , subitems in arbre:
 
@@ -352,7 +360,6 @@ def calcula_menu( user , path ):
                         subitem.subsubitems.append(subsubitem)
                     if actiu and subsubmenu_id == 'blanc':
                         menu['subsubitems'] = subitem.subsubitems
-
     return menu
 
 
