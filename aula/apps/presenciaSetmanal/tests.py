@@ -21,6 +21,16 @@ from aula.apps.horaris.models import Horari, DiaDeLaSetmana, FranjaHoraria
 from aula.apps.assignatures.models import Assignatura
 from aula.apps.presencia.models import Impartir, ControlAssistencia, EstatControlAssistencia
 
+#typehint.
+from django.db.models.query import QuerySet
+
+class IControlAssistencia(ControlAssistencia):
+    #Experiment per posar tipus a Python, no fer cas.
+    objects = None # type: QuerySet
+
+    class Meta:
+        abstract = True
+
 
 class PresenciaSetmanalTestCase(TestCase):
     primerESOA = None
@@ -107,29 +117,46 @@ class PresenciaSetmanalTestCase(TestCase):
         f.close()
         self.assertNotEqual(response2.content,'')
 
-    def _testComprovaCanviEstat(self, client, estatInicial, estatCanviat):
+    def test_comprovaNElementsTaula(self):
+        #Comprova que la taula fa NxM files i columnes.
+        c=Client()
+        response = c.post('http://localhost:8000/usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
+        response = c.get('http://127.0.0.1:8000/presenciaSetmanal/' + str(self.primerESOA.pk) + '/')
+        contingut = response.content #type: str
+
+        nceles = contingut.count('class="botoMatriu"')
+        #print (response.context)
+        #Ha de ser igual al número d'alumnes x el número d'assignatures.
+        nAlumnes = len(Alumne.objects.all())
+        nAssignatures = len(Assignatura.objects.all())
+        self.assertEquals(nAlumnes*nAssignatures, nceles, "El número d'elements de la taula no coincidèixen.")
+
+    def _canviEstat(self, client, estatInicial):
+        #type: () => HttpResponse
         url = self.urlBase + 'presenciaSetmanal/modificaEstatControlAssistencia/{2}/{0}/{1}'.format(
             self.alumne.pk, self.impartirDilluns.pk, quote(estatInicial))
-        response = client.get(url) #type: HttpResponse
-        self.assertIn(estatCanviat, response.content)
+        return client.get(url) 
+
+    def _testComprovaCanviEstat(self, client, estatInicial, estatCanviat):
+        self.assertIn(estatCanviat, self._canviEstat(client, estatInicial).content)
 
     def test_client_modificar_control_assistencia(self):
-        settings.CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR = True
-        c=Client()
-        response = c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
-        self._testComprovaCanviEstat(c,'P','F')
-        self._testComprovaCanviEstat(c,'F','R')
-        self._testComprovaCanviEstat(c,'R',' ')
-        self._testComprovaCanviEstat(c,' ','P')
+        with self.settings(CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR=True):
+            c=Client()
+            c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
+            self._testComprovaCanviEstat(c,'P','F')
+            self._testComprovaCanviEstat(c,'F','R')
+            self._testComprovaCanviEstat(c,'R',' ')
+            self._testComprovaCanviEstat(c,' ','P')
 
     def test_client_modificar_control_assistencia_justifica_tothom(self):
-        settings.CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR = False
-        c=Client()
-        response = c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
-        self._testComprovaCanviEstat(c,'P','F')
-        self._testComprovaCanviEstat(c,'F','R')
-        self._testComprovaCanviEstat(c,'R','J')
-        self._testComprovaCanviEstat(c,'J',' ')
+        with self.settings(CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR=False):
+            c=Client()
+            c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
+            self._testComprovaCanviEstat(c,'P','F')
+            self._testComprovaCanviEstat(c,'F','R')
+            self._testComprovaCanviEstat(c,'R','J')
+            self._testComprovaCanviEstat(c,'J',' ')
     
     def test_client_nopuc_modificar_assistencia_altri(self):
         c=Client()
@@ -142,5 +169,29 @@ class PresenciaSetmanalTestCase(TestCase):
             self.fail("Error no s'ha generat excepció.")
         except AssertionError as identifier:
             pass #Tot bé.
-            
+
+    def test_client_posar_tot_a_present(self):
+        #Posar totes les hores a present.
+        c=Client()
+        response = c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
+        self._canviEstat(c, 'P')
         
+        response = c.get(self.urlBase + 'presenciaSetmanal/modificaEstatControlAssistenciaGrup/P/' + str(self.impartirDilluns.pk))
+        #Cal assegurar-se que tot els element son P.
+        manager = ControlAssistencia.objects # type: QuerySet
+        controls = manager.filter(impartir=self.impartirDilluns.pk) # type: QuerySet
+        self.assertEqual(len(controls.exclude(estat__codi_estat='P')), 0, "Haurien de ser tots presents")
+        
+    def test_client_nopuc_posar_tot_a_present(self):
+        #Posar totes les hores a present.
+        c=Client()
+        response = c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrIntrus', 'paraulaDePas':'patata'})
+        self._canviEstat(c, 'P')
+        
+        response = c.get(self.urlBase + 'presenciaSetmanal/modificaEstatControlAssistenciaGrup/P/' + str(self.impartirDilluns.pk))
+        #Cal assegurar-se que NO tot els element son P.
+        ca = ControlAssistencia # type: IControlAssistencia
+        controls = ca.objects.filter(impartir=self.impartirDilluns.pk) # type: QuerySet
+        self.assertGreater(len(controls.exclude(estat__codi_estat='P')), 0, "Hauria d'haver-hi estats no presents")
+
+
