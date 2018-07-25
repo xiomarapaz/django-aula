@@ -63,6 +63,12 @@ class PresenciaSetmanalTestCase(TestCase):
         profe2.set_password('patata')
         profe2.save()
 
+        profe3 = Professor.objects.create(username='SrTutorESOA', password='patata') #type: Professor
+        profe3.groups.add(grupProfessors)
+        profe3.groups.add(grupProfessionals)
+        profe3.set_password('patata')
+        profe3.save()
+
         # Crear un horari
         tmpDS = DiaDeLaSetmana.objects.create(n_dia_uk=1,n_dia_ca=0,dia_2_lletres='DL',dia_de_la_setmana='dilluns', es_festiu=False)
         tmpFH = FranjaHoraria.objects.create(hora_inici = '9:00', hora_fi = '10:00')
@@ -193,5 +199,4 @@ class PresenciaSetmanalTestCase(TestCase):
         ca = ControlAssistencia # type: IControlAssistencia
         controls = ca.objects.filter(impartir=self.impartirDilluns.pk) # type: QuerySet
         self.assertGreater(len(controls.exclude(estat__codi_estat='P')), 0, "Hauria d'haver-hi estats no presents")
-
 

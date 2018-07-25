@@ -1,1 +1,7 @@
-Prova commint inicial montilivi
+Adapto codi de montilvi a la nova versió
+==============================================
+
+!- Presencia Setmanal.
+- Control per UF's. (Intantar separar al màxim.)
+
+

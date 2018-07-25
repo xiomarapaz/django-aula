@@ -50,6 +50,7 @@ from django.forms.widgets import RadioSelect, HiddenInput, TextInput
 from aula.apps.BI.utils import dades_dissociades
 from aula.apps.BI.prediccio_assistencia import predictTreeModel
 from aula.apps.presencia.business_rules.impartir import impartir_despres_de_passar_llista
+from .passarLlistaManager import PassarLlistaManager, PassarLlistaUFsManager
 
 #template filters
 from django.template.defaultfilters import date as _date
@@ -244,6 +245,185 @@ def mostraImpartir( request, year=None, month=None, day=None ):
 
 #------------------------------------------------------------------------------------------
 
+@login_required
+@group_required(['professors'])
+def passaLlista( request, pk ):
+    #Permet seleccionar la pantalla de passar llista convencional.
+    #O la pantalla de passar llista amb UF's.
+    impartir = Impartir.objects.get(pk=pk)
+    manager = None
+    if impartir.horari.assignatura.tipus_assignatura != None and \
+        impartir.horari.assignatura.tipus_assignatura.tipus_assignatura.lower() == settings.CUSTOM_UNITAT_FORMATIVA_DISCONTINUADA:
+        #Passar llista amb control de UF's
+        manager = PassarLlistaUFsManager(impartir)
+    else:
+        manager = PassarLlistaManager(impartir)
+    return _passaLlistaGeneral(request, pk, manager)
+
+# http://streamhacker.com/2010/03/01/django-model-formsets/
+def _passaLlistaGeneral(request, pk, manager):
+    #type: (HttpRequest, int, PassarLlistaManager)->HttpResponse
+    credentials = getImpersonateUser(request)
+    (user, l4) = credentials
+    NoHaDeSerALAula = apps.get_model('presencia', 'NoHaDeSerALAula')
+
+    # prefixes:
+    # https://docs.djangoproject.com/en/dev/ref/forms/api/#prefixes-for-forms
+    formset = []
+    impartir = Impartir.objects.get(pk=pk)
+
+    # seg-------------------------------
+    pertany_al_professor = user.pk in [impartir.horari.professor.pk, \
+                                       impartir.professor_guardia.pk if impartir.professor_guardia else -1]
+    if not (l4 or pertany_al_professor):
+        raise Http404()
+
+    head = ''
+    info = {}
+    info['old'] = unicode(impartir)
+    info['professor'] = unicode(impartir.horari.professor)
+    info['dia_setmana'] = unicode(impartir.horari.dia_de_la_setmana)
+    info['dia_complet'] = impartir.dia_impartir.strftime("%d/%m/%Y")
+    info['hora'] = unicode(impartir.horari.hora)
+    info['assignatura'] = unicode(impartir.horari.assignatura)
+    info['nom_aula'] = unicode(impartir.get_nom_aula)
+    info['grup'] = unicode(impartir.horari.grup)
+
+    url_next = '/presencia/mostraImpartir/%d/%d/%d/' % (
+        impartir.dia_impartir.year,
+        impartir.dia_impartir.month,
+        impartir.dia_impartir.day)
+
+    # ---------------------------------Passar llista -------------------------------
+    if request.method == "POST":
+        # un formulari per cada alumne de la llista
+        totBe = True
+        quelcomBe = False
+        hiHaRetard = False
+        form0 = forms.Form()
+        formset.append(form0)
+        for control_a in impartir.controlassistencia_set.order_by('alumne'):  # .order_by( 'alumne__grup', 'alumne' )
+            control_a.currentUser = user
+            form = helper_tuneja_item_nohadeseralaula( request, control_a, manager )
+
+            control_a.professor = User2Professor(user)
+            control_a.credentials = credentials
+
+            if control_a.nohadeseralaula_set.exists():
+                quelcomBe |= True
+            elif form.is_valid():
+                try:
+                    control_aux = form.save()
+                    hiHaRetard |= bool(control_aux.estat.codi_estat) and (control_aux.estat.codi_estat == "R")
+                    quelcomBe |= True
+                except ValidationError, e:
+                    totBe = False
+                    # Com que no és un formulari de model cal tractar a mà les incidències del save:
+                    form = helper_tuneja_item_nohadeseralaula(request, control_a, manager,
+                                                              te_error=True)
+                    if form._errors is None:
+                        form._errors = ErrorDict()                  #en alguns casos arriba sense _errors IDNW
+                    for _, v in e.message_dict.items():
+                        form._errors.setdefault(NON_FIELD_ERRORS, []).extend(v)
+
+            else:
+                totBe = False
+                errors_formulari = form._errors
+                # torno a posar el valor que hi havia ( per si el tutor l'ha justificat )
+                form = helper_tuneja_item_nohadeseralaula(request,
+                                                          control_a,
+                                                          manager,
+                                                          te_error=True)
+                form._errors = errors_formulari
+
+            formset.append(form)
+
+        if quelcomBe:
+            # algun control d'assistència s'ha desat. Desem també el model Impartir.
+            impartir.dia_passa_llista = datetime.now()
+            impartir.professor_passa_llista = User2Professor(request.user)
+            impartir.currentUser = user
+
+            try:
+                impartir.save()
+
+                # si hi ha retards, recordar que un retard provoca una incidència.
+                if hiHaRetard:
+                    url_incidencies = reverse("aula__horari__posa_incidencia", kwargs={'pk': pk})
+                    msg = u"""Has posat 'Retard', recorda que els retars provoquen incidències, 
+                    s'hauran generat automàticament, valora si cal 
+                    <a href="{url_incidencies}">gestionar les faltes</a>.""".format(url_incidencies=url_incidencies)
+                    messages.warning(request, SafeText(msg))
+                # LOGGING
+                Accio.objects.create(
+                    tipus='PL',
+                    usuari=user,
+                    l4=l4,
+                    impersonated_from=request.user if request.user != user else None,
+                    text=u"""Passar llista: {0}.""".format(impartir)
+                )
+
+                impartir_despres_de_passar_llista(impartir)
+                if totBe:
+                    return HttpResponseRedirect(url_next)
+            except ValidationError, e:
+                # Com que no és un formulari de model cal tractar a mà les incidències del save:
+                for _, v in e.message_dict.items():
+                    form0._errors.setdefault(NON_FIELD_ERRORS, []).extend(v)
+
+    else:
+        for control_a in impartir.controlassistencia_set.order_by('alumne'):
+            form = helper_tuneja_item_nohadeseralaula(request, control_a, manager)
+            formset.append(form)
+
+    for form in formset:
+        if hasattr(form, 'instance'):
+
+            # 0 = present #1 = Falta
+            d = dades_dissociades(form.instance)
+            form.hora_anterior = (0 if d['assistenciaaHoraAnterior'] == 'Present' else
+                                  1 if d['assistenciaaHoraAnterior'] == 'Absent' else None)
+            prediccio, pct = predictTreeModel(d)
+            form.prediccio = (0 if prediccio == 'Present' else
+                              1 if prediccio == 'Absent' else  None)
+
+            form.avis = None
+            form.avis_pct = (u"{0:.2f}%".format(pct * 100)) if pct else ''
+            if pct < 0.8:
+                form.bcolor = '#CC0000'
+                form.avis = 'danger'
+            elif pct < 0.9:
+                form.bcolor = '#CC9900'
+                form.avis = 'warning'
+            else:
+                form.bcolor = '#66FFCC'
+                form.avis = 'info'
+
+
+    el_puc_justificar = lambda i: ( not settings.CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR or
+                                    User2Professor(user) in  i.alumne.tutorsDeLAlumne() )
+
+    els_meus_tutorats = ",".join( unicode( i.pk )
+                                  for i in impartir.controlassistencia_set.order_by()
+                                  if el_puc_justificar(i)
+                                  )
+
+    return manager.render(
+        request,
+        {"formset": formset,
+         "id_impartir": pk,
+         "horariUrl": url_next,
+         "pot_marcar_sense_alumnes": not impartir.pot_no_tenir_alumnes,
+         "impartir": impartir,
+         "head": head,
+         "info": info,
+         "feelLuckyEnabled": True,
+         "permetCopiarDUnaAltreHoraEnabled": settings.CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA,
+         "els_meus_tutorats": els_meus_tutorats,
+         })
+
+
+'''
 # http://streamhacker.com/2010/03/01/django-model-formsets/
 @login_required
 @group_required(['professors'])
@@ -407,9 +587,11 @@ def passaLlista(request, pk):
          "els_meus_tutorats": els_meus_tutorats,
          },
         )
+'''
 
-
-def helper_tuneja_item_nohadeseralaula( request, control_a, te_error = False ):
+def helper_tuneja_item_nohadeseralaula( request, control_a, manager, te_error = False ):
+    #type: (HttpRequest, int, PassarLlistaManager, bool) -> int
+    #El manager s'encarrega de crear el formulari corresponent segons el cas.
 
     NoHaDeSerALAula = apps.get_model('presencia', 'NoHaDeSerALAula')
     q_no_al_centre_expulsat = control_a.nohadeseralaula_set.filter(motiu=NoHaDeSerALAula.EXPULSAT_DEL_CENTRE)
@@ -448,18 +630,21 @@ def helper_tuneja_item_nohadeseralaula( request, control_a, te_error = False ):
 
     else:
         if request.method == "POST" and not te_error:
-            form = ControlAssistenciaForm(
-                request.POST,
-                prefix=str(control_a.pk),
-                instance=control_a)
+            form = manager.crearFormulari(request.POST, control_a)
+            #form = ControlAssistenciaForm()
+            #    request.POST,
+            #    prefix=str(control_a.pk),
+            #    instance=control_a)
         elif request.method == "POST" and te_error:
-            form = ControlAssistenciaForm(
-                prefix=str(control_a.pk),
-                instance=ControlAssistencia.objects.get(pk = control_a.pk))
+            form = manager.crearFormulari(request.POST, ControlAssistencia.objects.get(pk = control_a.pk))
+            #form = ControlAssistenciaForm(
+            #    prefix=str(control_a.pk),
+            #    instance=ControlAssistencia.objects.get(pk = control_a.pk))
         else:
-            form = ControlAssistenciaForm(
-                prefix=str(control_a.pk),
-                instance=control_a)
+            form = manager.crearFormulari(None, control_a)
+            #form = ControlAssistenciaForm(
+            #    prefix=str(control_a.pk),
+            #    instance=control_a)
 
         form.fields['estat'].label = unicode(control_a.alumne)
         avui_es_anivesari = (control_a.alumne.data_neixement.month == control_a.impartir.dia_impartir.month and

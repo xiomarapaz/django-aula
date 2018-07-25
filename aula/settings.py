@@ -52,6 +52,28 @@ CUSTOM_PORTAL_FAMILIES_TUTORIAL = u""
 CUSTOM_FALTES_ABSENCIA_PER_CARTA = 1
 CUSTOM_FALTES_ABSENCIA_PER_TIPUS_CARTA = { 'tipus1': 1 }
 
+#Codi unitat formativa discontinuada.
+CUSTOM_UNITAT_FORMATIVA_DISCONTINUADA='unitat formativa discontinuada'
+
+#Configuracions pel testeig, per fer-lo més ràpid
+#https://dizballanze.com/django-blazing-fast-tests/
+import sys
+TESTING = 'test' in sys.argv
+
+if TESTING:
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    ]
+
+    MIGRATION_MODULES = {
+        'django.contrib.auth': None,
+        'django.contrib.contenttypes': None,
+        'django.contrib.sessions': None,
+        'django.contrib.sites': None,
+        'aula.apps.missatgeria': None,
+        'aula.apps.alumnes': None,
+        'aula.apps.assignatures': None,
+    }
 
 try:
     from settings_local import *

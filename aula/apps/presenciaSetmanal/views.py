@@ -216,7 +216,7 @@ def modificaEstatControlAssistencia(request, codiEstat, idAlumne, idImpartir):
         return HttpResponse(CONST_ERROR_CODE + str, status=500)
     except Exception as e:
         #import traceback
-        print (CONST_ERROR_CODE, unicode(traceback.format_exc(), 'utf-8'))
+        #print (CONST_ERROR_CODE, unicode(traceback.format_exc(), 'utf-8'))
         #return HttpResponse(CONST_ERROR_CODE + unicode(e) + u"-" + unicode(traceback.format_exc(), 'utf-8'))
         return HttpResponse(CONST_ERROR_CODE + unicode(e), status=500)
 

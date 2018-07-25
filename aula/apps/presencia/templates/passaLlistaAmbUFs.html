@@ -1,0 +1,71 @@
+{% extends "passaLlista.html" %}
+
+{% block altres_botons %}
+<div class="col-sm-4">&nbsp;</div>
+<div class="col-sm-8">&nbsp;</div>
+<div class="col-sm-4"></div><!-- no funciona bé el col-offset-6"-->
+<div class="col-sm-8">
+    {% for uf in ufs %}
+        <button type="button" id="sel_uf{{forloop.counter0}}" class="btn btn-primary">Tot {{uf.nom}}</button>
+    {% endfor %}
+    <button type="button" id="ufsHoraAnterior" class="btn btn-primary">UFs hora anter.</button>
+</div>
+{% endblock %}
+
+{% block altres_botons_responsive %}
+<div class="btn-group">
+    <button type="button" id="ufsHoraAnterior2" class="btn btn-primary">UFs hora anter.</button>
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      {% for uf in ufs %}
+        <li><a id="sel2_uf{{forloop.counter0}}" value="{{uf.id}}">Tot {{uf.nom}}</a></li>
+      {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block extres_js %}
+<script type="text/javascript">   
+    function totesUFsNetes() {
+        //Elimino els checks de cada UF per cada registre del llistat.
+        {% for uf in ufs %}
+          {% for f in formset %}
+            $(".btn{{uf}}").removeClass('active');
+            $(".rad{{uf}}").prop("checked", false);
+            //$('#label_id_{{f.prefix}}-uf_{{forloop.parentloop.counter0}}').removeClass('active');
+            //$('#rad_id_{{f.prefix}}-uf_{{forloop.parentloop.counter0}}').prop("checked", false);
+          {% endfor %}
+        {% endfor %}
+      }
+
+    $(document).ready(
+
+        function($){
+            {% for uf in ufs %}
+                $("#sel_uf{{forloop.counter0}}, #sel2_uf{{forloop.counter0}}").click(function(){
+                    totesUFsNetes();
+                    {% for f in formset %}
+                        $('#label_id_{{f.prefix}}-uf_{{forloop.parentloop.counter0}}').addClass('active');
+                        $('#rad_id_{{f.prefix}}-uf_{{forloop.parentloop.counter0}}').prop("checked", true);
+                    {% endfor %}
+                    return false;
+                });
+            {% endfor %}
+
+            $("#ufsHoraAnterior, #ufsHoraAnterior2").click(function(){
+                totesUFsNetes();
+                {% for f in formset %}
+                    {% if f.n_uf_seleccionada != -1 %}
+                        $('#label_id_{{f.prefix}}-uf_{{f.n_uf_seleccionada}}').addClass('active');
+                        $('#rad_id_{{f.prefix}}-uf_{{f.n_uf_seleccionada}}').prop("checked", true);
+                        console.warn ({{f.uf_id_anterior}});
+                    {% endif %}
+                {% endfor %}
+                return false;
+            })
+        }
+    );
+</script>
+{% endblock %}
+

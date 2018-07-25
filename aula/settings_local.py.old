@@ -1,0 +1,105 @@
+#encoding: utf-8
+'''# This Python file uses the following encoding: utf-8
+# Django settings for aula project.
+
+from settings_dir.common import *
+
+NOM_CENTRE = 'Centre de Demo'
+LOCALITAT = u"L'Escala"
+URL_DJANGO_AULA = r'http://djau.ctrlaltd.webfactional.com'
+ALLOWED_HOSTS = [ 'djau.ctrlaltd.webfactional.com', ]
+
+ACCES_RESTRINGIT_A_GRUPS = None # ó be = ['direcció','administradors']  mentre duran les proves
+
+#En cas de tenir un arbre de predicció cal posar-lo aquí:
+# from lxml import etree  
+# PREDICTION_TREE=etree.parse( r'path_fins_el_model' )
+PREDICTION_TREE = None
+
+STATIC_URL = '/site-css/'.format( domain=URL_DJANGO_AULA )
+STATIC_ROOT = location('../static/')
+
+EMAIL_SUBJECT_PREFIX = '[DEMO AULA] '
+
+DEBUG = True
+
+ADMINS = (
+    ('joan rodriguez', 'ui@mega.cracs.cat'),
+)
+
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_HOST_USER='el-meu-centre@gmail.com'
+EMAIL_HOST_PASSWORD='xxxx xxxx xxxx xxxx'
+DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+SERVER_EMAIL='el-meu-centre@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+DEBUG = True
+SQL_DEBUG = True
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME':  location( 'db.sqlite'),
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+        'ATOMIC_REQUESTS': True,
+    }
+}
+
+INSTALLED_APPS = [
+    #'debug_toolbar',
+    'demo'
+] + INSTALLED_APPS
+
+MIDDLEWARE_CLASSES += [
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False
+}
+
+EMAIL_SUBJECT_PREFIX = '[DEMO AULA] '
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+COMPRESS_ENABLED = False
+
+ALLOWED_HOSTS = ['localhost']
+
+STATICFILES_DIRS = [
+    location( '../demo/static-web/'),
+] + STATICFILES_DIRS
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+                location('../customising/templates'),
+                location('templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'debug' : DEBUG,
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                #"django.core.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.csrf",
+                'django.template.context_processors.request',
+                'aula.utils.context_processors.dades_basiques',
+            ],
+        },
+    },
+]
+
+TEMPLATES[0]['DIRS'] = [location('../demo/templates')]+TEMPLATES[0]['DIRS']
+
+'''
