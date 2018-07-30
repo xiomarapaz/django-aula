@@ -130,7 +130,7 @@ def syncro_data_api(request, format=None):
     if not serializer.is_valid():
         raise serializers.ValidationError("ups! petició amb errors")
 
-    darrera_sincronitzacio = serializer.validated_data["darrera_sincronitzacio"]
+    darrera_sincronitzacio = serializer.validated_data["last_sync_date"]
 
     qrtoken = request.user.qrportal
 
@@ -142,11 +142,11 @@ def syncro_data_api(request, format=None):
     # Sí hi ha novetats, envio tot:
     qrtoken.darrera_sincronitzacio = datetime.datetime.now()
     content = {
+        "id": qrtoken.alumne_referenciat.id,
         "darrera_sincronitzacio": qrtoken.darrera_sincronitzacio ,
         "Assistència": [  {"dia": "2018-06-01", "materia":"MA", "franja": "12:00-13:05", "tipus": "Retard"}, 
                           {"dia": "2018-06-02", "materia":"FI", "franja": "10:00-11:05", "tipus": "Justificada"}, 
                        ],
-                            
         "Incidències": [  {"dia": "2018-06-01", "tipus":"Incidència", "franja": "12:00-13:05", "motiu": "Molesta els companys"}, 
                           {"dia": "2018-06-02", "tipus":"Observació", "franja": "12:00-13:05", "motiu": "Bona feina"}, 
                        ],

@@ -19,11 +19,18 @@ def notifica():
     from aula.apps.presencia.models import ControlAssistencia
     from django.core.mail import send_mail
     from aula.apps.usuaris.models import Accio
+
+    num_correus_no_enviats=0
         
     urlDjangoAula = settings.URL_DJANGO_AULA
     textTutorial = settings.CUSTOM_PORTAL_FAMILIES_TUTORIAL
     
     #with transaction.autocommit():  #deprecated on 1.8. Now is the default behaviuor.
+
+    # TODO x App
+    #
+    # treure fa_2_setmanes
+    # llista alumnes q_no_informat_adreca deprecated: tenen adreça informada o tenen token
         
     #actualitzo notificacions sortides:
     notifica_sortides()
@@ -81,7 +88,9 @@ def notifica():
                              hiHaNovetatsPresencia or
                              hiHaNovetatsSortides or
                              hiHaNovetatsIncidencies
-                             )                  
+                             )      
+
+
             #print u'Avaluant a {0}'.format( alumne )
             enviatOK = False
             if hiHaNovetats:
@@ -113,8 +122,16 @@ def notifica():
                               fail_silently=False)
                     enviatOK = True
                 except:
-                    #cal enviar msg a tutor que no s'ha pogut enviar correu a un seu alumne.
                     enviatOK = False
+                    #Enviar msg a admins, ull! podem inundar de missatges si fallen tots els alumnes.
+                    num_correus_no_enviats += 1
+
+
+            #actualitzo QR's
+            if hiHaNovetats:
+                n_tokens = alumne.qr_portal_set.update( novetats_detectades_moment = ara  )
+
+            enviatOK = enviatOK or bool(n_tokens)  # s'ha enviat per algun dels mitjants
 
             if enviatOK:                    
                 noves_sortides.update( relacio_familia_notificada = ara )
@@ -138,4 +155,9 @@ def notifica():
                                 
         except ObjectDoesNotExist:
             pass
+    
+    # si hi ha correus que han fallat informar a l'admin
+
+    if num_correus_no_enviats > 0:
+        raise Exception(u"No s'han pogut enviar {} missatges a famílies.".format(num_correus_no_enviats))
 

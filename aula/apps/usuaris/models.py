@@ -154,4 +154,4 @@ class OneTimePasswd(AbstractOneTimePasswd):
     pass
 
 class QRPortal(AbstractQRPortal):
-    pass
+    pass    
