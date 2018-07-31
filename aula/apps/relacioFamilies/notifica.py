@@ -38,7 +38,7 @@ def notifica():
     #Notificacions        
     ara = datetime.now()
     
-    fa_2_setmanes = ara - timedelta(  days = 14 )
+    # fa_2_setmanes = ara - timedelta(  days = 14 )
     presencies_notificar = EstatControlAssistencia.objects.filter( codi_estat__in = ['F','R','J']  )
     q_no_es_baixa = Q(data_baixa__gte = ara ) | Q(data_baixa__isnull = True )
     q_no_informat_adreca = Q( correu_relacio_familia_pare = '' ) & Q( correu_relacio_familia_mare = '' )
@@ -63,7 +63,7 @@ def notifica():
             noves_expulsions = alumne.expulsio_set.exclude( estat = 'ES').filter(    relacio_familia_notificada__isnull = True  )
             noves_sancions = alumne.sancio_set.filter( impres=True, relacio_familia_notificada__isnull = True  )
             noves_faltes_assistencia = ControlAssistencia.objects.filter( alumne = alumne, 
-                                                                          impartir__dia_impartir__gte = fa_2_setmanes,
+                                                                          # impartir__dia_impartir__gte = fa_2_setmanes,
                                                                           relacio_familia_notificada__isnull = True,
                                                                           estat__pk__in = presencies_notificar )
             noves_respostes_qualitativa = ( alumne

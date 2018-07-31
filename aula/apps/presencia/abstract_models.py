@@ -183,6 +183,9 @@ class AbstractControlAssistencia(models.Model):
         verbose_name = u'Entrada al Control d\'Assistencia'
         verbose_name_plural = u'Entrades al Control d\'Assistencia'
         unique_together = (("alumne", "impartir"))
+        index_together = [
+                            ["alumne", "estat", "relacio_familia_notificada" ],
+                         ]
         
     def __unicode__(self):
         return unicode(self.alumne) + u' -> '+ unicode(self.estat)
