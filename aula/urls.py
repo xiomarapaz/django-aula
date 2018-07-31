@@ -7,6 +7,8 @@ from aula.apps.alumnes.views import mostraGrupPromocionar,nouAlumnePromocionar,l
 from django.contrib.auth.views import password_change
 from django.views.static import serve
 from rest_framework_jwt.views import obtain_jwt_token,refresh_jwt_token, verify_jwt_token
+from django.views.generic.base import RedirectView
+from django.conf import settings
 
 admin.autodiscover()
 
@@ -45,6 +47,7 @@ urlpatterns = [
     url(r'^aules/', include('aula.apps.aules.urls')),
     url(r'^mblapp/', include('aula.mblapp.urls')),
     # Uncomment the next line to enable the admin:
+    url(r'^admin/login/', RedirectView.as_view(url=settings.LOGIN_URL, permanent=True, query_string=True)),
     url(r'^admin/', include(admin.site.urls)),
     # Login i logout automàtics
     #(r'^login/$', 'django.contrib.auth.views.login'),
