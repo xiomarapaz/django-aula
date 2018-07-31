@@ -41,9 +41,14 @@ def notifica():
     # fa_2_setmanes = ara - timedelta(  days = 14 )
     presencies_notificar = EstatControlAssistencia.objects.filter( codi_estat__in = ['F','R','J']  )
     q_no_es_baixa = Q(data_baixa__gte = ara ) | Q(data_baixa__isnull = True )
-    q_no_informat_adreca = Q( correu_relacio_familia_pare = '' ) & Q( correu_relacio_familia_mare = '' )
+    # q_no_informat_adreca = Q( correu_relacio_familia_pare = '' ) & Q( correu_relacio_familia_mare = '' )
     
-    llista_alumnes = Alumne.objects.filter(q_no_es_baixa).exclude( q_no_informat_adreca ).values_list('pk', flat=True)
+    llista_alumnes = ( Alumne
+                      .objects
+                      .filter(q_no_es_baixa)
+                      #.exclude( q_no_informat_adreca )
+                      .values_list('pk', flat=True)
+                     )
 
     avui = datetime.now().date()
     qualitatives_en_curs = [ q for q in AvaluacioQualitativa.objects.all()
@@ -57,6 +62,10 @@ def notifica():
     for alumne_id in llista_alumnes:
         try:
             alumne = Alumne.objects.get( pk = alumne_id )
+
+            adreca_mail_informada = bool( alumne.correu_relacio_familia_pare or alumne.correu_relacio_familia_mare ) 
+            app_instalada = alumne.qr_portal_set.exists()
+
             fa_n_dies = ara - timedelta(  days = alumne.periodicitat_faltes )
             noves_sortides = NotificaSortida.objects.filter( alumne = alumne, relacio_familia_notificada__isnull = True  )
             noves_incidencies = alumne.incidencia_set.filter( relacio_familia_notificada__isnull = True  )
@@ -93,7 +102,7 @@ def notifica():
 
             #print u'Avaluant a {0}'.format( alumne )
             enviatOK = False
-            if hiHaNovetats:
+            if hiHaNovetats and adreca_mail_informada:
                 #enviar correu i marcar novetats com a notificades:
                 assumpte = u"{0} - Notificacions al Djau de {1}".format(alumne.nom, settings.NOM_CENTRE )
                 missatge = [u"Benvolgut/da,",

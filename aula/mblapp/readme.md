@@ -30,33 +30,33 @@ Nota: Sempre s'envien totes les dades, no és incremental.
 
 Només falten dues coses per programar:
 
-* notifica (a relació famílies): cal ampliar la llista als que tenen tokens.
-* vista de mblapp: cal enviar les dades bones i no dades de fake.
+* només envia a la app assistència i incidències. Cal ampliar-ho a la resta ( està preparat per ampliar )
+* Cal la pantalla per a que el tutor activi l'accés quan la família torna el paper signat.
 
 ### Provatures part servidora des de la línia de comandes
 
 ```bash
 
 #Fase 0: Li passem el token inicial. TODO: usuari -> username, demanar data naixement
-export INITIALTOKEN="08d9c337-7b15-47d5-a4c7-56f0ec2b28bd"   #copiar-lo del .odt on hi ha el QR
-export BORNDATE="1992-04-04"
+export INITIALTOKEN="19415140-12e5-41bf-8ce1-8dcd3c63d5ec"   #copiar-lo del .odt on hi ha el QR
+export BORNDATE="1996-07-22"
 curl -X POST -H "Content-Type: application/json" -d "{\"key\":\"${INITIALTOKEN}\", \"born_date\":\"${BORNDATE}\"  }" http://localhost:8000/mblapp/capture_token_api/
 #Ex resposta: {"username":"APIittW","password":"fRyOrWNKHegg"}
 
 #Fase 1: Posar l'usuari a estat actiu ( a mà ho farà el professor per UI ):
 $ python manage.py shell
 from django.contrib.auth.models import User
-u=User.objects.get(username ="APIpOH1")
+u=User.objects.get(username ="APIsnUJ")
 u.is_active = True
 u.save()
 exit()
 
 #Fase 2: Prova de demanar un token per accedir-hi
-curl -X POST -H "Content-Type: application/json" -d '{"username":"APIpOH1","password":"sxvQx?drpOHY"}' http://localhost:8000/api-token-auth/
+curl -X POST -H "Content-Type: application/json" -d '{"username":"APIsnUJ","password":"kJMeHVKhMUyy"}' http://localhost:8000/api-token-auth/
 {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik0xIiwidXNlcl9pZCI6NCwiZW1haWwiOiIiLCJleHAiOjE1MjU5NjA5MjR9.EKEhsW-uqdblRLEpAH0uxKMb-FUnCJB6a3_3xRd4Pno"}
 
 #Fase 3: Prova accedir a recurs amb el token
-export JWTOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFQSXBPSDEiLCJ1c2VyX2lkIjoyMjYsImVtYWlsIjoiIiwiZXhwIjoxNTMzMDQ2MzgxfQ._OCRlFiMP7ajk5_OxI_zOqZRbCdH8r2dtADmg-FOP28
+export JWTOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFQSXNuVUoiLCJ1c2VyX2lkIjoyMjcsImVtYWlsIjoiIiwiZXhwIjoxNTMzMDQ5ODcwfQ.b5XfM51uOZu4FOY_3u1lPFFCTnv6NqFsGfyGIjY4SO8
 curl -H "Authorization: JWT ${JWTOKEN}" http://127.0.0.1:8000/mblapp/hello_api_login/
 
 
@@ -66,7 +66,7 @@ curl -H "Authorization: JWT ${JWTOKEN}" http://127.0.0.1:8000/mblapp/hello_api_l
 
 
 export JWTOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFQSWl0dFciLCJ1c2VyX2lkIjoyMzUsImVtYWlsIjoiIiwiZXhwIjoxNTMyOTQ4MDg5fQ.uPixe14hJFLYdALHx2lbkRj6Gl9N4GWe-SUDom1Nh0g
-export LASTSYNCDATE="2018-06-01 12:00:13"
+export LASTSYNCDATE="2010-06-01 12:00:13"
 curl -H "Authorization: JWT ${JWTOKEN}" -d "{\"last_sync_date\":\"${LASTSYNCDATE}\"  }" http://127.0.0.1:8000/mblapp/syncro_data_api/
 
 
