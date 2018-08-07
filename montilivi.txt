@@ -2,6 +2,12 @@ Adapto codi de montilvi a la nova versió
 ==============================================
 
 !- Presencia Setmanal.
-- Control per UF's. (Intantar separar al màxim.)
+- Control per UF's. (Intentar separar al màxim.)
+    - Comprovar que avisa correctament per correu.
+- Comprovar que els alumnes s'importen correctament a través del fitxer Sanma.
+- Comprovar que es poden crear alumnes de forma manual.
+- Comprovar que el portal funciona correctament i que els alumnes reben modificacions (Canvi per any 2018/19)
+
+
 
 

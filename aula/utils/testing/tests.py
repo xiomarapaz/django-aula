@@ -4,6 +4,7 @@
 from aula.apps.usuaris.models import Professor, Group
 from aula.apps.alumnes.models import Grup, Alumne
 from aula.apps.presencia.models import EstatControlAssistencia, Impartir, ControlAssistencia
+from aula.apps.horaris.models import FranjaHoraria
 from typing import List, Dict, Union
 from datetime import date
 
@@ -11,6 +12,9 @@ import random
 
 class TestUtils():
 
+    diesSetmana = ["Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte", "Diumenge"]
+    diesSetmana2Lletres = ["DL", "DM", "DI", "DJ", "DV", "DS", "DU"]
+    
     def crearProfessor(self, nomUsuari, passwordUsuari):
     # type:(str, str) -> Professor
         grupProfessors, _ = Group.objects.get_or_create(name='professors')
@@ -19,24 +23,36 @@ class TestUtils():
         profe1.groups.add(grupProfessors)
         profe1.groups.add(grupProfessionals)
         profe1.set_password(passwordUsuari)
+        profe1.first_name = nomUsuari
+        profe1.last_name = "cognom_" + nomUsuari
+        profe1.email = "xeviterr@gmail.com"
         profe1.save()
         
         return profe1
 
     def generaAlumnesDinsUnGrup(self, grupAlumnes, nAlumnesAGenerar):
-        #type:(Grup,int) -> List[Grup]
-        noms = ['Xevi','Joan','Pere','Lluís','Brandom','Maria','Lola','Azucena']
-        cognoms = ['Serra','Vazquez','García','Moreno','Vila','Vilamitjana']
-        alumnesGenerats = [] #type: List[Grup]
+        #type:(Grup,int) -> List[Alumne]
+        noms = [u'Xevi',u'Joan',u'Pere',u'Lluís',u'Brandom',u'Maria',u'Lola',u'Azucena']
+        cognoms = [u'Serra',u'Vazquez',u'García',u'Moreno',u'Vila',u'Vilamitjana']
+        alumnesGenerats = [] #type: List[Alumne]
         
+        if nAlumnesAGenerar > (len(noms)*len(cognoms)):
+            raise Exception("Error no pots generar tants alumnes, sortirien repetits.")
+
+        nCognom = 0
+        nNom = 0
         for i in range(0,nAlumnesAGenerar):
             alumne = Alumne.objects.create(ralc=100, grup=grupAlumnes, 
-                nom=noms[random.randint(0,noms.__len__()-1)], 
-                cognoms=cognoms[random.randint(0,cognoms.__len__()-1)], 
+                nom=noms[nNom], 
+                cognoms=cognoms[nCognom], 
                 tutors_volen_rebre_correu=False,
                 data_neixement=date(1990,7,7) #english date.
                 ) 
             alumnesGenerats.append(alumne)
+            nNom+=1
+            if nNom == len(noms):
+                nCognom+=1
+                nNom = 0
         return alumnesGenerats
         
     def generarEstatsControlAssistencia(self):
@@ -54,3 +70,19 @@ class TestUtils():
             ControlAssistencia.objects.create(
                 alumne = alumne,
                 impartir = horaAImpartir)
+
+    def generarFrangesHoraries(self):
+        #type: ()->List[FranjaHoraria]
+        franges = []
+        franges.append(FranjaHoraria.objects.create(hora_inici = '9:00', hora_fi = '10:00'))
+        franges.append(FranjaHoraria.objects.create(hora_inici = '10:00', hora_fi = '11:00'))
+        franges.append(FranjaHoraria.objects.create(hora_inici = '11:00', hora_fi = '12:00'))
+        franges.append(FranjaHoraria.objects.create(hora_inici = '12:00', hora_fi = '13:00'))
+        return franges
+
+    @staticmethod
+    def llancaPostMortem():
+        import ipdb, sys, traceback
+        extype, value, tb = sys.exc_info()
+        traceback.print_exc()
+        ipdb.post_mortem(tb)

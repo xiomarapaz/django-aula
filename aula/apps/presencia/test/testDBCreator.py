@@ -29,16 +29,6 @@ class TestDBCreator(object):
         
         # Crear un horari, 
         # compte, cal crear hores que ja hagin passat, per tal de fer el test.
-        '''data = date.today() #type: date
-        diaAnterior = (data.weekday() - 1 + 7) % 7
-        dosDiesAbans = (data.weekday() - 2 + 7) % 7
-        diaAnteriorUK=diaAnterior+1
-        if diaAnteriorUK == 7:
-            diaAnteriorUK = 0
-        dosDiesAbansUK = dosDiesAbans+1
-        if dosDiesAbansUK == 7:
-            dosDiesAbansUK = 0
-        '''
 
         dataDiaActual = date.today() #type: date
         dataDiaAnterior = dataDiaActual - timedelta(1)

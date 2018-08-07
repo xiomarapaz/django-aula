@@ -6,7 +6,7 @@ from aula.utils.testing.tests import TestUtils
 from aula.apps.alumnes.models import Nivell, Curs, Grup
 from aula.apps.horaris.models import DiaDeLaSetmana, FranjaHoraria, Horari
 from aula.apps.assignatures.models import Assignatura, TipusDAssignatura, UF
-from aula.apps.presencia.models import Impartir, ControlAssistencia
+from aula.apps.presencia.models import Impartir, ControlAssistencia, EstatControlAssistencia
 from django.conf import settings
 from datetime import date, timedelta
 from aula.apps.presencia.test.testDBCreator import TestDBCreator
@@ -16,127 +16,46 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox import webelement
 
-'''
+
+class VerySimpleTest(TestCase):
+
+    def test_hola(self):
+        self.assertIsNotNone("a")
+
 class SimpleTest(TestCase):
 
     def setUp(self):
         tUtils = TestUtils()
+        self.db = TestDBCreator()
         
-        #Crear n alumnes.
-        DAM = Nivell.objects.create(nom_nivell='DAM') #type: Nivell
-        primerDAM = Curs.objects.create(nom_curs='1er', nivell=DAM) #type: Curs
-        primerDAMA = Grup.objects.create(nom_grup='A', curs=primerDAM) #type: Grup
-        self.nAlumnesGrup = 10
-        alumnes = tUtils.generaAlumnesDinsUnGrup(primerDAMA, self.nAlumnesGrup)
-
-        # Crear un profe.
-        profe1=tUtils.crearProfessor('SrProgramador','patata')
-        
-        # Crear un horari
-        tmpDS = DiaDeLaSetmana.objects.create(n_dia_uk=1,n_dia_ca=0,dia_2_lletres='DL',dia_de_la_setmana='dilluns', es_festiu=False)
-        tmpFH1 = FranjaHoraria.objects.create(hora_inici = '9:00', hora_fi = '10:00')
-        tmpFH2 = FranjaHoraria.objects.create(hora_inici = '10:00', hora_fi = '11:00')
-        tmpFH3 = FranjaHoraria.objects.create(hora_inici = '11:00', hora_fi = '12:00')
-
-        programacioDAM = Assignatura.objects.create(nom_assignatura='Programació', curs=primerDAM)
-        entradaHorari1 = Horari.objects.create(
-            assignatura=programacioDAM, 
-            professor=profe1,
-            grup=primerDAMA, 
-            dia_de_la_setmana=tmpDS,
-            hora=tmpFH1,
-            nom_aula='3.04',
-            es_actiu=True)
-
-        tipusAssigDiscontinuada = TipusDAssignatura.objects.create(
-            tipus_assignatura=settings.CUSTOM_UNITAT_FORMATIVA_DISCONTINUADA)
-
-        sistemesDAM = Assignatura.objects.create(
-            nom_assignatura='Sistemes', 
-            curs=primerDAM,
-            tipus_assignatura=tipusAssigDiscontinuada)
-
-        entradaHorari2 = Horari.objects.create(
-            assignatura=sistemesDAM, 
-            professor=profe1,
-            grup=primerDAMA, 
-            dia_de_la_setmana=tmpDS,
-            hora=tmpFH2,
-            nom_aula='3.04',
-            es_actiu=True)
-
-        entradaHorari3 = Horari.objects.create(
-            assignatura=sistemesDAM, 
-            professor=profe1,
-            grup=primerDAMA, 
-            dia_de_la_setmana=tmpDS,
-            hora=tmpFH3,
-            nom_aula='3.04',
-            es_actiu=True)
-
-        self.sistemesDAM_UF1=UF.objects.create(nom='UF1', dinici=date.today(), dfi=date.today()+timedelta(days=14), 
-            horesTeoriques=2, assignatura=sistemesDAM) 
-        self.sistemesDAM_UF2=UF.objects.create(nom='UF2', dinici=date.today(), dfi=date.today()+timedelta(days=14), 
-            horesTeoriques=2, assignatura=sistemesDAM) 
-
-        #Crea controls d'assistencia
-        self.estats = tUtils.generarEstatsControlAssistencia()
-
-        #Aquí hauriem de crear unes quantes classes a impartir i provar que l'aplicació funciona correctament.
-        diaActual = date.today() #type: date
-        diaActualSetmana = diaActual.weekday()
-        dillunsActual = diaActual - timedelta(diaActualSetmana)
-
-        self.programacioDilluns = Impartir.objects.create(
-            horari = entradaHorari1,
-            professor_passa_llista = profe1,
-            dia_impartir = dillunsActual) #type: Impartir
-
-        tUtils.omplirAlumnesHora(alumnes, self.programacioDilluns)
-
-        self.sistemesDilluns = Impartir.objects.create(
-            horari = entradaHorari2,
-            professor_passa_llista = profe1,
-            dia_impartir = dillunsActual
-        )     
-        tUtils.omplirAlumnesHora(alumnes, self.sistemesDilluns)
-
-        self.sistemesDillunsHora2 = Impartir.objects.create(
-            horari = entradaHorari3,
-            professor_passa_llista = profe1,
-            dia_impartir = dillunsActual
-        )     
-        tUtils.omplirAlumnesHora(alumnes, self.sistemesDillunsHora2)
-
- 
     def test_numeroAlumnesMostratsEsCorrecte(self):
         c = Client()
         response = c.post('http://localhost:8000/usuaris/login/', {'usuari':'SrProgramador', 'paraulaDePas':'patata'})
-        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.programacioDilluns.pk) + '/')
+        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.db.programacioDilluns.pk) + '/')
         nBotonsPresent = response.content.count("btn btn-default btnPresent")
-        self.assertTrue(nBotonsPresent == self.nAlumnesGrup, "Error falten usuaris en el llistat")
+        self.assertTrue(nBotonsPresent == self.db.nAlumnesGrup, "Error falten usuaris en el llistat")
 
     def test_passarLlistaModificaBD(self):
         c = Client()
         response = c.post('http://localhost:8000/usuaris/login/', {'usuari':'SrProgramador', 'paraulaDePas':'patata'})
-        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.programacioDilluns.pk) + '/')
+        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.db.programacioDilluns.pk) + '/')
         #Localitzar els CA's que cal enviar.
         estatsAEnviar=self.obtenirEstats(response.content)
         
-        response = c.post('http://localhost:8000/presencia/passaLlista/' + str(self.programacioDilluns.pk) + '/', 
+        response = c.post('http://localhost:8000/presencia/passaLlista/' + str(self.db.programacioDilluns.pk) + '/', 
          estatsAEnviar)
         
         #Comprova que ha canviat l'estat.
-        controlsAssistencia = ControlAssistencia.objects.filter(impartir=self.programacioDilluns, estat=self.estats['p'])
-        self.assertTrue(len(controlsAssistencia) == self.nAlumnesGrup, 
-            "Error el número de controls d'assisència marcats com a present hauria de ser " + str(self.nAlumnesGrup) + 
+        controlsAssistencia = ControlAssistencia.objects.filter(impartir=self.db.programacioDilluns, estat=self.db.estats['p'])
+        self.assertTrue(len(controlsAssistencia) == self.db.nAlumnesGrup, 
+            "Error el número de controls d'assisència marcats com a present hauria de ser " + str(self.db.nAlumnesGrup) + 
             "i és:" + str(len(controlsAssistencia)))
 
     def test_passarLlistaModificaBD_unitatsFormativesDiscontinuades(self):
         #Passar llista amb unitats formatives discontinuades, tenim en compte la UF.
         c = Client()
         response = c.post('http://localhost:8000/usuaris/login/', {'usuari':'SrProgramador', 'paraulaDePas':'patata'})
-        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.sistemesDilluns.pk) + '/')
+        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.db.sistemesDilluns.pk) + '/')
         
         estatsAEnviar=self.obtenirEstats(response.content)
         ufsAEnviar=self.obtenirUFs(response.content)
@@ -144,21 +63,21 @@ class SimpleTest(TestCase):
         dadesPost.update(estatsAEnviar)
         dadesPost.update(ufsAEnviar)
 
-        response = c.post('http://localhost:8000/presencia/passaLlista/' + str(self.sistemesDilluns.pk) + '/', 
+        response = c.post('http://localhost:8000/presencia/passaLlista/' + str(self.db.sistemesDilluns.pk) + '/', 
          dadesPost)
 
         #Comprova que ha canviat l'estat de la UF i l'estat de l'assistència.
         #TODO
-        controlsAssistencia = ControlAssistencia.objects.filter(impartir=self.sistemesDilluns, 
-            estat=self.estats['p'], uf=self.sistemesDAM_UF2)
-        self.assertTrue(len(controlsAssistencia)== self.nAlumnesGrup)
+        controlsAssistencia = ControlAssistencia.objects.filter(impartir=self.db.sistemesDilluns, 
+            estat=self.db.estats['p'], uf=self.db.sistemesDAM_UF2)
+        self.assertTrue(len(controlsAssistencia)== self.db.nAlumnesGrup)
     
     
     def test_passarLlistaUnitatsFormatives_passarLlistaHoraSeguentComprovarUFS(self):
         #Test per comprovar que passant llista a una hora la següent conserva les unitats formatives.
         c = Client()
         response = c.post('http://localhost:8000/usuaris/login/', {'usuari':'SrProgramador', 'paraulaDePas':'patata'})
-        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.sistemesDilluns.pk) + '/')
+        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.db.sistemesDilluns.pk) + '/')
         
         estatsAEnviar=self.obtenirEstats(response.content)
         ufsAEnviar=self.obtenirUFs(response.content)
@@ -168,11 +87,11 @@ class SimpleTest(TestCase):
     
         controlsAssitenciaIUfs = self.obtenirControlAssistenciaIUfs(response.content)
 
-        c.post('http://localhost:8000/presencia/passaLlista/' + str(self.sistemesDilluns.pk) + '/', 
+        c.post('http://localhost:8000/presencia/passaLlista/' + str(self.db.sistemesDilluns.pk) + '/', 
             dadesPost)
 
         #Comprovar que a la següent hora hi han marcades les uf's de la primera.
-        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.sistemesDillunsHora2.pk) + '/')
+        response = c.get('http://localhost:8000/presencia/passaLlista/' + str(self.db.sistemesDillunsHora2.pk) + '/')
         controlsAssitenciaIUfsHora2 = self.obtenirControlAssistenciaIUfs(response.content)
 
         #comprovar que totes les UF's es marquen com a UF2 al seleccionar el botó de l'hora anterior.
@@ -185,7 +104,7 @@ class SimpleTest(TestCase):
         matches=re.findall('name="[0-9]+-estat"', html)
         for match in matches:
             coincidencia = str(match)[6:-1]
-            valorsAEnviar[coincidencia] = self.estats['p'].pk
+            valorsAEnviar[coincidencia] = self.db.estats['p'].pk
         return valorsAEnviar
 
     def obtenirIdEstats(self, estats):
@@ -201,7 +120,7 @@ class SimpleTest(TestCase):
         matches=re.findall('name="[0-9]+-uf"', html)
         for match in matches:
             coincidencia = str(match)[6:-1]
-            valorsAEnviar[coincidencia] = self.sistemesDAM_UF2.pk
+            valorsAEnviar[coincidencia] = self.db.sistemesDAM_UF2.pk
         return valorsAEnviar
 
     def obtenirControlAssistenciaIUfs(self, html):
@@ -215,7 +134,6 @@ class SimpleTest(TestCase):
             else:
                 controlsIUFs[match[0]].append(match[1])
         return controlsIUFs
-'''
 
 class MySeleniumTests(LiveServerTestCase):
 
@@ -226,6 +144,47 @@ class MySeleniumTests(LiveServerTestCase):
     
     def tearDown(self):
         self.selenium.close()
+
+    def test_comprovarOpcioForcarTreure(self):
+        #Login
+        #Passa llista tot a present alumne X fa falta.
+        #Treure alumne X de la hora. No marcar la opció forçar, comprovar que l'alumne continua present.
+        #Treure alumne X de la hora. Marcar la opció forçar. Comprovar que l'alumne no està dins la hora.
+        self.loginUsuari()
+        self.selenium.get(self.live_server_url + '/presencia/afegeixAlumnesLlista/' + 
+            str(self.db.programacioDillunsHoraBuidaAlumnes.pk) + '/')
+        
+        alumneX=self.db.alumnes[0]
+        self.seleccionarAlumne(alumneX.pk)
+        self.seleccionarAlumne(self.db.alumnes[1].pk)
+        self.seleccionarAlumne(self.db.alumnes[2].pk)
+        self.selenium.find_elements_by_xpath("//button[@type='submit']")[0].click()
+
+        cas=ControlAssistencia.objects.filter(impartir_id=self.db.programacioDillunsHoraBuidaAlumnes.pk) 
+        casAlumneX = cas.get(alumne=alumneX)
+        for ca in cas:
+            self.selenium.execute_script('x=document.getElementById("label_id_{}-estat_0"); x.click()'.format(ca.pk))
+        self.selenium.execute_script('x=document.getElementById("label_id_{}-estat_1"); x.click()'.format(casAlumneX.pk))
+        self.selenium.find_elements_by_xpath("//button[@type='submit']")[0].click()
+
+        self.selenium.get(self.live_server_url + '/presencia/treuAlumnesLlista/' + 
+            str(self.db.programacioDillunsHoraBuidaAlumnes.pk) + '/')
+        self.seleccionarAlumne(alumneX.pk)
+        self.selenium.find_elements_by_xpath("//button[@type='submit']")[0].click()
+
+        caAlumneX=ControlAssistencia.objects.get(impartir_id=self.db.programacioDillunsHoraBuidaAlumnes.pk, alumne=alumneX) #type: ControlAssistencia
+        estat = caAlumneX.estat #type: EstatControlAssistencia
+        self.assertTrue(estat.codi_estat=='F')
+        
+        self.selenium.get(self.live_server_url + '/presencia/treuAlumnesLlista/' + 
+            str(self.db.programacioDillunsHoraBuidaAlumnes.pk) + '/')
+        self.seleccionarAlumne(alumneX.pk)
+        botoTreureTot = self.selenium.find_element_by_id("id_tots-matmulla")
+        botoTreureTot.click()
+        self.selenium.find_elements_by_xpath("//button[@type='submit']")[0].click()
+
+        caAlumnes=ControlAssistencia.objects.filter(impartir_id=self.db.programacioDillunsHoraBuidaAlumnes.pk, alumne=alumneX) #type: ControlAssistencia
+        self.assertTrue(len(caAlumnes) == 0)
 
     def test_treureAlumnes(self):
         self.loginUsuari()
@@ -361,5 +320,9 @@ class MySeleniumTests(LiveServerTestCase):
         botons = self.selenium.find_elements_by_xpath("//button[@type='submit']")
         botons[0].click()
 
-        
-
+    def seleccionarAlumne(self, codiAlumne):
+        #type: (int)->None
+        js = """ x = document.evaluate('//input[@type=\\\'checkbox\\\' and @value="""+str(codiAlumne)+"""]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null );
+                    x.singleNodeValue.click();
+                """
+        self.selenium.execute_script(js)

@@ -1,0 +1,10 @@
+{% extends "formset.html" %}
+
+{% block content %}
+
+  {% for assignatura in llistaAssignatures %}
+    <p><a href="/assignatures/veureUnitatsFormatives/{{assignatura.id}}">{{assignatura}}
+    </a></p>
+  {% endfor %}
+
+{% endblock %}

@@ -65,15 +65,6 @@ if TESTING:
         'django.contrib.auth.hashers.MD5PasswordHasher',
     ]
 
-    MIGRATION_MODULES = {
-        'django.contrib.auth': None,
-        'django.contrib.contenttypes': None,
-        'django.contrib.sessions': None,
-        'django.contrib.sites': None,
-        'aula.apps.missatgeria': None,
-        'aula.apps.alumnes': None,
-        'aula.apps.assignatures': None,
-    }
 
 try:
     from settings_local import *

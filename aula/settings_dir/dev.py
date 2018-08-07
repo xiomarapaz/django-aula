@@ -50,5 +50,8 @@ DEBUG_TOOLBAR_CONFIG = {
 EMAIL_SUBJECT_PREFIX = '[DEMO AULA] '
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+#EMAIL_FILE_PATH = '/tmp/app-messages' # change this to a proper location
+
 COMPRESS_ENABLED = False
 
