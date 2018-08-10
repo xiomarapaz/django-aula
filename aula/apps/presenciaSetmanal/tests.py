@@ -8,7 +8,8 @@ Replace this with more appropriate tests for your application.
 
 from urllib import quote
 
-from django.test import TestCase
+from django.test import TransactionTestCase
+from aula.utils.testing.tests import TestUtils
 from django.contrib.auth.models import User, Group
 from datetime import date, timedelta
 from django.test import Client
@@ -32,13 +33,13 @@ class IControlAssistencia(ControlAssistencia):
         abstract = True
 
 
-class PresenciaSetmanalTestCase(TestCase):
-    primerESOA = None
-    alumne=None
-    impartirDilluns=None
+class PresenciaSetmanalTestCase(TransactionTestCase):
+    #Necessito el TransactionTestCase, perque torna a l'estat inicial de la BD esborrant les taules.
+    #Si ho faig amb el TestCase habitual no hi poden haver subtransaccions dins el test
+    #   - sempre n'hi ha perque s'executen amb ATOMIC_REQUEST (la vista acaba bé=commit, malament=rollback)
     urlBase = 'http://localhost:8000/'
 
-    def setUp(self):
+    def generaBD(self):
         #Crear n alumnes.
         ESO = Nivell.objects.create(nom_nivell='ESO') #type: Nivell
         primerESO = Curs.objects.create(nom_curs='1er', nivell=ESO) #type: Curs
@@ -70,7 +71,11 @@ class PresenciaSetmanalTestCase(TestCase):
         profe3.save()
 
         # Crear un horari
-        tmpDS = DiaDeLaSetmana.objects.create(n_dia_uk=1,n_dia_ca=0,dia_2_lletres='DL',dia_de_la_setmana='dilluns', es_festiu=False)
+        import datetime
+        diaActual = datetime.datetime.now()
+        diaAnterior = diaActual - datetime.timedelta(-1)
+
+        tmpDS = DiaDeLaSetmana.objects.create(n_dia_uk=diaAnterior.isoweekday(),n_dia_ca=diaAnterior.weekday(),dia_2_lletres='XX',dia_de_la_setmana="dia" + str(diaAnterior.weekday()), es_festiu=False)
         tmpFH = FranjaHoraria.objects.create(hora_inici = '9:00', hora_fi = '10:00')
 
         matresPrimerESO = Assignatura.objects.create(nom_assignatura='Mates', curs=primerESO)
@@ -110,11 +115,13 @@ class PresenciaSetmanalTestCase(TestCase):
             impartir = impartirDilluns)
 
     def test_alumne_creat(self):
+        self.generaBD()
         """Animals that can speak are correctly identified"""
         alumne = Alumne.objects.get(nom="Xevi")
         self.assertEqual(alumne.cognoms, 'Petit')
         
     def test_client(self):
+        self.generaBD()
         c=Client()
         response = c.post('http://localhost:8000/usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
         response2 = c.get('http://127.0.0.1:8000/presenciaSetmanal/' + str(self.primerESOA.pk) + '/')
@@ -124,6 +131,7 @@ class PresenciaSetmanalTestCase(TestCase):
         self.assertNotEqual(response2.content,'')
 
     def test_comprovaNElementsTaula(self):
+        self.generaBD()
         #Comprova que la taula fa NxM files i columnes.
         c=Client()
         response = c.post('http://localhost:8000/usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
@@ -137,16 +145,8 @@ class PresenciaSetmanalTestCase(TestCase):
         nAssignatures = len(Assignatura.objects.all())
         self.assertEquals(nAlumnes*nAssignatures, nceles, "El número d'elements de la taula no coincidèixen.")
 
-    def _canviEstat(self, client, estatInicial):
-        #type: () => HttpResponse
-        url = self.urlBase + 'presenciaSetmanal/modificaEstatControlAssistencia/{2}/{0}/{1}'.format(
-            self.alumne.pk, self.impartirDilluns.pk, quote(estatInicial))
-        return client.get(url) 
-
-    def _testComprovaCanviEstat(self, client, estatInicial, estatCanviat):
-        self.assertIn(estatCanviat, self._canviEstat(client, estatInicial).content)
-
     def test_client_modificar_control_assistencia(self):
+        self.generaBD()
         with self.settings(CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR=True):
             c=Client()
             c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
@@ -154,8 +154,10 @@ class PresenciaSetmanalTestCase(TestCase):
             self._testComprovaCanviEstat(c,'F','R')
             self._testComprovaCanviEstat(c,'R',' ')
             self._testComprovaCanviEstat(c,' ','P')
+        
 
     def test_client_modificar_control_assistencia_justifica_tothom(self):
+        self.generaBD()
         with self.settings(CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR=False):
             c=Client()
             c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
@@ -165,6 +167,7 @@ class PresenciaSetmanalTestCase(TestCase):
             self._testComprovaCanviEstat(c,'J',' ')
     
     def test_client_nopuc_modificar_assistencia_altri(self):
+        self.generaBD()
         c=Client()
         response = c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrIntrus', 'paraulaDePas':'patata'})
         #Ha de donar error doncs l'usuari no pot modificar.
@@ -177,6 +180,7 @@ class PresenciaSetmanalTestCase(TestCase):
             pass #Tot bé.
 
     def test_client_posar_tot_a_present(self):
+        self.generaBD()
         #Posar totes les hores a present.
         c=Client()
         response = c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrCastanya', 'paraulaDePas':'patata'})
@@ -189,6 +193,7 @@ class PresenciaSetmanalTestCase(TestCase):
         self.assertEqual(len(controls.exclude(estat__codi_estat='P')), 0, "Haurien de ser tots presents")
         
     def test_client_nopuc_posar_tot_a_present(self):
+        self.generaBD()
         #Posar totes les hores a present.
         c=Client()
         response = c.post(self.urlBase + 'usuaris/login/', {'usuari':'SrIntrus', 'paraulaDePas':'patata'})
@@ -200,3 +205,12 @@ class PresenciaSetmanalTestCase(TestCase):
         controls = ca.objects.filter(impartir=self.impartirDilluns.pk) # type: QuerySet
         self.assertGreater(len(controls.exclude(estat__codi_estat='P')), 0, "Hauria d'haver-hi estats no presents")
 
+    def _canviEstat(self, client, estatInicial):
+        #type: () => HttpResponse
+        url = self.urlBase + 'presenciaSetmanal/modificaEstatControlAssistencia/{2}/{0}/{1}'.format(
+            self.alumne.pk, self.impartirDilluns.pk, quote(estatInicial))
+        return client.get(url) 
+
+    def _testComprovaCanviEstat(self, client, estatInicial, estatCanviat):
+        nouEstat = self._canviEstat(client, estatInicial).content
+        self.assertIn(estatCanviat, nouEstat)

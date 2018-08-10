@@ -6,7 +6,7 @@ from aula.apps.alumnes.models import Grup, Alumne
 from aula.apps.presencia.models import EstatControlAssistencia, Impartir, ControlAssistencia
 from aula.apps.horaris.models import FranjaHoraria
 from typing import List, Dict, Union
-from datetime import date
+from datetime import date, time, datetime, timedelta
 
 import random
 
@@ -15,7 +15,7 @@ class TestUtils():
     diesSetmana = ["Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte", "Diumenge"]
     diesSetmana2Lletres = ["DL", "DM", "DI", "DJ", "DV", "DS", "DU"]
     
-    def crearProfessor(self, nomUsuari, passwordUsuari):
+    def crearProfessor(self, nomUsuari, passwordUsuari, mail="mail@mailserver.com"):
     # type:(str, str) -> Professor
         grupProfessors, _ = Group.objects.get_or_create(name='professors')
         grupProfessionals, _ = Group.objects.get_or_create(name='professional')
@@ -25,7 +25,7 @@ class TestUtils():
         profe1.set_password(passwordUsuari)
         profe1.first_name = nomUsuari
         profe1.last_name = "cognom_" + nomUsuari
-        profe1.email = "xeviterr@gmail.com"
+        profe1.email = mail
         profe1.save()
         
         return profe1
@@ -73,11 +73,17 @@ class TestUtils():
 
     def generarFrangesHoraries(self):
         #type: ()->List[FranjaHoraria]
+        dtActual = datetime.now()
+        dt6HoresAbans = dtActual - timedelta(seconds=3600*6)
+        if (dtActual.date() != dt6HoresAbans.date()):
+            raise Exception("No pots fer tests sobre un mateix dia, necessito 6 hores de dia com a mínim. Perque treballes abans de les 6 del matí?")
         franges = []
-        franges.append(FranjaHoraria.objects.create(hora_inici = '9:00', hora_fi = '10:00'))
-        franges.append(FranjaHoraria.objects.create(hora_inici = '10:00', hora_fi = '11:00'))
-        franges.append(FranjaHoraria.objects.create(hora_inici = '11:00', hora_fi = '12:00'))
-        franges.append(FranjaHoraria.objects.create(hora_inici = '12:00', hora_fi = '13:00'))
+        for i in range(dt6HoresAbans.hour, dtActual.hour):
+            hora = i % 24
+            horaMes1 = (i + 1) %24
+            hi = time(hora, 0, 0)
+            hf = time(horaMes1, 0, 0)
+            franges.append(FranjaHoraria.objects.create(hora_inici = hi, hora_fi = hf))
         return franges
 
     @staticmethod

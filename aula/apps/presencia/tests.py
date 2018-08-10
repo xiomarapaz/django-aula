@@ -16,12 +16,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox import webelement
 
-
-class VerySimpleTest(TestCase):
-
-    def test_hola(self):
-        self.assertIsNotNone("a")
-
 class SimpleTest(TestCase):
 
     def setUp(self):

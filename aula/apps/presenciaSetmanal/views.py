@@ -201,13 +201,14 @@ def modificaEstatControlAssistencia(request, codiEstat, idAlumne, idImpartir):
         #Log
         from aula.apps.usuaris.models import Accio
         Accio.objects.create(
-            tipus='PL_ESTAT1',
+            tipus='PL',
             usuari=user,
             l4=l4,
             impersonated_from=request.user if request.user != user else None,
             text=u"""Passar llista, presenciaSetmanal: {0}.""".format(impartir)
         )
 
+        print ("Retorno correctament ", codiResultat)
         return HttpResponse(codiResultat)
     except ValidationError as e:
         str = u''
@@ -215,7 +216,6 @@ def modificaEstatControlAssistencia(request, codiEstat, idAlumne, idImpartir):
             str = str + unicode(v) + u"<br>"
         return HttpResponse(CONST_ERROR_CODE + str, status=500)
     except Exception as e:
-        #import traceback
         #print (CONST_ERROR_CODE, unicode(traceback.format_exc(), 'utf-8'))
         #return HttpResponse(CONST_ERROR_CODE + unicode(e) + u"-" + unicode(traceback.format_exc(), 'utf-8'))
         return HttpResponse(CONST_ERROR_CODE + unicode(e), status=500)
@@ -257,7 +257,7 @@ def modificaEstatControlAssistenciaGrup(request, codiEstat, idImpartir):
 
         #Log
         Accio.objects.create(
-            tipus='PL_ESTAT1',
+            tipus='PL',
             usuari=user,
             l4=l4,
             impersonated_from=request.user if request.user != user else None,
@@ -283,10 +283,11 @@ def _modificaEstatControlAssistencia(nouEstat, controlAssistencia, profeActual, 
     controlAssistencia.credentials = credentials
     controlAssistencia.estat_id = nouEstat.getIdOrNone()
     controlAssistencia.save()
-    if controlAssistencia.estat:
-        return controlAssistencia.estat.codi_estat
-    else:
+    if not controlAssistencia.estat:
         return ' '
+    else:
+        return controlAssistencia.estat.codi_estat
+    
 
 def _comprovarQueLaHoraPertanyAlProfessorOError(credentials, impartir):
     (user, l4) = credentials
