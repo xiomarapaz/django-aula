@@ -1,0 +1,192 @@
+[
+{
+  "pk": 3, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "GAD", 
+    "descripcio_nivell": "GAD", 
+    "anotacions_nivell": "..."
+  }
+},
+{
+  "pk": 7, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "EMV", 
+    "descripcio_nivell": "EMV", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 8, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "JUR", 
+    "descripcio_nivell": "JUR", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 9, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "AFI", 
+    "descripcio_nivell": "AFI", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 10, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "SEC", 
+    "descripcio_nivell": "SEC", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 11, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "AUT", 
+    "descripcio_nivell": "AUT", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 12, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "CAR", 
+    "descripcio_nivell": "CAR", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 13, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "DAW", 
+    "descripcio_nivell": "DAW", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 14, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "ASIX", 
+    "descripcio_nivell": "ASIX", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 15, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "DAM", 
+    "descripcio_nivell": "DAM", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 16, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "LAC", 
+    "descripcio_nivell": "LAC", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 17, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "ODL", 
+    "descripcio_nivell": "ODL", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 18, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "INS", 
+    "descripcio_nivell": "INS", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 19, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "EDI", 
+    "descripcio_nivell": "EDI", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 20, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "ECA", 
+    "descripcio_nivell": "ECA", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 21, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "DPE", 
+    "descripcio_nivell": "DPE", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 22, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "MEL", 
+    "descripcio_nivell": "MEL", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 23, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "ITC", 
+    "descripcio_nivell": "ITC", 
+    "anotacions_nivell": ""
+  }
+},
+{
+  "pk": 24, 
+  "model": "alumnes.nivell", 
+  "fields": {
+    "ordre_nivell": null, 
+    "nom_nivell": "CAS", 
+    "descripcio_nivell": "CAS", 
+    "anotacions_nivell": ""
+  }
+}
+]

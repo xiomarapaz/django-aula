@@ -1,0 +1,26 @@
+{% extends "extHoraris/baseaula.html" %}
+
+{% block content  %}
+
+<h1>Gestió d'Aules</h1>
+<p>
+    <a href="{% url "aula_new" %}" class="btn btn-primary">Nova aula</a>
+</p>
+<p>
+<table class="manteniment">
+<tr>
+    <th class="manteniment">&nbsp;</th>
+    <th class="manteniment">Nom</th>
+</tr>
+{% for aula in object_list %}
+<tr>
+    <td class="manteniment"><a href="{% url "aula_delete" aula.id %}">Eliminar</a></td>
+    <td class="manteniment">{{ aula.nom }}</td>
+</tr>
+{% endfor %}
+</table>
+</p>
+<p>
+    <a href="{% url "aula_new" %}" class="btn btn-primary">Nova aula</a>
+</p>
+{% endblock %}

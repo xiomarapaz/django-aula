@@ -1,0 +1,28 @@
+{% extends "extHoraris/baseprofe.html" %}
+
+{% block content  %}
+
+<h1>Gestió de Profes</h1>
+<p>
+    <a href="{% url "profe_new" %}" class="btn btn-primary">Nou Profe</a>
+</p>
+<p>
+<table class="manteniment">
+<tr>
+    <th class="manteniment">&nbsp;</th>
+    <th class="manteniment">Nom</th>
+</tr>
+{% for profe in object_list %}
+<tr>
+    <td class="manteniment"><a href="{% url "profe_delete" profe.id %}">Eliminar</a></td>
+    <td class="manteniment">{{ profe.nomUsuari }}</td>
+    <td class="manteniment">{{ profe.nomComplert }}</td>
+    <!--<a href="{% url "profe_edit" profe.id %}">{{ profe.nomUsuari }}</a>-->
+</tr>
+{% endfor %}
+</table>
+</p>
+<p>
+    <a href="{% url "profe_new" %}" class="btn btn-primary">Nou Profe</a>
+</p>
+{% endblock %}

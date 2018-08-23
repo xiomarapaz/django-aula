@@ -1,0 +1,8 @@
+{% extends "extHoraris/baseprofe.html" %}
+
+{% block content  %}
+<form method="post">{% csrf_token %}
+    <p>Segur que vols eliminar "{{ object }}" ?</p>
+    <p><input type="submit" class="btn btn-large btn-primary btn-block" name="submit" value="Eliminar"/></p>
+</form>
+{% endblock %}

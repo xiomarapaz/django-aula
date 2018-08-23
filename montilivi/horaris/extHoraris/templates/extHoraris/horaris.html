@@ -1,0 +1,169 @@
+{% extends "extHoraris/basehoraris.html" %}
+{% load static %}
+{% load extras %}
+
+{% block head %}
+  {{ head }}
+{% endblock %}
+
+{% block extrahead %}
+<style type="text/css">
+    #snackbar {
+        visibility:hidden; /* Hidden by default. Visible on click */
+        min-width: 250px; /* Set a default minimum width */
+        margin-left: -125px; /* Divide value of min-width by 2 */
+        background-color: #333; /* Black background color */
+        color: #fff; /* White text color */
+        text-align: center; /* Centered text */
+        border-radius: 2px; /* Rounded borders */
+        padding: 16px; /* Padding */
+        position: fixed; /* Sit on top of the screen */
+        z-index: 1; /* Add a z-index if needed */
+        left: 50%; /* Center the snackbar */
+        bottom: 20%; 
+    }
+  </style>
+{% endblock %}
+
+
+{% block content  %}
+	{% block preform %}{% endblock %}
+    <div class="row">
+    <div id="formulari" class="col-md-4">
+        <form class="form-signin" action="{{funcioControlador}}" method="post" target="{%if target %}{{target}}{%else%}_self{%endif%}">{% csrf_token %}
+            <input type="hidden" name="idGrup" value="{{idGrup}}"/>
+            {% if opcioModificar %}
+                <h3 class="form-signin-heading"><b>{{nomGrup}}:</b> Editar entrada horari</h3>
+            {% else %}
+                <h3 class="form-signin-heading"><b>{{nomGrup}}:</b> Nova entrada horari</h3>
+            {% endif %}
+
+            <div class="row">
+                <label for="idProfe">Professor (usuari de l'INS):</label>
+                <div class="input-append">
+                    <select id="idProfe" name="idProfe" name="idFranja" class="form-control">
+                        {% for profe in profes %}
+                        <option value="{{profe.id}}"
+                            {% if profe.id == idProfe %} selected="selected" {% endif %} >
+                            {{ profe }}</option>
+                        {% endfor %}
+                    </select>
+
+
+                    <!--<input type=text id="codiUsuariProfe" name="codiUsuariProfe" list=profes class="span2" value="{{codiUsuariProfe}}" >
+                    <datalist id="profes">
+                        {% for profe in profes %}
+                        <option>{{ profe }}</option>
+                        {% endfor %}
+                    </datalist>-->
+                    <a class="btn" href="{% url "profe_list" %}">Gestionar professors</a>
+                </div>
+                <label for="idAula">Aula:</label>
+                <select id="idAula" name="idAula" class="form-control">
+                    {% for aula in aules %}
+                        <option value="{{aula.id}}"
+                        {% if aula.id == idAula %} selected="selected" {% endif %} >
+                        {{ aula }}</option>
+                    {% endfor %}
+                </select>
+                <a class="btn" href="{% url "aula_list" %}">Gestionar aules</a><br>
+                <!--<input type="text" id="aula" name="aula" class="form-control" value="{{aula}}">-->
+
+
+                <label for="codiMateria">Materia (format MP00-Descripció):</label>
+                <input type=text id="codiMateria" name="codiMateria" list=materies class="form-control" value="{{codiMateria}}" >
+                <datalist id="materies">
+                    {% for materia in materies %}
+                    <option>{{ materia }}</option>
+                    {% endfor %}
+                </datalist>
+            </div>
+            <div class="row">
+                <label for="idDia">Dia</label>
+                <select id="idDia" name="idDia" class="form-control">
+                    {% for dia in dies %}
+                        <option value="{{dia.id}}"
+                        {% if dia.id == idDia %} selected="selected" {% endif %} >
+                        {{ dia }}</option>
+                    {% endfor %}
+                </select>
+                <label for="idFranja">Franja horària</label>
+                <select id="idFranja" name="idFranja" class="form-control">
+                    {% for franja in franges %}
+                    <option value="{{franja.id}}"
+                        {% if franja.id == idFranja %} selected="selected" {% endif %} >
+                        {{ franja }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                {% if opcioModificar %}
+                    <input type="hidden" name="idEntradaHorari" value="{{idEntradaHorari}}" />
+                    <button class="btn btn-large btn-primary btn-block" type="submit" name="botoSubmit" value="modificar">Modificar</button>
+                {% else %}
+                    <button class="btn btn-large btn-primary btn-block" type="submit" name="botoSubmit" value="afegir">Afegir</button>
+                {% endif %}
+            </div>
+        </form>
+        <p><a href="{%url 'extHoraris__calendari' idGrup%}">Nova entrada</a></p>
+        <div class="form-signin">
+            {% if horarisProfeSolapats %}
+                <h3 class="form-signin-heading">Professors solapats</h3>
+            {% endif %}
+            {% for idEntradaHorari,entradaHorari in horarisProfeSolapats.items %}
+                <li><b>{{entradaHorari.0.profe}}</b> 
+                    <br>{{entradaHorari.0.grup}} ({{entradaHorari.0.dia}} {{entradaHorari.0.franja}})
+                    <br>{{entradaHorari.1.grup}} ({{entradaHorari.1.dia}} {{entradaHorari.1.franja}})</li>
+            {% endfor %}
+            {% if horarisAulesSolapades %}
+            <h3 class="form-signin-heading">Aules solapades</h3>
+            {% endif %}
+            {% for idEntradaHorari,entradaHorari in horarisAulesSolapades.items %}
+                <li><b>{{entradaHorari.0.aula}}</b> 
+                    <br>{{entradaHorari.0.grup}} ({{entradaHorari.0.dia}} {{entradaHorari.0.franja}})
+                    <br>{{entradaHorari.1.grup}} ({{entradaHorari.1.dia}} {{entradaHorari.1.franja}})</li>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="horari" class="col-md-8">
+        <table border="1">
+            <tr>
+                <th>&nbsp;</th>
+                {% for dia in dies %}
+                <th>{{dia}}</th>
+                {% endfor %}
+            </tr>
+            {% for fila in taula %}
+            <tr>
+                <td>{% get_value_from_key franges forloop.counter %}</td>
+                {% for cela in fila %}
+                <td>
+                    {% for entrada in cela %}
+                    
+                        {% if entrada.msg %}
+                            <div id="content" style="background-color:rgb({{entrada.color}}); text-align:center; color:white" 
+                            onmouseover="var sb = document.getElementById('snackbar'); 
+                                sb.innerHTML='{{entrada.msg}}';sb.style.visibility='visible';"
+                            onmouseout="document.getElementById('snackbar').style.visibility='hidden';">
+                            <img width="20" height="20" src="{% static "/images/warning.png" %}"/></a>&nbsp; 
+                        {%else%}
+                            <div id="content" style="background-color:rgb({{entrada.color}}); text-align:center; color:white">
+                        {% endif %}
+                            <a style="color:blue;" href="{% url 'extHoraris__eliminarEntradaHorari' entrada.id %}" alt="Eliminar entrada">
+                                <img width="20" height="20" src="{% static "/images/delete.png" %}"/></a>&nbsp;
+                            <a style="color:blue;" href="{% url 'extHoraris__veureEntradaHorari' entrada.id %}" alt="Editar entrada">
+                                <img width="25" height="25" src="{% static "/images/edit.png" %}"/>{{entrada.materia.codi}}</a>
+                            <br>{{entrada.profe}} - {{entrada.aula}}<br>
+                            <!--<a style="color:blue;" href="{% url 'extHoraris__eliminarEntradaHorari' entrada.id %}"><img width="25" height="25" src="{{STATIC_URL}}/images/delete.png"/>Eliminar</a>-->
+                            </div>
+                    {% endfor %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div id="snackbar">Some text some message..</div>
+
+
+{% endblock %}

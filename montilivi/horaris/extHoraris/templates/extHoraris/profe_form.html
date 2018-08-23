@@ -1,0 +1,10 @@
+{% extends "extHoraris/baseprofe.html" %}
+
+{% block content  %}
+<form method="post">{% csrf_token %}
+    <p>El codi d'usuari serà utilitzat per entrar a l'aplicació de faltes.
+        <br> Per fer-ho fàcil cal posar l'usuari de l'INS:</p>
+    <p>{{ form.as_p }}</p>
+    <p><input type="submit" class="btn btn-large btn-primary btn-block" name="submit" value="Crear"/></p>
+</form>
+{% endblock %}

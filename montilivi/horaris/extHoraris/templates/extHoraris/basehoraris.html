@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block menu %}
+    <li><a tabindex="-1" href="{%url 'extHoraris__calendari' idGrup%}">Veure horari actual</a></li>
+    <li><a tabindex="-1" href="{%url 'extHoraris__imprimirHorariGrup' idGrup%}">Imprimir horari grup</a></li>
+    <li><a tabindex="-1" href="{%url 'extHoraris__imprimirHorariProfes'%}">Imprimir horari profe</a></li>
+    <li><a tabindex="-1" href="{%url 'extHoraris__imprimirHorariAules'%}">Imprimir horari aula</a></li>
+    <li><a tabindex="-1" href="{% url 'logout' %}"> Logout</a></li>
+    {% if esAdministrador %}
+    <li><a tabindex="-1" href="{%url 'extHoraris__carregarCsvProfes'%}">Carregar CSV profes</a></li>
+    <li><a tabindex="-1" href="{%url 'extHoraris__imprimirCsv'%}">Imprimir CSV</a></li>
+    {% endif %}
+{% endblock %}

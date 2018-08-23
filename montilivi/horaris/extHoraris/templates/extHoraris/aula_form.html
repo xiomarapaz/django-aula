@@ -1,0 +1,9 @@
+{% extends "extHoraris/baseaula.html" %}
+
+{% block content  %}
+<form method="post">{% csrf_token %}
+    <p>Introduir el codi d'aula:</p>
+    <p>{{ form.as_p }}</p>
+    <p><input type="submit" class="btn btn-large btn-primary btn-block" name="submit" value="Crear"/></p>
+</form>
+{% endblock %}

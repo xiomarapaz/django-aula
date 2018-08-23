@@ -112,12 +112,12 @@ Reconfigurar inici de curs.
 
 .. code:: python
 
-from datetime import date
-from aula.apps.alumnes.models import Curs
-cursos = Curs.objects.all()
-for curs in cursos:
-    curs.data_inici_curs = date(2017,9,12)
-    curs.data_fi_curs = date(2018,6,1)
-    curs.save()
+    from datetime import date
+    from aula.apps.alumnes.models import Curs
+    cursos = Curs.objects.all()
+    for curs in cursos:
+        curs.data_inici_curs = date(2017,9,12)
+        curs.data_fi_curs = date(2018,6,1)
+        curs.save()
 
 
