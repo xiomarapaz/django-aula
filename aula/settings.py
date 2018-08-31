@@ -11,6 +11,7 @@ CUSTOM_DIES_PRESCRIU_INCIDENCIA = 30
 CUSTOM_DIES_PRESCRIU_EXPULSIO = 90
 CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR = True
 CUSTOM_MODUL_SORTIDES_ACTIU = True
+CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU = True
 CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA = False
 CUSTOM_RETARD_PRIMERA_HORA_GESTIONAT_PEL_TUTOR = False
 CUSTOM_NIVELLS = { u"ESO": [u"ESO"],
@@ -53,11 +54,24 @@ CUSTOM_PORTAL_FAMILIES_TUTORIAL = u""
 CUSTOM_FALTES_ABSENCIA_PER_CARTA = 1
 CUSTOM_FALTES_ABSENCIA_PER_TIPUS_CARTA = { 'tipus1': 1 }
 
+#Codi unitat formativa discontinuada.
+CUSTOM_UNITAT_FORMATIVA_DISCONTINUADA='unitat formativa discontinuada'
+
+#Configuracions pel testeig, per fer-lo més ràpid
+#https://dizballanze.com/django-blazing-fast-tests/
+import sys
+TESTING = 'test' in sys.argv
+
+if TESTING:
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    ]
+
 
 try:
     from settings_local import *
 except ImportError:
-    from settings_dir.demo import *
+    from settings_dir.montilivi import *
 
 
     

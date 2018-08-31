@@ -29,6 +29,12 @@ urlpatterns = [
     url(r'^elsMeusAlumnesTutoratsEntreDates/$', tutoria_views.elsMeusAlumnesTutoratsEntreDates,
         name="tutoria__assistencia__list_entre_dates"),
                        
+    url(r'^elsMeusAlumnesTutoratsXModulsEntreDates/$', tutoria_views.elsMeusAlumnesTutoratsxModulEntreDates,
+        name="tutoria__axmodul__list_entre_dates"),
+                       
+    url(r'^llistatAssistenciaUFs/$', tutoria_views.llistatAssistenciaUFs,
+        name="tutoria__llistatAssistenciaUFs__entreDates"),
+
     url(r'^detallTutoriaAlumne/(?P<pk>\d+)/(?P<detall>\w+)/$', tutoria_views.detallTutoriaAlumne,
         name="tutoria__alumne__detall"),
                        

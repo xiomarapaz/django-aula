@@ -88,6 +88,8 @@ def calcula_menu( user , path ):
                       ("Cartes", 'tutoria__cartes_assistencia__gestio_cartes', tu, None, None ),                                      
                       ("Alumnes", 'tutoria__alumnes__list', tu, None, None ),
                       ("Assistència", 'tutoria__assistencia__list_entre_dates', tu, None, None ),                                      
+                      ("Assistència per mòdul", 'tutoria__axmodul__list_entre_dates', tu, None, None),
+                      ("Assistència per UF", 'tutoria__llistatAssistenciaUFs__entreDates', tu, None, None),
                       ("Informe", 'tutoria__alumne__informe_setmanal', tu, None, None ),                                      
                       ("Portal", 'tutoria__relacio_families__dades_relacio_families', tu, None, None ),
                       ("Seguiment", 'tutoria__seguiment_tutorial__formulari', tu, None, None ),
@@ -150,7 +152,9 @@ def calcula_menu( user , path ):
                       ("Matèries", 'aula__materies__blanc', pr, None, 
                           ( 
                             ("Llistat entre dates", 'aula__materies__assistencia_llistat_entre_dates', pr, None),
-                            ("Calculadora UF", 'aula__materies__calculadora_uf', pr, None )
+                            ("Calculadora UF", 'aula__materies__calculadora_uf', pr, None ),
+                            ("Assignar UFs", 'aula__materies__seleccionar_assignatura_uf', pr, None ),
+                            ("Llistat per UFs", 'aula__materies__llistat_assistencia_ufs', pr, None )
                           )
                       ),         
                       ("Qualitativa", 'aula__qualitativa__les_meves_avaulacions_qualitatives', pr, ( u'!', 'info' ) if hiHaUnaQualitativaOberta else None, None ),
@@ -309,7 +313,15 @@ def calcula_menu( user , path ):
                ),                            
                          )
     
-    arbre = arbre1 + arbreSortides + arbre2
+    if hasattr(settings, 'CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU' ) and settings.CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU:
+        arbrePresenciaSetmanal = \
+        ('presencia_setmanal', 'Presencia setmanal', 'presencia_setmanal__index__index', tots, None,
+            (
+                (u"Índex", 'presencia_setmanal__index__index', di or so, None, None ),
+            )
+        ),
+
+    arbre = arbre1 + arbreSortides + arbrePresenciaSetmanal + arbre2
     
     for item_id, item_label, item_url, item_condicio, alerta , subitems in arbre:
 
@@ -352,7 +364,6 @@ def calcula_menu( user , path ):
                         subitem.subsubitems.append(subsubitem)
                     if actiu and subsubmenu_id == 'blanc':
                         menu['subsubitems'] = subitem.subsubitems
-
     return menu
 
 

@@ -16,3 +16,6 @@ django-appconf
 Pillow==4.2.1
 viivakoodi==0.8.0
 XlsxWriter==1.0.2
+typing>=3.6.4
+#El selenium és Util per fer tests, no és necessari si no vols executar-los.
+selenium>=3.13.0

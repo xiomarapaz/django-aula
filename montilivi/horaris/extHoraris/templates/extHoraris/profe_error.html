@@ -1,0 +1,7 @@
+{% extends "extHoraris/baseprofe.html" %}
+
+{% block content  %}
+<h2>S'ha produit un error</h2>
+<p>{{ errormsg }}</p>
+<p></p><a href="{% url "profe_list" %}">Tornar a la gestió de professors.</a></p>
+{% endblock %}

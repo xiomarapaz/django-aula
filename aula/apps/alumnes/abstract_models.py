@@ -149,8 +149,6 @@ class AbstractAlumne(models.Model):
                                                default = True,
                                                help_text = u'Periodicitat en la notificació de les incidències.'
                                                 )
-
-
     
     class Meta:
         abstract = True        

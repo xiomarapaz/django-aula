@@ -1,0 +1,3 @@
+# Els mateixos de DjAu, més els d'aquest fitxer.
+# pip install xlutils
+xlutils

@@ -18,5 +18,10 @@
    {"pk": 5, 
    "model": "assignatures.tipusdassignatura", 
    "fields": {"tipus_assignatura": "Menjador", 
-              "ambit_on_prendre_alumnes": "I"}}
+              "ambit_on_prendre_alumnes": "I"}},
+   {"pk": 6,
+   "model": "assignatures.tipusdassignatura",
+   "fields": {"tipus_assignatura": "Unitat Formativa Discontinuada",
+              "ambit_on_prendre_alumnes": "N",
+              "capcelera": "Mòdul professional discontinuat"}}
 ]

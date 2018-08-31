@@ -1,0 +1,7 @@
+{% extends "extHoraris/baseaula.html" %}
+
+{% block content  %}
+<h2>S'ha produit un error</h2>
+<p>{{ errormsg }}</p>
+<p></p><a href="{% url "aula_list" %}">Tornar a la gestió d'aules.</a></p>
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extrahead %}
+<style type="text/css">
+  .form-signin {
+    width: 100%;
+    padding: 19px 29px 29px;
+    margin: 0 auto 20px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+       -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  }
+  .form-signin .form-signin-heading,
+  .form-signin .checkbox {
+    margin-bottom: 10px;
+  }
+  .form-signin input[type="text"],
+  .form-signin input[type="password"] {
+    font-size: 16px;
+    height: auto;
+    margin-bottom: 15px;
+    padding: 7px 9px;
+  }
+</style>
+
+
+{% endblock %}
+
+{% block head %}
+  {{ head }}
+{% endblock %}
+
+
+{% block content  %}
+	{% block preform %}{% endblock %}
+
+ 	<div class="row">
+	    <div class="col-lg-12">
+			<div class="alert alert-info text-center">
+				<h4>-djAu- és un programari de codi obert per a la gestió d'assistència d'alumnes en instituts, escoles i acadèmies.</h4>
+			</div>
+		</div>
+	</div>
+
+    <div class="row">
+
+	    <div class="col-lg-8">
+
+	    	<div class="jumbotron text-center">
+			  <h1>-djAu-</h1>
+			  <h2>django-aula</h2>
+			  <h4>Programari de Gestió d'assistència, Incidències i més!</h4>
+
+			  <div class="btn-group">
+				  <button type="button" class="btn btn-success btn-large" id="coneixB">Què és -djAu- </button>
+				  <button type="button" class="btn btn-success btn-large dropdown-toggle" data-toggle="dropdown">
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu">
+				    <li><a href="#estalvitemps">Menys feina</a></li>
+				    <li><a href="#millorgestio">Millor gestió</a></li>
+				    <li><a href="#millorrendiment">Millor rendiment acadèmic</a></li>
+				    <li class="divider"></li>
+				    <li><a href="https://github.com/ctrl-alt-d/django-aula">-djAu- a GitHub</a></li>
+				  </ul>
+			  </div>
+
+			</div>
+
+
+	    </div>
+
+	    <div class="col-lg-4">
+		    <form class="form-signin" action="." method="post" target="{%if target %}{{target}}{%else%}_self{%endif%}">{% csrf_token %}
+		      <h2 class="form-signin-heading">Identificació</h2>
+		      <input type="text" name="usuari" class="form-control" value="M1" placeholder="Nom d'usuari" autofocus>
+		      {% if form.usuari.errors %}
+			        <div class="alert alert-danger">
+			        <button type="button" class="close" data-dismiss="alert">&times;</button>
+				        <ul>
+				          {% for error in form.usuari.errors%}
+				          <li>{{ error }}</li>
+			              {% endfor %}
+			            </ul>
+		         	</div>
+		      {% endif %}
+			  <input type="password" name="paraulaDePas" class="form-control" value="djAu" placeholder="Paraula de pas">
+		      {% if form.paraulaDePas.errors %}
+			        <div class="alert alert-danger">
+			        <button type="button" class="close" data-dismiss="alert">&times;</button>
+				        <ul>
+				          {% for error in form.paraulaDePas.errors%}
+				          <li>{{ error }}</li>
+			              {% endfor %}
+			            </ul>
+		         	</div>
+		      {% endif %}
+
+			  {% if form.non_field_errors %}
+				  <div class="alert alert-danger">
+			      <button type="button" class="close" data-dismiss="alert">&times;</button>
+			      {% for error in form.non_field_errors %}
+			        <p>{{error}}</p>
+			      {% endfor %}
+			    </div>
+			  {% endif %}
+
+		      <button class="btn btn-large btn-primary btn-block" rel="nofollow" type="submit">Entra a la demo</button>
+		      <a class="btn btn-default btn-large" style="margin-top:10px; width: 100%;" data-toggle="modal" href="#myModal" rel="nofollow">Detalls</a>
+
+		    </form>
+
+		</div>
+	</div><!-- Row -->
+
+ 	<div class="row">
+	    <div class="col-lg-12">
+			<div class="alert alert-success  text-center">
+				<h4>La tecnologia "responsive" permet visualitzar amb comoditat l'aplicació amb independència del dispositiu utilitzat.
+				La presentació s'adaptarà a les mides de la pantalla utilitzada. Minimitza els zooms i els clics en dispositius mòbils.</h4>
+			</div>
+		</div>
+	</div>
+
+  	<div class="row">
+
+	    <div class="col-lg-12 jumbotron text-center" style="background-color: #FFFFFF;">
+	    	<img class="visible-lg" src="{% static 'demo/desktop-tablet-phone-lg.png' %}">
+	    	<img class="visible-md" src="{{STATIC_URL}}demo/desktop-tablet-phone-md.png">
+	    	<img class="visible-sm" src="{{STATIC_URL}}demo/desktop-tablet-phone-sm.png">
+		</div>
+
+  	</div>
+
+ 	<div class="row" id="coneix">
+	    <div class="col-lg-12">
+			<div class="alert alert-info text-center">
+				<h4>-djAu- és un programari de codi obert per a la gestió de la presència o assistència d'alumnes en instituts, escoles i acadèmies.
+					El desenvolupament d'aquest programari es basa en tres eixos: Estalviar temps al professorat, Millorar la Gestió i Millorar el rendiment acadèmic.
+					El sistema diferencia entre absència, absència justificada, presència i retard.</h4>
+			</div>
+		</div>
+	</div>
+
+
+
+  	<div class="row" >
+  		<div class="col-lg-4" id="estalvitemps">
+		  <div class="panel panel-primary">
+	        <div class="panel-heading">
+	          <h3 class="panel-title">Menys feina - Estalvi temps</h3>
+	        </div>
+	        	<strong>Predicció d'assistència</strong> Passa llista amb un sol clic. Interfície "responsive" no evitar zoom i pinch.
+	        	'Justificador' i visualització setmanal.
+	        	Importació i <strong>Sincronització</strong> alumnes i horaris (Actualment: Saga, Krowowin)
+	        	Gestió i <strong>ranking</strong> d'incidències (i expulsions), presència.
+	        	Gestió ràpida de les avaluacions qualitatives. Dades sempre accessibles via Internet.
+	      </div>
+		</div>
+
+  		<div class="col-lg-4" id="millorgestio">
+		  <div class="panel panel-primary">
+	        <div class="panel-heading">
+	          <h3 class="panel-title">Millor gestió</h3>
+	        </div>
+	        	Gestiona llista alumnes a les optatives i unitats formatives.
+	        	<strong>Alertes</strong> alumnes tutorats.
+	        	Informació agregada i actualitzada.
+	        	Base de dades relacional accessible.
+	        	Codi font disponible i customitzable, possiblitat d'escriure les pròpies regles de negoci.
+	        	Custòdia de la <strong>coherència</strong> de les dades: temps límit per rectificar dades, no matxacar justificacions del tutor, no passar llista al futur i un llarg etc.
+	      </div>
+		</div>
+
+  		<div class="col-lg-4" id="millorrendiment">
+		  <div class="panel panel-primary">
+	        <div class="panel-heading">
+	          <h3 class="panel-title">Millora el rendiment</h3>
+	        </div>
+	        	Seguiment tutorial entre cursos. Prevenir l'absèntisme. Gestió d'actuacions amb alumnes i família. Accés especial per a psicopedagog . Perfils professor, direcció, consergeria i més.
+	        	Notificacions immediates a <strong>família</strong> a més dels informes trimestrals en paper. Possiblitat de configuració de la periodicitat dels avisos.
+	      </div>
+		</div>
+  	</div>
+
+  	<div class="row" >
+	  <a class="btn btn-default btn-large" style="margin-top:10px; width: 100%;" data-toggle="modal" href="https://github.com/ctrl-alt-d/django-aula">Descarrega't-el</a>
+	  <a class="btn btn-default btn-large" style="margin-top:10px; width: 100%;" data-toggle="modal" href="https://github.com/ctrl-alt-d/django-aula/blob/master/LICENSE">Llicència i crèdits</a>
+    </div>
+
+<!-- Modal -->
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">-Demo-</h4>
+        </div>
+        <div class="modal-body">
+<pre>
+Professors: M0 ,M5 ,T0 ,T1 ,T3
+Tutors: M2 ,M3 ,M4 ,M7 ,T2 ,T4 ,T5
+Direcció: M1 ,M6, T1
+Tots els passwords de professors: 'djAu'
+La base de dades de demo es refà a cada hora.
+Totes les dades de la base de dades de demo han estat generades de manera aleatòria
+
+Atenció, aquest programari utilitza cookies estrictament per al manteniment de sessió.
+</pre>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+	<script>
+		$("#coneixB").click(function(){
+			window.location.href = "#coneix";
+		});
+	</script>
+
+{% endblock %}

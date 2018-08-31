@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h2>Configuració notificacions {{assignatura.nom_assignatura}}</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {% if missatge != '' %}
+    <p style="border-width: 1px; border-color:black; border-style:solid">{{missatge}}</p>
+    {% endif %}
+    <p>
+      Vols activar les notificacions via mail?
+      <select name="activarNotificacions">
+        <option {% if activarNotificacions %} selected {% endif %}>Si</option>
+        <option {% if not activarNotificacions %} selected {% endif %}>No</option>
+      </select>
+    </p>
+
+    <p>
+      El correu que tens configurat per rebre notificacions és: <b>{{usuari.email}}</b><br>
+      Si vols modificar-lo fes click <a href="/usuaris/canviDadesUsuari/">aquí</a>
+    </p>
+
+    <p>
+      A quin % de faltes per UF, vols rebre la primera notificació?
+      <input type="text" name="primeraNotificacio" value="{{primeraNotificacio}}"></input>
+    </p>
+    
+    <p>
+      A quin % de faltes per UF, vols rebre la segona notificació?
+      <input type="text" name="segonaNotificacio" value="{{segonaNotificacio}}"></input>
+    </p>
+    <p><input type="submit" value="Modificar" class="btn btn-primary"></p>
+  </form>
+  <p>
+    <a href="/assignatures/" class="btn btn-primary">Seleccionar nova assignatura</a>
+  </p>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block head %}
+  {{ head }}
+{% endblock %}
+
+{% block menu %}
+    <li><a tabindex="-1" href="{%url 'extHoraris__calendari' idGrup%}">Tornar a edició horari</a></li>
+{% endblock %}
+
+{% block content  %}
+	{% block preform %}{% endblock %}
+
+    <form class="form-signin" method="post" target="{%if target %}{{target}}{%else%}_self{%endif%}">{% csrf_token %}
+      <h2 class="form-signin-heading">Imprimir horari professor</h2>
+      <label for="id">Selecciona el professor:</label>
+      <select id="id" name="id" class="form-control" autofocus>
+      {% for profe in profes %}
+        <option value="{{profe.id}}">{{profe.nomUsuari}}</option>
+      {% endfor %}
+      </select>
+      <p>&nbsp;</p>
+	  {% if error %}
+		  <div class="alert alert-danger">
+	      <button type="button" class="close" data-dismiss="alert">&times;</button>
+	        <p>{{error}}</p>
+	    </div>
+	  {% endif %}      
+
+      <input type="hidden" name="next" value="{{nextUrl}}">
+      <button class="btn btn-large btn-primary btn-block" type="submit">Seleccionar</button>
+    </form>
+
+
+{% endblock %}

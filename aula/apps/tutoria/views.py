@@ -23,12 +23,15 @@ from aula.utils.decorators import group_required
 
 #forms
 from aula.apps.tutoria.forms import  justificaFaltesW1Form, informeSetmanalForm,\
-    seguimentTutorialForm, elsMeusAlumnesTutoratsEntreDatesForm
+    seguimentTutorialForm, elsMeusAlumnesTutoratsEntreDatesForm, FaltesAssistenciaEntreDatesForm, \
+    FaltesAssistenciaEntreDatesUFsForm
+import aula.apps.tutoria.forms as MyForms
 
 #helpers
 from aula.utils import tools
 from aula.apps.presencia.models import  ControlAssistencia, EstatControlAssistencia,\
     Impartir
+from aula.apps.assignatures.models import Assignatura
 from django.utils.datetime_safe import  date, datetime
 from datetime import timedelta
 from aula.apps.tutoria.models import Actuacio, Tutor, SeguimentTutorialPreguntes,\
@@ -58,6 +61,11 @@ from aula.apps.tutoria.rpt_gestioCartes import gestioCartesRpt
 from aula.apps.tutoria import report_carta_absentisme
 from aula.apps.tutoria.report_carta_absentisme import report_cartaAbsentisme
 from aula.apps.tutoria.rpt_totesLesCartes import totesLesCartesRpt
+from aula.apps.tutoria.rpt_faltesAssistenciaEntreDatesProfessorRpt import faltesAssistenciaEntreDatesProfessorRpt
+#TODO: Això s'hauria de refer i posar dins un mòdul comú.
+#No sembla massa correcte que tutoria depengui de reports d'assignatures.
+from aula.apps.assignatures.reports import faltesAssistenciaEntreDatesUFsRpt
+
 from django.core.urlresolvers import reverse
 from aula.apps.sortides.models import Sortida
 from aula.apps.sortides.table2_models import Table2_Sortides
@@ -68,6 +76,8 @@ from aula.apps.tutoria.table2_models import Table2_Actuacions
 from django.contrib import messages
 from django.conf import settings
 
+#types:
+from django.http import HttpRequest, HttpResponse
 
 @login_required
 @group_required(['professors'] )
@@ -2509,7 +2519,200 @@ def justificarSortidaAlumne(request, pk ):
                     },
                 )
 
+def _assignaturaEsCursadaPerGrup(grup, assignatura):
+    #Comprovar que l'assignatura seleccionada la cursi el grup seleccionat.
+    assignaturaEsCursadaPerGrup = False
+    assignatura = Assignatura.objects.get(id=assignatura)
+    grupsQueFanAssignatura = assignatura.curs.grup_set.filter(id=grup)
+    if (len(grupsQueFanAssignatura) != 0):
+        assignaturaEsCursadaPerGrup = True
+    return assignaturaEsCursadaPerGrup
 
+@login_required
+@group_required(['professors'])
+def elsMeusAlumnesTutoratsxModulEntreDates(request):
+    #type: (HttpRequest)->HttpResponse
+
+    credentials = tools.getImpersonateUser(request)
+    (user, _ ) = credentials
+
+    professor = User2Professor( user )
+
+    head=u'Els alumnes de la meva tutoria %assistència entre dates i per mòdul'
+    infoForm = []
+
+    #Obté totes les tutories d'un profe tutor.
+    #Ara cal obtenir tots els grups dels quals es tutor.
+    grups = Grup.objects.filter(tutor__professor__id=professor.pk)
+    cursosDelsGrups = []
+    for grup in grups:
+      cursosDelsGrups.append(grup.curs)
+    assignaturesTutor=Assignatura.objects.filter(curs__in=cursosDelsGrups)
+
+    if request.method == 'POST':
+        form = FaltesAssistenciaEntreDatesForm( request.POST, assignatures = assignaturesTutor, grups = grups )
+
+        #Comprovar que l'assignatura seleccionada la cursi el grup seleccionat o error.
+        if form.data.has_key('grup') and form.data.has_key('assignatura'):
+            if not _assignaturaEsCursadaPerGrup(form.data['grup'], form.data['assignatura']):
+                msgError = u'Error el grup seleccionat i l\'assignatura no coincideixen'
+                if not form.errors.has_key('assignatura'):
+                    form.errors['assignatura'] = [msgError]
+                else:
+                    form.errors['assignatura'].append(msgError)
+
+        if form.is_valid():
+
+            report = faltesAssistenciaEntreDatesProfessorRpt(
+                grup = form.cleaned_data['grup'][0],
+                assignatura = form.cleaned_data['assignatura'][0],
+                dataDesDe = form.cleaned_data['dataDesDe'],
+                horaDesDe = form.cleaned_data['horaDesDe'],
+                dataFinsA = form.cleaned_data['dataFinsA'],
+                horaFinsA = form.cleaned_data['horaFinsA'])
+
+            return render(request,
+                    'reportTabs.html',
+                        {'report': report,
+                         'head': 'Informació alumnes'})
+    else:
+        form = FaltesAssistenciaEntreDatesForm( assignatures = assignaturesTutor, grups = grups)
+    return render(request,
+                'form.html',
+                {'form': form,
+                 'head': head})
+
+
+@login_required
+@group_required(['professors'])
+def llistatAssistenciaUFs(request):
+    #type: (HttpRequest)->HttpResponse
     
+    credentials = tools.getImpersonateUser(request)
+    (user, _ ) = credentials
 
+    professor = User2Professor( user )
+    head=u'Llistat %assistència per UF\'s'
+
+    #Obté totes les tutories d'un profe tutor.
+    #Ara cal obtenir tots els grups dels quals es tutor.
+    grups = Grup.objects.filter(tutor__professor__id=professor.pk)
+    cursosDelsGrups = []
+    for grup in grups:
+        cursosDelsGrups.append(grup.curs)
+    assignaturesTutor=Assignatura.objects.filter(curs__in=cursosDelsGrups)
+
+    if request.method == 'POST':
+        form = FaltesAssistenciaEntreDatesUFsForm( \
+            request.POST, assignatures = assignaturesTutor, grups = grups)
+
+        #Comprovar que l'assignatura seleccionada la cursi el grup seleccionat o error.
+        if form.data.has_key('grup') and form.data.has_key('assignatura'):
+            if not _assignaturaEsCursadaPerGrup(form.data['grup'], form.data['assignatura']):
+                msgError = u'Error el grup seleccionat i l\'assignatura no coincideixen'
+                if not form.errors.has_key('assignatura'):
+                    form.errors['assignatura'] = [msgError]
+                else:
+                    form.errors['assignatura'].append(msgError)
+
+        if form.is_valid():
+
+            report = faltesAssistenciaEntreDatesUFsRpt(
+                grup=form.cleaned_data['grup'][0],
+                assignatura = form.cleaned_data['assignatura'][0])
+
+            return render(request,
+                    'reportTabs.html',
+                        {'report': report,
+                         'head': 'Informació alumnes' ,
+                        })
+    else:
+        form = FaltesAssistenciaEntreDatesUFsForm( \
+            assignatures = assignaturesTutor, grups = grups)
+    return render(request,
+                'form.html',
+                {'form': form,
+                 'head': head})            
+
+@login_required
+@group_required(['professors'])
+def seguimentTreureAlumneGrupFormulari(request):
+    formset = [] #type: List[SeguimentTreureAlumneGrupForm]
+    formulari = myForms.SeguimentTreureAlumneGrupForm()
+    formset.append(formulari)
+
+    return render(render,
+                'formset.html',
+                {'formset': formset})
+
+@login_required
+@group_required(['professors'])
+def seguimentTreureAlumneGrupFormulari(request):
+    #Vista que es dedica a treure un alumne de totes les hores hores on s'imparteix classe d'un 
+    #determinat grup. És interessant per fer baixes encobertes, no dono de baixa a l'alumne
+    #però no em comptabilitza per les faltes.
+    (user, _ ) = tools.getImpersonateUser(request)
+    professor = User2Professor( user )
+    grups = Grup.objects.filter(tutor__professor = professor) 
+    if request.method == 'POST':
+        formulari = myForms.SeguimentTreureAlumneGrupForm(request.POST, querySetGrups=grups)    
+        if formulari.is_valid():
+            grup = formulari.cleaned_data['grup']
+            data = formulari.cleaned_data['data']
+            return HttpResponseRedirect(
+                '/tutoria/seguimentTreureAlumneGrupFormulari2/{0}/{1}/'.format(grup.pk, data.isoformat()))
+    else:
+        formulari = myForms.SeguimentTreureAlumneGrupForm(querySetGrups=grups)
+
+    formset = [] #type: List[SeguimentTreureAlumneGrupForm]
+    formset.append(formulari)
+    return render(render,
+                'formset.html',
+                {'formset': formset})
+
+def seguimentTreureAlumneGrupFormulari2(request, _grup, _data): 
+    #Continuació del formulari 1.
+    grup = _grup #type: str
+    data = datetime.strptime(_data,'%Y-%m-%d') #type: datetime
+    alumnes = Alumne.objects.filter(grup__pk = _grup) #type: QuerySet
+    if request.method == 'POST':
+        formulari = myForms.SeguimentTreureAlumneGrupForm2(request.POST, 
+            querySetAlumnes=alumnes)
+        if formulari.is_valid():
+            try:
+                codiAlumne = formulari.cleaned_data['alumne'].pk
+                nEliminats = others.treureAlumnesLlistaClasse(codiAlumne, grup, data)
+                msg = 'Alumne eliminat de les llistes de classe. S\'han elmiminat {} registres'.format(nEliminats)
+
+                dictProfes = {}
+                horaris = Horari.objects.filter(grup__pk=_grup)
+                for horari in horaris:
+                    if horari.professor.email != None:
+                        dictProfes[horari.professor.pk]=horari.professor.email
+                
+                #Cal enviar un correu als profes afectats.
+                alumne = Alumne.objects.get(pk=codiAlumne) #type: Alumne
+                nomAlumne = unicode(alumne.cognoms) + u", " + unicode(alumne.nom)
+                send_mail('Treure alumne', 
+                    u"El tutor del grup ha eliminat de les llistes d'alumnes el següent alumne: {0} \n No és una baixa " + 
+                    u" definitiva, però no posar-li faltes ajudarà a les estadístiques. \n" + 
+                    u" Pots tornar-lo a afegir a llistes sempre que ho desitgis. \n".format(nomAlumne),
+                    settings.EMAIL_HOST_USER,
+                    dictProfes.values(), 
+                    fail_silently=False, connection=get_connection())
+
+            except Exception as ex:
+                msg = 'S\'ha produït un error {}.'.format(unicode(ex))
+            
+            return render(request,
+                'formset.html',
+                {'missatge': msg})
+    else:
+        formulari = myForms.SeguimentTreureAlumneGrupForm2( 
+            querySetAlumnes=alumnes)
+
+    formset = [formulari]
+    return render(request,
+                'formset.html',
+                {'formset': formset})
         

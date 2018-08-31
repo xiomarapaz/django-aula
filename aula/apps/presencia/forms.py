@@ -9,6 +9,7 @@ from aula.apps.presencia.models import ControlAssistencia  , EstatControlAssiste
 from aula.apps.usuaris.models import Professor
 from django.utils.datetime_safe import datetime
 from aula.apps.alumnes.models import Nivell, Grup
+from aula.apps.assignatures.models import UF
 from aula.utils.widgets import bootStrapButtonSelect
 
 
@@ -244,4 +245,30 @@ class llistaLesMevesHoresForm( forms.Form ):
 #    def clean(self):
 #        cleaned_data = super(llistaLesMevesHoresForm, self).clean()
 #        hores = cleaned_data.get("hores")
+
+class ControlAssistenciaUFForm(ModelForm):
+    '''
+      Control assistència per UF's discontinuades. Incorpora un selector de la UF a cada hora de passar llista.
+    '''
+    estat = forms.ModelChoiceField( 
+                        queryset= EstatControlAssistencia.objects.all(), 
+                        empty_label=None,
+                        widget = bootStrapButtonSelect( attrs={'class':'presenciaEstat'} ),
+                    )
+    uf = forms.ModelChoiceField(
+        empty_label=None, 
+        queryset=None, 
+        widget=bootStrapButtonSelect( attrs={'class':'presenciaEstat'} ))    
+    
+    def __init__(self, *args, **kwargs):
+        self.id_assignatura = kwargs.pop('id_assignatura', None)
+        super(ControlAssistenciaUFForm, self).__init__(*args, **kwargs)
+        #Modifiquem el queryset del camp
+        self.fields["uf"].queryset = UF.objects.filter(assignatura=self.id_assignatura)
+
+    class Meta:
+        model = ControlAssistencia
+        fields = ('estat', 'uf')
+
+
 

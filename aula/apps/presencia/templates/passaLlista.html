@@ -31,7 +31,7 @@
         border-color: #ec971f;
       }
     </style>
-    
+
     <script type="text/javascript">
       // DEPRECATED: Desactiva tots els botons
 /*
@@ -109,7 +109,7 @@
             return false;
           });
           
-		$("#feelLucky, #feelLucky2").click(function(){
+		      $("#feelLucky, #feelLucky2").click(function(){
             $("div[id^='prediccio']").remove();
             {% for f in formset %}
               if(! $('#label_id_{{f.prefix}}-estat_2').hasClass('active') ) {
@@ -132,9 +132,14 @@
             return false;
           });
         });
+
     </script>
 
+    {% block extres_js %}
+    {% endblock %}
+
 {% endblock %}
+
 
 
 {% block preform  %}
@@ -183,6 +188,8 @@
           <button type="button" id="horaAnterior" class="btn btn-primary">= hora<br />abans</button>
         <!--/div-->
       </div>
+      {% block altres_botons %}
+      {% endblock %}
     </div>
   
     <div class="row row-padded visible-xs">
@@ -200,6 +207,9 @@
 	          </ul>
 	        </div>
       
+          {% block altres_botons_responsive %}
+          {% endblock %}
+
 	       <div class="btn-group">
 	          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 	            Opcions <span class="caret"> </span>
@@ -215,7 +225,7 @@
 	              </li>
                   {% if es_direccio_o_impersonat %}<li><a href="/presencia/anularImpartir/{{id_impartir}}" >Anul·lar aquesta hora de classe</a></li>{% endif %}
                   {% if es_direccio_o_impersonat %}<li><a href="/presencia/desanularImpartir/{{id_impartir}}">Des-anul·lar aquesta hora de classe</a></li>{% endif %}
-	          </ul>
+            </ul>
 	        </div>
 
         </div>  

@@ -1,0 +1,22 @@
+Adapto codi de montilvi a la nova versió
+==============================================
+
+!- Control per UF's. (Intentar separar al màxim.)
+!    - Comprovar que avisa correctament per correu.
+!- Control per UF's discontinuades.    
+!- Mòdul passar llista: Presencia Setmanal (aula/apps/presenciaSetmanal).
+!- Comprovar que els alumnes s'importen correctament a través del fitxer Sanma.
+- Comprovar que podem importar horaris i alumnes de forma correcte amb la nova versió del programa (Fer reset manual).
+- Comprovar que es poden crear alumnes de forma manual.
+- Incorporar els llistats de cap d'estudis per fer estadístiques.
+- Comprovar que el portal funciona correctament i que els alumnes reben modificacions (Canvi per any 2018/19)
+- Incorporar llistats de tutor i altres (repassar menus)
+- Fer tests de la carrega d'alumnes.
+!- Incorporar programa d'horaris. (Dins montilivi/horaris), és una aplicació Django.
+
+
+Revisar
+-----------
+
+tutoria/forms.py ---> class FaltesAssistenciaEntreDatesForm(forms.Form):
+

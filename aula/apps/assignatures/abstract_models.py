@@ -34,6 +34,10 @@ class AbstractAssignatura(models.Model):
     tipus_assignatura = models.ForeignKey("assignatures.TipusDAssignatura", null=True, blank=True)
     codi_assignatura = models.CharField(max_length=45)
     nom_assignatura = models.CharField(max_length=250, blank=True)
+    activar_notificacions = models.BooleanField(default=False, blank=False)
+    percent_primer_avis = models.PositiveSmallIntegerField(blank=False, default=10)
+    percent_segon_avis = models.PositiveSmallIntegerField(blank=False, default=15)
+
     class Meta:
         abstract = True        
         verbose_name = u'Assignatura'
@@ -41,8 +45,6 @@ class AbstractAssignatura(models.Model):
     def __unicode__(self):        
         curs = u'({0})'.format(self.curs.nom_curs) if self.curs else ''
         return u'{0}{1}'.format(self.codi_assignatura,curs )
-    
-
         
     def getLongName(self):
         return self.nom_assignatura.title() if self.nom_assignatura and self.codi_assignatura != self.nom_assignatura else self.codi_assignatura

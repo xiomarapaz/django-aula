@@ -18,6 +18,10 @@ class AbstractDiaDeLaSetmana(models.Model):
         verbose_name_plural = u'Dies de la Setmana'
     def __unicode__(self):
         return self.dia_de_la_setmana
+    def weekday(self):
+        #Torna el dia de la setmana, és útil per fer polimorfisme amb una data.
+        return self.n_dia_ca
+
 
 class AbstractFranjaHoraria(models.Model):
     hora_inici = models.TimeField(unique=True) 

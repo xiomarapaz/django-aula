@@ -5,6 +5,7 @@ from datetime import datetime
 from django.apps import apps
 #consultes
 from django.db.models import Q
+from aula.apps.assignatures.models import UF
 
 class AbstractImpartir(models.Model):
     horari = models.ForeignKey('horaris.Horari', db_index=True)
@@ -177,6 +178,9 @@ class AbstractControlAssistencia(models.Model):
     
     relacio_familia_revisada = models.DateTimeField( null=True )    
     relacio_familia_notificada = models.DateTimeField( null=True ) 
+
+    #Camp afegit per fer uf's discontinuades. Cada alumne al passar llista pot fer una UF diferent.
+    uf = models.ForeignKey('assignatures.UF',null=True,blank=True)
     
     class Meta:
         abstract = True
@@ -220,9 +224,7 @@ class AbstractNoHaDeSerALAula(models.Model):
     control=models.ForeignKey(to = 'presencia.ControlAssistencia', on_delete=models.CASCADE, db_index=True)
     sancio =models.ForeignKey(to = 'incidencies.Sancio',blank=True, null=True, on_delete=models.CASCADE, db_index=True)
     sortida =models.ForeignKey(to = 'sortides.Sortida',blank=True, null=True, on_delete=models.CASCADE, db_index=True)
-    
-    
-    
+        
     class Meta:
         abstract = True
         verbose_name = u'Motiu no ha està pressent'

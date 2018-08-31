@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ca">
+    <head>
+        <meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Intranet | Institut Montilivi</title>
+        				<link href="/css/bootstrap.css" rel="stylesheet">
+			<link href="/css/comun.css" rel="stylesheet">
+			<link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+			<link href="/js/jquery-ui.min.css" rel="stylesheet">
+			<link href="/css/jquery.treetable.css" rel="stylesheet" type="text/css" />
+			<link href="/css/jquery.treetable.theme.default.css" rel="stylesheet" type="text/css" />
+		
+	<link href="/css/intranet.css" rel="stylesheet" type="text/css" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    </head>
+    <body id="">
+		<div id="container">
+        		<header>
+		<div class="container">
+	<div class="row">
+		<div class="col-xs-2">
+			<a href="/intranet/">
+						<img src="/images/logos/montilivi_logo_intranet.png" style="margin-top:10px;" alt="Institut Montilivi" title="Institut Montilivi" />
+					</a>
+		</div>
+		<div class="col-xs-6 text-center">
+			<a href="/">
+						<img src="/images/logos/perfil-girona-intranet.jpg" style="margin:5px 0" />	
+						
+			</a>	
+	
+		</div>
+		<div class="col-xs-4">
+			<nav class="pull-right">
+				    				<p class="text-center">
+						<a href="/intranet/perfil/"><i class="glyphicon glyphicon-user"></i> Terradellas Brugada, Xavier ( PROFESSORS )</a>
+					</p>
+    						
+				<ul class="list-unstyled list-inline text-right">
+					<li>
+						<a href="/">
+							<img src="/images/icones/web_blue.png" alt="Accés a la web" title="Accés a la web" />
+						</a>
+					</li>
+									
+										<li>
+					<a href="/intranet/logout">
+						<img src="/images/icones/logout_blue.png" alt="Tarcar la sessió" title="Tancar la sessió" />
+					</a>
+					</li>
+								</ul>
+			</nav>
+		</div>
+	</div>
+</div>	
+	</header>
+	<div class="container not-padding">
+						
+<nav class="navbar navbar-default" role="navigation">	
+	<!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+	<!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/">Web públic</a></li>
+					<li>
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Aplicacions Docents<span class="caret"></span></a>
+          					
+	<ul class="dropdown-menu" role="menu">
+		<li>
+			
+			
+			<li class="dropdown dropdown-submenu">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">ESO / BAT</a>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="/intranet/applications/redirect/activitats/" target="_blank">Activitats / Sortides</a>
+					</li>
+					<li>
+						<a href="/intranet/avaluacio-inicial-eso/">Avaluació Inicial Qualitativa ESO</a>
+					</li>
+					<li>
+						<a href="/intranet/aplicacions-docents/enviar-correus-pares/">Enviar correus a pares ESO / BAT</a>
+					</li>
+					<li>
+						<a href="https://sites.google.com/institutmontilivi.cat/tutorieseso/inici?authuser=1" target="TutoriesESO">Tutories ESO</a>
+					</li>
+					<li>
+						<a href="https://sites.google.com/institutmontilivi.cat/estratgiesaprenentatge/distribuci%C3%B3-per-nivells?authuser=2" target="TutoriesESO">Estratègies i metodologies didàctiques</a>
+					</li>
+				</ul>
+			</li>
+			<li class="dropdown dropdown-submenu">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">FP</a>
+				<ul class="dropdown-menu">
+					<li>	
+						<a href="https://faltes.institutmontilivi.cat/" target="_blank">Faltes d'Assistència FP</a>
+					</li>
+				</ul>
+			</li>
+			
+			<hr />
+			<li>
+				<a href="/intranet/aplicacions-docents/gestio-docent/horari/professor/42/">Control d'assistència - Incidències</a>		
+			</li>
+			<li>
+				<a href="/intranet/aplicacions-docents/gestio-docent/">Gestió Docent</a>		
+			</li>
+		</li>
+	</ul>
+</li>
+		
+<li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Aplicacions Gestió <span class="caret"></span></a>
+          	
+	<ul class="dropdown-menu" role="menu">
+		<li>
+			<a href="/intranet/avisos-i-notes/nou/">Avisos i notes</a>
+		</li>
+		<li>
+			<a href="#" ">Comandes</a>
+		</li>
+				
+		
+		
+		<li>	
+			<a href="/intranet/punt-info/" >Gestió punt d'informació</a>
+		</li>
+		<li class="dropdown dropdown-submenu">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Gestió aules</a>
+			<ul class="dropdown-menu">
+				<li>
+					<a href="/intranet/aplicacions-gestio/gestio-aules/horari/aules/">Horaris aules</a>
+				</li>
+				<li>
+					<a href="/intranet/aplicacions-gestio/gestio-aules/horari/grups/">Horaris grups</a>
+				</li>
+				<li>
+					<a href="/intranet/aplicacions-gestio/gestio-aules/horari/professors/">Horaris professors</a>
+				</li>
+				<hr/>
+				<li>
+					<a href="/intranet/aplicacions-gestio/reserva-aules/">Reserva aules</a>
+				</li>
+			</ul>	
+		</li>
+		<li class="dropdown dropdown-submenu">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Gestió web</a>
+			<ul class="dropdown-menu">
+				<li>
+					<a href="/nou-article/informacio-pares/">Informació per a pares</a>
+				</li>
+				<li>
+					<a href="/intranet/informacio/">Intranet alumnes</a>
+				</li>
+				<li>
+					<a href="/nou-article/noticies/">Novetats!</a>
+				</li>
+							</ul>	
+		</li>
+		<li>	
+			<a href="/intranet/aplicacions-gestio/reparacions/">Incidències - Reparacions</a>
+		</li>	
+		<li>
+						<a href="/intranet/aplicacions-gestio/inventari/">Inventari</a>
+		</li>			
+										<li>	
+			<a href="/intranet/aplicacions-gestio/reprografia/enviar-document/">Reprografia</a>
+		</li>
+		
+		
+		
+		<li>	
+			 
+					</li>
+	</ul>
+			
+</li>
+<li>
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Aplicacions Administratives <span class="caret"></span></a>
+          	
+	<ul class="dropdown-menu" role="menu">
+				<li>
+			<a href="/intranet/aplicacions-administratives/gestio-del-personal/PROFESSORS/">Gestió del personal</a>				
+		</li>
+		<li>
+			<a href="/intranet/aplicacions-administratives/gestio-d-alumnes/">Gestió d'alumnes</a>				
+		</li>
+		
+		
+		
+		
+				
+		<hr />
+		<li class="dropdown dropdown-submenu">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Gestió Google Suite</a>
+			<ul class="dropdown-menu">
+				<li>
+					<a href="/intranet/aplicacions-administratives/gestio-de-grups/">Gestió de grups</a>
+				</li>	
+			</ul>	
+		</li>
+		
+		<hr />
+		<li>
+			<a href="/intranet/aplicacions-administratives/borsa-de-treball/">Borsa de treball</a>				
+		</li>
+		<hr />
+		<li class="dropdown dropdown-submenu">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Seguiment</a>
+			<ul class="dropdown-menu">
+												<li>
+					<a href="/intranet/certificat/">Certificats</a>
+				</li>
+				<li>
+					<a href="/intranet/contacte/">Contacte, queixes i suggeriments</a>
+				</li>
+								<li>
+					<a href="/intranet/aplicacions-administratives/gestio-d-alumnes/prematricula/">Matrícula alumnes - Confirmació CF</a>
+				</li>
+				<li>
+					<a href="/intranet/aplicacions-administratives/gestio-d-alumnes/matricula-nous-alumnes/">Matrícula nous alumnes</a>
+				</li>
+								
+							</ul>	
+		</li>
+		<hr />
+		<li>
+			<a href="/intranet/aplicacions-administratives/orla-professors/">Orla professors</a>				
+		</li>
+	</ul>
+</li>
+								
+      </ul>
+	  <div class="pull-right notification">
+	  	<a href="/intranet/avisos-i-notes/" title="Avisos i notes rebuts">
+			<i class="glyphicon glyphicon-comment"></i>
+					</a>		
+	  </div>
+    </div>
+</nav>			</div>
+	
+	<div class="container content">
+		<div class="row">
+  			<div class="col-xs-12">
+				<ol class="breadcrumb pull-left">
+				</ol>
+			</div>
+		</div>
+		<div class="row">
+			  			<div class="col-xs-2">
+													<div class="box">
+	<h1>Correu</h1>
+	<div class="box-content">
+	<ul class="list-inline text-center">
+		<li>
+			<a href="http://mail.institutmontilivi.cat" target="_blank">
+				<img src="/images/icones/email_32.png" alt="Correu Institut" title="Correu institut" width="24" class="opacity" />
+			</a>
+		</li>
+		<li>
+		
+			<a href="/intranet/aplicacions-administratives/llistes-distribucio/">
+				<img src="/images/icones/list32.png" alt="Llistes de distribució" title="Llistes de distribució" width="24" class="opacity" />
+			</a>
+		</li>
+		<li>
+			<a href="http://correuweb.xtec.cat" target="_blank">
+				<img src="/images/icones/email_xtec_32.png" alt="Correu XTEC" title="Correu XTEC" width="24" class="opacity" />
+			</a>	
+		</li>
+	</ul>
+	</div>
+</div>
+												<div class="box">
+					<h1>
+	Enllaços
+	</h1>
+<div class="box-content">
+
+			
+<ul class="list-unstyled">
+					<li style="margin: 10px 0">
+			<a href="/redirigir-link/moodle/" target="_blank">
+				<img src="/images/links/moodle.png" alt="Moodle" title="Moodle" class="opacity" />
+			</a>
+					
+		</li>
+		    				<li style="margin: 10px 0">
+			<a href="/redirigir-link/atri-gencat/" target="_blank">
+				<img src="/images/links/atri-gencat.png" alt="ATRI Gencat" title="ATRI Gencat" class="opacity" />
+			</a>
+					
+		</li>
+		    		    		    		    				<li style="margin: 10px 0">
+			<a href="/redirigir-link/isotools/" target="_blank">
+				<img src="/images/links/isotools.gif" alt="IsoTools" title="IsoTools" class="opacity" />
+			</a>
+					
+		</li>
+		    				<li style="margin: 10px 0">
+			<a href="/redirigir-link/saga/" target="_blank">
+				<img src="/images/links/saga.jpg" alt="saga" title="saga" class="opacity" />
+			</a>
+					
+		</li>
+		    				<li style="margin: 10px 0">
+			<a href="/redirigir-link/django-faltes/" target="_blank">
+				<img src="/images/links/django-faltes.png" alt="django - Faltes" title="django - Faltes" class="opacity" />
+			</a>
+					
+		</li>
+		    	
+</ul>
+</div>				</div>
+											</div>
+			<div class="col-xs-10">
+										
+										
+											<div class="box">
+							<h1>Intranet Professors</h1>
+							<div class="box-content">
+								<div class="row">
+<div class="col-xs-12 col-sm-12">
+<div class="box-inner light">
+<div class="h1" style="padding: 5px 10px;background-color:darkgray;color:white">G Suite</div>
+
+<div class="box-content">
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+	<tbody>
+		<tr>
+			<td style="text-align:center"><a href="http://mail.institutmontilivi.cat/" target="_blank"><img alt="" src="/articles/intranet/IG-gmail.jpg" style="height:40px; width:40px" title="gmail" /></a></td>
+			<td style="text-align:center"><a href="http://drive.institutmontilivi.cat" target="_blank"><img alt="" src="/articles/intranet/IG-Drive.jpg" style="height:40px; width:40px" title="drive" /></a></td>
+			<td style="text-align:center"><a href="https://www.google.com/calendar/hosted/institutmontilivi.cat" target="_blank" title="calendar"><img alt="" src="/articles/intranet/IG-Calendar.jpg" style="height:40px; width:40px" title="calendar" /></a></td>
+			<td style="text-align:center"><a href="https://www.google.com/contacts/?hl=ca#contacts" target="_blank" type="contactes"><img alt="" src="/articles/intranet/IG-Contactes.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://groups.google.com/" target="_blank" type="grups"><img alt="" src="/articles/intranet/IG-Groups.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://docs.google.com/spreadsheets" target="_blank" type="fulls de càlcul"><img alt="" src="/articles/intranet/IG-Docs.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://docs.google.com/document" target="_blank" type="docs"><img alt="" src="/articles/intranet/IG-Spreadshets.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://docs.google.com/presentation" target="_blank" type="presentacions"><img alt="" src="/articles/intranet/IG-Slides.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://docs.google.com/forms" target="_blank" type="Formularis"><img alt="" src="/articles/intranet/IG-Forms.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://hangouts.google.com" target="_blank" type="Hangouts"><img alt="" src="/articles/intranet/IG-Hangout.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://hangouts.google.com" target="_blank" type="maps"><img alt="" src="/articles/intranet/IG-Maps.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://sites.google.com/a/institutmontilivi.cat" target="_blank" type="sites"><img alt="" src="/articles/intranet/IG-Sites.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://plus.google.com" target="_blank" type="google +"><img alt="" src="/articles/intranet/IG-Gplus.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://www.youtube.com/" target="_blank" type="youtube"><img alt="" src="/articles/intranet/IG-Youtube.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://www.google.es/webhp?tab=mw&amp;authuser=0&amp;ei=e3v8V6eDBorda_qXgbgL&amp;ved=0EKkuCAQoAQ" target="_blank" type="cercador de google"><img alt="" src="/articles/intranet/IG-Google.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://classroom.google.com" target="_blank" type="classroom"><img alt="" src="/articles/intranet/IG-Classroom.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://translate.google.es/?hl=ca&amp;tab=mT" target="_blank" type="traductor"><img alt="" src="/articles/intranet/IG-Traductor.jpg" style="height:40px; width:40px" /></a></td>
+			<td style="text-align:center"><a href="https://myaccount.google.com/?utm_source=OGB&amp;pli=1" target="_blank" type="el meu compte a google"><img alt="" src="/articles/intranet/IG-Acount.jpg" style="height:40px; width:40px" /></a></td>
+		</tr>
+		<tr>
+			<td style="text-align:center"><a href="http://mail.institutmontilivi.cat/" target="_blank"><small>gmail</small></a></td>
+			<td style="text-align:center"><a href="http://drive.institutmontilivi.cat" target="_blank"><small>drive</small></a></td>
+			<td style="text-align:center"><a href="https://www.google.com/calendar/hosted/institutmontilivi.cat" target="_blank"><small>calendar</small></a></td>
+			<td style="text-align:center"><small>&nbsp;<a href="https://www.google.com/contacts/?hl=ca#contacts" target="_blank">contacts</a></small></td>
+			<td style="text-align:center"><a href="https://groups.google.com" target="_blank" type="grups"><small>grups</small></a></td>
+			<td style="text-align:center"><a href="https://docs.google.com/spreadsheets" target="_blank" type="fulls de càlcul"><small>sheets</small></a></td>
+			<td style="text-align:center"><a href="https://docs.google.com/document" target="_blank" type="docs"><small>docs</small></a></td>
+			<td style="text-align:center"><a href="https://docs.google.com/presentation" target="_blank" type="presentacions"><small>slides</small></a></td>
+			<td style="text-align:center"><a href="http://Formularis" target="_blank" type="Formularis"><small>forms</small></a></td>
+			<td style="text-align:center"><a href="https://hangouts.google.com" target="_blank" type="hangouts"><small>hangouts</small></a></td>
+			<td style="text-align:center"><a href="https://hangouts.google.com" target="_blank" type="maps"><small>maps</small></a></td>
+			<td style="text-align:center"><a href="https://sites.google.com/a/institutmontilivi.cat" target="_blank" type="sites"><small>sites</small></a></td>
+			<td style="text-align:center"><a href="https://plus.google.com" target="_blank" type="google +"><small>google+</small></a></td>
+			<td style="text-align:center"><a href="https://www.youtube.com/" target="_blank" type="youtube"><small>youtube</small></a></td>
+			<td style="text-align:center"><a href="https://www.google.es/webhp?tab=mw&amp;authuser=0&amp;ei=e3v8V6eDBorda_qXgbgL&amp;ved=0EKkuCAQoAQ" target="_blank" type="cercador de google"><small>cercador</small></a></td>
+			<td style="text-align:center"><small>&nbsp;<a href="https://classroom.google.com" target="_blank" type="classroom">classroom</a>&nbsp;</small></td>
+			<td style="text-align:center"><a href="https://translate.google.es/?hl=ca&amp;tab=mT" target="_blank" type="traductor"><small>traductor</small></a></td>
+			<td style="text-align:center"><a href="https://myaccount.google.com/?utm_source=OGB&amp;pli=1" target="_blank" type="el meu compte a google"><small>compte</small></a></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="col-xs-12 col-sm-12">
+<div class="box-inner light">
+<div class="h1" style="padding: 5px 10px;background-color:gray;color:white">Plantilles</div>
+
+<div class="box-content">
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+	<tbody>
+		<tr>
+			<td><strong>Logos</strong></td>
+			<td><strong>Documents</strong></td>
+			<td><strong>Presentacions</strong></td>
+		</tr>
+		<tr>
+			<td><a href="http://wip.isotools.org/documento.cfm?d=571f363e76a7b1cec2bcc23c4a989515" target="_blank"><img alt="" src="/articles/intranet/files/jpg.gif" style="height:16px; width:14px" />&nbsp;Logo Montilivi blanc</a></td>
+			<td><a href="https://wip.isotools.org/documento.cfm?d=a6d3a1cf35d44d7b30281e1afe124fd0" target="_blank"><img alt="" src="/articles/intranet/files/doc.gif" style="height:16px; width:16px" />&nbsp;Document b&agrave;sic (control de canvis)</a></td>
+			<td><a href="http://wip.isotools.org/documento.cfm?d=730e82d6d2cbb48d15fa583d0e70f8ac" target="_blank"><img alt="" src="/articles/intranet/files/ppt.gif" style="height:16px; width:16px" />&nbsp;Plantilla PowerPoint</a></td>
+		</tr>
+		<tr>
+			<td><a href="http://wip.isotools.org/documento.cfm?d=da890fc4ebcf2a78a36cc698dd1ae363" target="_blank"><img alt="" src="/articles/intranet/files/jpg.gif" style="height:16px; width:14px" />&nbsp;Logo Montilivi negre</a></td>
+			<td><a href="https://appe.isotools.org/wip/documento.cfm?d=c3ee56c00d1c4ee611d2384d6fc1de47"><img alt="" src="/articles/intranet/files/doc.gif" style="height:16px; line-height:20.8px; width:16px" />&nbsp;Document b&agrave;sic (logo)</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><a href="http://wip.isotools.org/documento.cfm?d=c49ec430afa8907f12c344d3161f3d3e" target="_blank"><img alt="" src="/articles/intranet/files/jpg.gif" style="height:16px; width:14px" />&nbsp;Logo Montilivi vermell</a></td>
+			<td><a href="http://wip.isotools.org/documento.cfm?d=e9361823bbce05041c5171d215f19766" target="_blank"><img alt="" src="/articles/intranet/files/doc.gif" style="height:16px; line-height:20.8px; width:16px" />&nbsp;Document examens (Cicles Formatius)</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><a href="http://wip.isotools.org/documento.cfm?d=e9361823bbce05041c5171d215f19766" target="_blank"><img alt="" src="/articles/intranet/files/doc.gif" style="height:16px; line-height:20.8px; width:16px" /></a><a href="https://appe.isotools.org/wip/documento.cfm?d=93d8b4feb90c3d7700907ac0547efc9a" target="_blank">&nbsp;Document examens (ESO-BAT)</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><a href="http://wip.isotools.org/documento.cfm?d=e9361823bbce05041c5171d215f19766" target="_blank"><img alt="" src="/articles/intranet/files/doc.gif" style="height:16px; line-height:20.8px; width:16px" /></a>&nbsp;<a href="https://appe.isotools.org/wip/documento.cfm?d=f19189a0ff3c8220b3e06cde69879f33" target="_blank">Document base Treball de Recerca (Bat)</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>* Actualitzat a 23 de juliol de 2018</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+							</div>	
+						</div>
+										
+																				
+					<div class="box">
+						<h1>Agenda</h1>
+						<div class="box-content">
+															<p>
+																	<iframe src=https://calendar.google.com/calendar/embed?src=institutmontilivi.cat_bj8je4m3igrlihvui1qbc35j4c%40group.calendar.google.com&ctz=Europe/Madrid" frameborder="0" height="400" scrolling="no" style="border: 0" width="730"></iframe>
+																</p>
+									
+						</div>	
+					</div>
+					
+								</div>
+					</div>
+	</div>
+		</div>
+		<footer class="container text-center">
+			<h5>INSTITUT Montilivi, Av. Montilivi, 125, 17003 Girona, Tel.: 972209458 Fax: 972209069 iesmontilivi@xtec.cat | <a href='/centre/avis-legal/'>Avís legal</a> &copy;  2018 </h5>		</footer>
+					<script src="/js/jquery.min.js"></script>
+			<script src="/js/jquery-ui.min.js"></script>
+			
+			<script src="/js/bootstrap.min.js"></script>
+			<script src="/js/navbar.js"></script>
+			<!-- Herramientas Javascript -->
+			<script type="text/javascript" src="/js/tools.js"></script> 
+				
+		
+				<script>
+			$(function () {
+  				$('[data-toggle="tooltip"]').tooltip()
+			})
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+             })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+             ga('create', 'UA-94024621-1', 'auto');
+             ga('send', 'pageview');
+
+        </script>
+    </body>
+</html>

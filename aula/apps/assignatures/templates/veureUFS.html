@@ -1,0 +1,28 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% for uf in llistaUFS %}
+      <p>
+        <b>{{uf.nom}}</b><br>
+        <b>Dates:</b> {{uf.dinici}}&nbsp;-&nbsp;{{uf.dfi}}<br>
+        <b>Hores teòriques:</b> {{uf.horesTeoriques}}<br>
+        <a href="/assignatures/eliminarUnitatFormativa/{{idAssignatura}}/{{uf.id}}">Eliminar</a>
+        <a href="/assignatures/modificarUnitatFormativa/{{idAssignatura}}/{{uf.id}}">Modificar</a></p>
+      </p>
+  {% endfor %}
+
+  <p>
+    <a href="/assignatures/crearUnitatFormativa/{{idAssignatura}}" class="btn btn-primary">Nova UF</a>
+  </p>
+
+  <p>
+    <a href="/assignatures/" class="btn btn-primary">Seleccionar nova assignatura</a>
+  </p>
+
+  <p>
+    <a href="/assignatures/configurarNotificacions/{{idAssignatura}}" class="btn btn-primary">Configurar notificacions</a>
+  </p>
+
+{% endblock %}

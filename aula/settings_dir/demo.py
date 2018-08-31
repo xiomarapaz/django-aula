@@ -7,6 +7,7 @@ location = lambda x: os.path.join(PROJECT_DIR, x)
 TEMPLATES[0]['DIRS'] = [location('../demo/templates')]+TEMPLATES[0]['DIRS']
 
 INSTALLED_APPS  = [
+                    'aula.apps.presenciaSetmanal',
 #                   'demo',
 #                   'django.contrib.staticfiles',
                    ] + INSTALLED_APPS
