@@ -69,7 +69,7 @@ if TESTING:
 try:
     from settings_local import *
 except ImportError:
-    from settings_dir.demo import *
+    from settings_dir.montilivi import *
 
 
     

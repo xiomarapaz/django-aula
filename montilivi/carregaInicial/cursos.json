@@ -242,6 +242,17 @@
   }
 },
 {
+  "pk": 35,
+  "model": "alumnes.curs",
+  "fields": {
+    "nom_curs_complert": "ODL2",
+    "data_inici_curs": "2015-08-16",
+    "nom_curs": "ODL2",
+    "data_fi_curs": "2015-09-16",
+    "nivell": 17
+  }
+},
+{
   "pk": 36, 
   "model": "alumnes.curs", 
   "fields": {
@@ -360,6 +371,17 @@
     "nom_curs": "CAS1", 
     "data_fi_curs": "2015-09-16", 
     "nivell": 24
+  }
+},
+  {
+  "pk": 49,
+  "model": "alumnes.curs",
+  "fields": {
+    "nom_curs_complert": "QI1",
+    "data_inici_curs": "2015-08-16",
+    "nom_curs": "QI1",
+    "data_fi_curs": "2015-09-16",
+    "nivell": 17
   }
 }
 ]

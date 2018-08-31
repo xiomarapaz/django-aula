@@ -1,6 +1,12 @@
 #encoding: utf-8
 from extHoraris import models
 
+class DiaFranja():
+    def __init__(self, pkDia, pkFranja):
+        #type: (int, int)->None
+        self.pkDia = pkDia
+        self.pkFranja = pkFranja
+
 def comprovaProfesSolapats(grupId):
     # Enter amb el grupId.
     # Retorna un array on cada element és un subarray amb les entrades dels profes solapats.

@@ -136,26 +136,31 @@
             <tr>
                 <td>{% get_value_from_key franges forloop.counter %}</td>
                 {% for cela in fila %}
-                <td>
-                    {% for entrada in cela %}
-                    
-                        {% if entrada.msg %}
-                            <div id="content" style="background-color:rgb({{entrada.color}}); text-align:center; color:white" 
-                            onmouseover="var sb = document.getElementById('snackbar'); 
-                                sb.innerHTML='{{entrada.msg}}';sb.style.visibility='visible';"
-                            onmouseout="document.getElementById('snackbar').style.visibility='hidden';">
-                            <img width="20" height="20" src="{% static "/images/warning.png" %}"/></a>&nbsp; 
-                        {%else%}
-                            <div id="content" style="background-color:rgb({{entrada.color}}); text-align:center; color:white">
-                        {% endif %}
-                            <a style="color:blue;" href="{% url 'extHoraris__eliminarEntradaHorari' entrada.id %}" alt="Eliminar entrada">
-                                <img width="20" height="20" src="{% static "/images/delete.png" %}"/></a>&nbsp;
-                            <a style="color:blue;" href="{% url 'extHoraris__veureEntradaHorari' entrada.id %}" alt="Editar entrada">
-                                <img width="25" height="25" src="{% static "/images/edit.png" %}"/>{{entrada.materia.codi}}</a>
-                            <br>{{entrada.profe}} - {{entrada.aula}}<br>
-                            <!--<a style="color:blue;" href="{% url 'extHoraris__eliminarEntradaHorari' entrada.id %}"><img width="25" height="25" src="{{STATIC_URL}}/images/delete.png"/>Eliminar</a>-->
-                            </div>
-                    {% endfor %}
+                <td style="padding: 10px; min-width:100px;">
+                    {% if not cela %}
+                        {% get_value_from_table taulaDiaHora forloop.parentloop.counter forloop.counter as diaFranja %}
+                    <a href="{% url 'extHoraris_mostraAfegirEntradaHorariPle' idGrup diaFranja.pkDia diaFranja.pkFranja %}"><img width="20" height="20" src="{% static "/images/add.png" %}">Crear</img></a>
+                    {%else%}
+                        {% for entrada in cela %}
+
+                            {% if entrada.msg %}
+                                <div id="content" style="background-color:rgb({{entrada.color}}); text-align:center; color:white"
+                                onmouseover="var sb = document.getElementById('snackbar');
+                                    sb.innerHTML='{{entrada.msg}}';sb.style.visibility='visible';"
+                                onmouseout="document.getElementById('snackbar').style.visibility='hidden';">
+                                <img width="20" height="20" src="{% static "/images/warning.png" %}"/></a>&nbsp;
+                            {%else%}
+                                <div id="content" style="background-color:rgb({{entrada.color}}); text-align:center; color:white">
+                            {% endif %}
+                                <a style="color:blue;" href="{% url 'extHoraris__eliminarEntradaHorari' entrada.id %}" alt="Eliminar entrada">
+                                    <img width="20" height="20" src="{% static "/images/delete.png" %}"/></a>&nbsp;
+                                <a style="color:blue;" href="{% url 'extHoraris__veureEntradaHorari' entrada.id %}" alt="Editar entrada">
+                                    <img width="25" height="25" src="{% static "/images/edit.png" %}"/>{{entrada.materia.codi}}</a>
+                                <br>{{entrada.profe}} - {{entrada.aula}}<br>
+                                <!--<a style="color:blue;" href="{% url 'extHoraris__eliminarEntradaHorari' entrada.id %}"><img width="25" height="25" src="{{STATIC_URL}}/images/delete.png"/>Eliminar</a>-->
+                                </div>
+                        {% endfor %}
+                    {% endif %}
                 </td>
                 {% endfor %}
             </tr>

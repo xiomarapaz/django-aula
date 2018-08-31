@@ -80,7 +80,12 @@ $.fn.bootstrapDP = null;
 
     {% if message %}
     <ul class="messages">
-        <div class="alert alert-danger">{{ message }}</div>
+        {%if isErrorMessage %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {%else%}
+            <div class="alert alert-light">{{ message }}</div>
+        {%endif%}
+
     </ul>
     {% endif %}
 

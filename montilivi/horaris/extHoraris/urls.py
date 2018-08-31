@@ -7,6 +7,8 @@ urlpatterns = (
     url(r'^$', views.index, name='extHoraris__index'),
     url(r'^calendari/(?P<idGrup>[0-9]+)$', views.calendari, name='extHoraris__calendari'),
     url(r'^calendari/afegirEntradaHorari$', views.afegirEntradaHorari, name='extHoraris__afegirEntradaHorari'),
+    url(r'^extHoraris_mostraAfegirEntradaHorariPle/(?P<idGrup>[0-9]+)/(?P<pkDia>[0-9]+)/(?P<pkFranja>[0-9]+)$',
+        views.mostraAfegirEntradaHorariPle, name='extHoraris_mostraAfegirEntradaHorariPle'),
     url(r'^calendari/veureEntradaHorari/(?P<idEntrada>[0-9]+)$', views.veureEntradaHorari, name='extHoraris__veureEntradaHorari'),
     url(r'^calendari/eliminarEntradaHorari/(?P<idEntrada>[0-9]+)$', views.eliminarEntradaHorari, name='extHoraris__eliminarEntradaHorari'),
     url(r'^calendari/modificarEntradaHorari$', views.modificarEntradaHorari, name='extHoraris__modificarEntradaHorari'),

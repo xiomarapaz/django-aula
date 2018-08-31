@@ -90,6 +90,12 @@ def veureEntradaHorari(request, idEntrada):
                         idEntradaHorari=idEntrada)
 
 @login_required
+def mostraAfegirEntradaHorariPle(request, idGrup, pkDia, pkFranja):
+    #Mostrar el calendari amb el dia i la hora seleccionades.
+    return  __mostrarCalendari__(request, idGrup, opcio=OPCIO_AFEGIR, codiMateria='',
+                             idAula=0, idDia=pkDia, idFranja=pkFranja, idEntradaHorari='', message='Entra el professor i l\'assignatura, fes click a afegir', isErrorMessage=False)
+
+@login_required
 def modificarEntradaHorari(request):
     #Modificar o eliminar segons sigui el cas.
     try:
@@ -285,7 +291,7 @@ def __elProfeJaTreballaALaMateixaHora__(entradesFusionades, novaEntrada):
     return elProfeJaTreballaALaMateixaHora
 
 def __mostrarCalendari__(request, idGrup, opcio=OPCIO_AFEGIR, codiMateria='', idProfe=0,
-                         idAula=0, idDia=0, idFranja=0, idEntradaHorari='', message=''):
+                         idAula=0, idDia=0, idFranja=0, idEntradaHorari='', message='', isErrorMessage=True):
     grup = Grup.objects.using(BD).get(id=idGrup)
     dies = Dia.objects.using(BD).all()
     franges = Franja.objects.using(BD).all()
@@ -324,19 +330,25 @@ def __mostrarCalendari__(request, idGrup, opcio=OPCIO_AFEGIR, codiMateria='', id
         matriuDiaHora[entradaHorari.dia.id][entradaHorari.franja.id].append(entradaHorari)
 
     #Colocar les entrades de l'horari en la taula de visualització.
+    # Taula que conté el dia i la hora de cada entrada.
+    taulaDiaHora = []  # type: List[List[utils.DiaFranja]]
     taula = []
     i = 0
     fila = []
     for franja in franges:
+        filaDiaHora = []
         fila = []
+
         j = 0
         for dia in dies:
+            filaDiaHora.append(utils.DiaFranja(dia.pk, franja.pk))
             fila.append('')
             if (matriuDiaHora.get(dia.id,None) != None):
                 if (matriuDiaHora[dia.id].get(franja.id,None) != None):
                     fila[j] = matriuDiaHora[dia.id][franja.id]
             j = j + 1
 
+        taulaDiaHora.append(filaDiaHora)
         taula.append(fila)
         i = i + 1
 
@@ -362,6 +374,7 @@ def __mostrarCalendari__(request, idGrup, opcio=OPCIO_AFEGIR, codiMateria='', id
             'dies': dies,
             'franges': franges,
             'aules': aules,
+            'taulaDiaHora': taulaDiaHora,
             'taula': taula,
             'idGrup': idGrup,
             'idEntradaHorari': idEntradaHorari,
@@ -373,6 +386,7 @@ def __mostrarCalendari__(request, idGrup, opcio=OPCIO_AFEGIR, codiMateria='', id
             'idDia': int(request.POST.get('idDia', idDia)),
             'idFranja': int(request.POST.get('idFranja', idFranja)),
             'message': message,
+            'isErrorMessage': isErrorMessage,
             'esAdministrador': esAdministrador,
             'horarisProfeSolapats': horarisProfeSolapats,
             'horarisAulesSolapades': horarisAulesSolapades, 

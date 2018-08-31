@@ -118,12 +118,12 @@ class FaltesAssistenciaEntreDatesForm(forms.Form):
                                        initial= datetime_safe.today(),
                                        required = True,
                                        widget = DateTextImput() )                                       
-    horaDesDe = forms.ModelChoiceField( queryset = FranjaHoraria.objects.all(), initial =  _franjaHorariaIniciONone())
+    horaDesDe = forms.ModelChoiceField( queryset = FranjaHoraria.objects.none())
     dataFinsA = forms.DateField(help_text=u'Data on finalitzar',
                                        initial= datetime_safe.today(),
                                        required = True,
                                        widget = DateTextImput() )
-    horaFinsA = forms.ModelChoiceField( queryset = FranjaHoraria.objects.all(), initial = _franjaHorariaFiONone())
+    horaFinsA = forms.ModelChoiceField( queryset = FranjaHoraria.objects.none())
 
     def __init__(self, *args, **kwargs):
         self.assignatures = kwargs.pop('assignatures', None)
@@ -131,8 +131,12 @@ class FaltesAssistenciaEntreDatesForm(forms.Form):
         super(FaltesAssistenciaEntreDatesForm,self).__init__(*args,**kwargs)
         self.fields['assignatura'].queryset = self.assignatures
         self.fields['grup'].queryset = self.grups
+        self.fields['dataDesDe'].queryset = FranjaHoraria.objects.all()
+        self.fields['dataDesDe'].initial = _franjaHorariaIniciONone()
+        self.fields['dataFinsA'].queryset = FranjaHoraria.objects.all()
+        self.fields['dataFinsA'].initial = _franjaHorariaFiONone()
 
-    
+
 class FaltesAssistenciaEntreDatesUFsForm(forms.Form):
   assignatura = forms.ModelMultipleChoiceField( queryset = None )
   grup = forms.ModelMultipleChoiceField( queryset = None )

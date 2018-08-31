@@ -1,0 +1,128 @@
+[
+  {
+    "pk": 2,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "09:00:00",
+      "hora_inici": "08:00:00"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "10:00:00",
+      "hora_inici": "09:00:00"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "Pati matí",
+      "hora_fi": "10:30:00",
+      "hora_inici": "10:00:00"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "11:30:00",
+      "hora_inici": "10:30:00"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "12:30:00",
+      "hora_inici": "11:30:00"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "13:30:00",
+      "hora_inici": "12:30:00"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "14:30:00",
+      "hora_inici": "13:30:00"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "16:00:00",
+      "hora_inici": "15:00:00"
+    }
+  },
+  {
+    "pk": 10,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "17:00:00",
+      "hora_inici": "16:00:00"
+    }
+  },
+  {
+    "pk": 11,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "17:55:00",
+      "hora_inici": "17:00:00"
+    }
+  },
+  {
+    "pk": 12,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "Pati tarda",
+      "hora_fi": "18:15:00",
+      "hora_inici": "17:55:00"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "19:10:00",
+      "hora_inici": "18:15:00"
+    }
+  },
+  {
+    "pk": 14,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "20:05:00",
+      "hora_inici": "19:10:00"
+    }
+  },
+  {
+    "pk": 15,
+    "model": "horaris.franjahoraria",
+    "fields": {
+      "nom_franja": "",
+      "hora_fi": "21:00:00",
+      "hora_inici": "20:05:00"
+    }
+  }
+]

@@ -2,12 +2,14 @@
 Documentació de com fer la carrega inicial
 ==================================================
 
-.. index:: índex
+.. index:: index
 
 HowTO carrega inicial.
 ========================
 
 Suposem que partim d'una BD pelada.
+
+**Creació BD**
 
 Accedim a la consola de MySQL i executem (compte cal canviar XXXXX pel password):
 
@@ -19,19 +21,51 @@ Accedim a la consola de MySQL i executem (compte cal canviar XXXXX pel password)
     USE djangoaula;
     SET storage_engine=INNODB;
 
-Ara crearem l'estructura de la BD:
+Versió nova (Ubuntu 16.04)
+
+.. code:: sql
+
+    CREATE DATABASE djangoaula CHARACTER SET utf8;
+    CREATE USER 'userdjangoaula'@'localhost' IDENTIFIED BY 'XXXXX';
+    GRANT ALL PRIVILEGES ON djangoaula.* TO 'userdjangoaula'@'localhost';
+    USE djangoaula;
+
+**Ara crearem l'estructura de la BD**
 
 .. code:: bash
     
     python manage.py syncdb
 
+Nova...
+
+.. code:: bash
+
+    python manage.py migrate
+
+**Configurar accés superusuari**
+
 Aquí també es configura un accés de superusuari, per defecte és administrador, canvia'l a root.
+
+La versió vella ja ho fa sol.
+
+A la nova versió.
+
+.. code:: bash
+
+    python manage.py createsuperuser #IMPORTANT: Creo usuari root
+
+**Assigna el superusuari al grup direcció**
+
+.. code:: bash
+
+    python ../../manage.py shell < assignaAdministradorARoot.py
+    python ./assignaAdministradorARoot.py
 
 Ara cal configurar les dades inicials, normalment son dades de proves. Però ja les he adaptat per la primer càrrega inicial.
 
 .. code:: bash
     
-    bash /var/djangoaula/scripts/fixtures.sh
+    bash /scripts/fixtures.sh
 
 Importem els nivells, cursos, que es troben a la mateixa carpeta d'aquest document.
 
@@ -39,11 +73,13 @@ Importem els nivells, cursos, que es troben a la mateixa carpeta d'aquest docume
 
     bash ./importar.bash
 
-Generem els grups i fem que **els cursos s'inicien a la data correcte**. Maniuplem el fitxer **crearGrups.py**, hi ha una part on indica quan comença i quan s'acaba una assignatura.
+Generem els grups i fem que **els cursos s'inicien a la data correcte**.
+
+Maniuplem el fitxer **crearGrups.py**, hi ha una part on indica quan comença i quan s'acaba una assignatura.
 
 .. code:: bash
 
-    python manage.py shell 
+    python ../../manage.py shell
     %run ./crearGrups.py
 
     #Alternativament pots fer copy paste interactiu.
@@ -55,23 +91,18 @@ Comprovar usuari administrador (root), assignar-li el grup de direcció.
 
     http://localhost:8000/admin/auth/user/
 
+**Modifico franges horaries**
 
-Posar l'administrador com a membre de l'equip directiu i d'administradors
-----------------------------------------------------------------------------
+Esborra la taula i carrega fixtures d'aquest directori
 
-Pots fer-ho manualment des de l'administració, jo només l'he afegit al grup direcció i ha funcionat.
+.. code:: python
 
-Alternativa codi.
+    python ../../manage.py shell < carregaFrangesHoraries.py
 
-.. code:: python 
 
-from django.contrib.auth.models import User, Group
-g = Group.objects.get( name = 'direcció' )
-ga = Group.objects.get ( name = 'administradors' )
-a = User.objects.get( username = 'root' ) # Pots substituir admin per root si no funciona correctament.
-a.groups = [ g, ga ]
-a.save()
-quit()
+Segueixo el procés de carrega de l'administració
+
+    http://127.0.0.1:8000/utils/carregaInicial/
 
 Carrega d'horaris
 -------------------
@@ -166,7 +197,6 @@ Coord. Profes > Tutors > Tutors Grup
 
 /var/dadesProtegides/aula/tutors.pdf
 
-
 Taules a modificar
 ---------------------
 
@@ -188,18 +218,12 @@ Com canviar dates dels grups
 
 Per fer proves puc canviar les dades del curs.
 
-.. code:: python 
+.. code:: bash
+
+    python ../../manage.py shell < canviarDatesGrup.py
+
         
-  from aula.apps.alumnes.models import *
-  from datetime import *
 
-  cursos = Curs.objects.all()
-  for curs in cursos:
-      curs.data_inici_curs = date(2015,8,16)
-      curs.data_fi_curs = date(2015,9,16)
-      curs.save()
-
-  A partir d'aquí regenerem horaris via web.
 
 
 

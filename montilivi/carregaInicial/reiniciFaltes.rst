@@ -99,7 +99,7 @@ Per fer-ho bé
   DELETE from auth_user_groups where user_id not in(SELECT id FROM auth_user WHERE username='root');
   DELETE FROM usuaris_accio;
   DELETE FROM usuaris_loginusuari;
-  DELETE FROM usuaris_onetimepasswd;  
+  DELETE FROM usuaris_onetimepasswd;
   DELETE FROM usuaris_abstractonetimepasswd;
   DELETE FROM `auth_user` WHERE username<>'root';
 
@@ -112,12 +112,12 @@ Reconfigurar inici de curs.
 
 .. code:: python
 
-from datetime import date
-from aula.apps.alumnes.models import Curs
-cursos = Curs.objects.all()
-for curs in cursos:
-    curs.data_inici_curs = date(2017,9,12)
-    curs.data_fi_curs = date(2018,6,1)
-    curs.save()
+    from datetime import date
+    from aula.apps.alumnes.models import Curs
+    cursos = Curs.objects.all()
+    for curs in cursos:
+        curs.data_inici_curs = date(2017,9,12)
+        curs.data_fi_curs = date(2018,6,1)
+        curs.save()
 
 

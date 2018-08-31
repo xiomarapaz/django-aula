@@ -1,5 +1,5 @@
 #encoding: utf-8
-from typing import List
+from typing import List, Generic, TypeVar
 from selenium import webdriver
 from django.test import TransactionTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -13,7 +13,6 @@ from selenium.webdriver.firefox.webelement import FirefoxWebElement
 import sys
 import ipdb
 import traceback
-
 
 class SimpleTest(TransactionTestCase):
     #Carrego una fixture.
@@ -41,7 +40,7 @@ class TestsIntegracio(StaticLiveServerTestCase):
     #Carrego una fixture.
     fixtures = ['testProfesClasseAMateixaHora.json']
 
-    def test(self):
+    def test_afegirDuesHoresSolpadesIComprova(self):
         #Test que afegeix dues hores solapades en horaris diferents i comprova que apareguin a l'apartat visual de solapaments.
         try:
             #User.objects.create_user('horaris','horaris@gmail.com','horaris')
