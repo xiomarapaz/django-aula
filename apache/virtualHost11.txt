@@ -1,0 +1,50 @@
+WSGIPythonPath /opt/django-aula/aula
+
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+	ServerAdmin xeviterr@gmail.com
+	ServerName faltes.institutmontilivi.cat
+
+	WSGIScriptAlias / /opt/django-aula/aula/wsgi.py
+
+	Alias /site-css/admin /usr/local/lib/python2.7/dist-packages/django/contrib/admin/static/admin/
+	Alias /site-css /opt/django-aula/aula/site-css/
+	ErrorLog /var/log/apache2/django-aula-ssl_error.log
+
+	<Directory /opt/django-aula/aula>
+	<Files wsgi.py>
+		Require all granted
+	</Files>
+	</Directory>
+
+	<Directory /opt/django-aula/aula/site-css/>
+		Require all granted
+	</Directory>
+
+	<Directory /usr/local/lib/python2.7/dist-packages/django/contrib/admin/static/admin/>
+		Require all granted
+	</Directory>
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /var/log/apache2/django-aula-ssl_access.log combined
+
+	SSLEngine on
+	SSLCertificateFile    /etc/ssl/certs/institutmontilivi.cat.pem
+	SSLCertificateKeyFile /etc/ssl/private/institutmontilivi.cat.key
+
+	<FilesMatch "\.(cgi|shtml|phtml|php)$">
+		SSLOptions +StdEnvVars
+	</FilesMatch>
+	<Directory /usr/lib/cgi-bin>
+		SSLOptions +StdEnvVars
+	</Directory>
+
+	BrowserMatch ".*MSIE.*" \
+		nokeepalive ssl-unclean-shutdown \
+		downgrade-1.0 force-response-1.0
+
+</VirtualHost>
+</IfModule>
