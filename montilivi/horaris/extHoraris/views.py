@@ -147,10 +147,9 @@ def imprimirHorariProfe(request, idProfe):
                 {'url': horaris.imprimirHorariProfe(idProfe), 'idGrup': request.session.get('HorarisRetorn') })
 
 def imprimirHorariAula(request, idAula):
-    return render(
+    return render(request,
                 'extHoraris/horaris_descarregar.html',
-                {'url': horaris.imprimirHorariAula(idAula), 'idGrup': request.session.get('HorarisRetorn') },
-                request)
+                {'url': horaris.imprimirHorariAula(idAula), 'idGrup': request.session.get('HorarisRetorn') })
 
 @login_required
 def imprimirHorariAules(request):
@@ -170,12 +169,11 @@ def imprimirHorariAules(request):
             aules.append(entrada.aula)
         ultimaAula = entrada.aula
 
-    return render_to_response(
+    return render(request,
             'extHoraris/horaris_aula_seleccionar.html',
                 {'aules': aules,
                  'idGrup': request.session.get('HorarisRetorn'),
-                 'error': error},
-                context_instance=RequestContext(request))
+                 'error': error})
 
 @login_required
 def imprimirHorariProfes(request):

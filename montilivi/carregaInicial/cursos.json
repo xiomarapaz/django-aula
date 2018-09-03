@@ -165,6 +165,18 @@
   }
 },
 {
+  "pk": 23, 
+  "model": "alumnes.curs", 
+  "fields": {
+    "nom_curs_complert": "ADI2", 
+    "data_inici_curs": "2015-08-16", 
+    "nom_curs": "ADI2", 
+    "data_fi_curs": "2015-09-16", 
+    "nivell": 10
+  }
+},
+
+{
   "pk": 28, 
   "model": "alumnes.curs", 
   "fields": {
