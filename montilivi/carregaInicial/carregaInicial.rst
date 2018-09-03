@@ -42,24 +42,7 @@ Nova...
 
     python manage.py migrate
 
-**Configurar accés superusuari**
-
-Aquí també es configura un accés de superusuari, per defecte és administrador, canvia'l a root.
-
-La versió vella ja ho fa sol.
-
-A la nova versió.
-
-.. code:: bash
-
-    python manage.py createsuperuser #IMPORTANT: Creo usuari root
-
-**Assigna el superusuari al grup direcció**
-
-.. code:: bash
-
-    python ../../manage.py shell < assignaAdministradorARoot.py
-    python ./assignaAdministradorARoot.py
+**Importació**
 
 Ara cal configurar les dades inicials, normalment son dades de proves. Però ja les he adaptat per la primer càrrega inicial.
 
@@ -79,13 +62,26 @@ Maniuplem el fitxer **crearGrups.py**, hi ha una part on indica quan comença i 
 
 .. code:: bash
 
-    python ../../manage.py shell
-    %run ./crearGrups.py
+    python ../../manage.py shell < crearGrups.py 
+  
+**Configurar accés superusuari**
 
-    #Alternativament pots fer copy paste interactiu.
-    %cpaste
-    #Inserim el fitxer aquí.
-    CTRL-D
+Aquí també es configura un accés de superusuari, per defecte és administrador, canvia'l a root.
+
+La versió vella ja ho fa sol.
+
+A la nova versió.
+
+.. code:: bash
+
+    python manage.py createsuperuser #IMPORTANT: Creo usuari root
+
+**Assigna el superusuari al grup direcció**
+
+.. code:: bash
+
+    python ../../manage.py shell < assignaAdministradorARoot.py
+    python ./assignaAdministradorARoot.py
 
 Comprovar usuari administrador (root), assignar-li el grup de direcció.
 
@@ -123,19 +119,13 @@ http://127.0.0.1:8000/extKronowin/assignaFranges/
 
 Modificar tipus d'assignatura
 --------------------------------
-Un cop hem carregat els horaris, cal modificar el tipus d'assignatura.
+Un cop hem carregat els horaris, cal modificar el tipus d'assignatura. En el meu cas tot son UF's.
 
-Executem el fitxer **passarAssignaturesAUF.py**
+Executem el fitxer **canviarTipusAssignatura.py**
 
 .. code:: bash
 
-    python manage.py shell 
-    %run passarAssignaturesAUF.py
-
-    #De forma alternativa pots fer copy/paste.
-    %cpaste
-    #Inserim el fitxer aquí.
-    CTRL-D
+    python ../../manage.py shell < canviarTipusAssignatura.py
 
 Regenerar horaris
 ----------------------
@@ -154,8 +144,8 @@ Carregar alumnes
 
 Simplement carreguem el fitxer que ens passa en Xevi.S.
 
-Carregar alumnes vell
-------------------------
+Carregar alumnes vell (obsolet)
+--------------------------------------
 
 En xevi.S m'ha passat un fitxer amb les dades corresponents. Problema el grup no està informat. El que fem temporalment és agafar el pla estudis i el nivell del saga i així podem crear un camp grup que correspon a la fusió d'aquests dos camps.
 

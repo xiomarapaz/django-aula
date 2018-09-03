@@ -44,8 +44,8 @@
   "model": "alumnes.nivell", 
   "fields": {
     "ordre_nivell": null, 
-    "nom_nivell": "SEC", 
-    "descripcio_nivell": "SEC", 
+    "nom_nivell": "ADI", 
+    "descripcio_nivell": "ADI", 
     "anotacions_nivell": ""
   }
 },
