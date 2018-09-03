@@ -29,7 +29,7 @@ for curs in cursos:
 
 cursos = Curs.objects.all()
 for curs in cursos:
-    curs.data_inici_curs = date(2018,8,27)
+    curs.data_inici_curs = date(2018,8,15)
     curs.data_fi_curs = date(2018,9,30)
     curs.save()
 
