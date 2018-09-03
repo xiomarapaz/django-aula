@@ -25,6 +25,8 @@ CUSTOM_TIMEOUT_GROUP = { u"consergeria": 4*60*60, # 4h
                          }
 CUSTOM_RESERVES_API_KEY = '_default_api_aules_password_'
 
+DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -69,7 +71,7 @@ if TESTING:
 try:
     from settings_local import *
 except ImportError:
-    from settings_dir.montilivi import *
+    from settings_dir.demo import *
 
 
     
