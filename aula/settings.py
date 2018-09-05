@@ -21,7 +21,7 @@ CUSTOM_NIVELLS = { u"ESO": [u"ESO"],
                   }
 CUSTOM_TIMEOUT = 15*60
 CUSTOM_TIMEOUT_GROUP = { u"consergeria": 4*60*60, # 4h
-                         u"professors":    15*60, # 15'
+                         u"professors": 15*60, # 15'
                          }
 CUSTOM_RESERVES_API_KEY = '_default_api_aules_password_'
 
@@ -33,7 +33,7 @@ CACHES = {
     },
     'select2': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'TIMEOUT': max( CUSTOM_TIMEOUT, *[ CUSTOM_TIMEOUT_GROUP[x] for x in CUSTOM_TIMEOUT_GROUP] ),
+        'TIMEOUT': 0, # max( CUSTOM_TIMEOUT, *[ CUSTOM_TIMEOUT_GROUP[x] for x in CUSTOM_TIMEOUT_GROUP] ),
         'OPTIONS': {
             'MAX_ENTRIES': 200
         }
