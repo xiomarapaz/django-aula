@@ -260,4 +260,3 @@ def blanc( request ):
                 )
     
     
-         

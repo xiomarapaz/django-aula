@@ -11,7 +11,7 @@ from aula.apps.presencia.forms import regeneraImpartirForm,ControlAssistenciaFor
     marcarComHoraSenseAlumnesForm, passaLlistaGrupDataForm,\
     llistaLesMevesHoresForm, ControlAssistenciaFormFake
 from aula.apps.presencia.forms import afegeixTreuAlumnesLlistaForm, afegeixAlumnesLlistaExpandirForm
-from aula.apps.presencia.forms import afegeixGuardiaForm, calculadoraUnitatsFormativesForm
+from aula.apps.presencia.forms import afegeixGuardiaForm, calculadoraUnitatsFormativesForm,  alertaAssistenciaEstadistiquesForm
 
 #models
 from aula.apps.horaris.models import FranjaHoraria
@@ -44,7 +44,7 @@ from django.http import Http404
 from django.utils.datetime_safe import datetime, date
 from django import forms
 from aula.apps.assignatures.models import Assignatura
-from aula.apps.presencia.reports import alertaAssitenciaReport 
+from aula.apps.presencia.reports import alertaAssitenciaReport, alertaAssitenciaEstadistiquesReport
 from aula.apps.presencia.rpt_faltesAssistenciaEntreDatesProfessor import faltesAssistenciaEntreDatesProfessorRpt
 from django.forms.models import modelformset_factory
 from django.forms.widgets import RadioSelect, HiddenInput, TextInput
@@ -1481,3 +1481,35 @@ def desanularImpartir(request, pk):
                            u"S'han trobat errors des-anul·lant aquesta hora de classe: {}".format(u", ".join(errors)))
         next_url = reverse("aula__horari__passa_llista", kwargs={'pk': pk})
     return HttpResponseRedirect(next_url)
+
+
+@login_required
+@group_required(['direcció'])
+def alertaAssistenciaEstadistiques(request):
+    '''
+    Obté un llistat amb les faltes d'assistència de cada grup.
+    Serveix perque el cap d'estudis pugui treure estadístiques que li demanen.
+    '''
+    form = None
+    if request.method == 'POST':
+        form = alertaAssistenciaEstadistiquesForm(request.POST)
+        if form.is_valid():
+            pmax = float(form.cleaned_data['tpc'])/100
+            pmin = float(form.cleaned_data['tpcMin'])/100
+            report = alertaAssitenciaEstadistiquesReport(
+                form.cleaned_data['data_inici'],
+                form.cleaned_data['data_fi'],
+                pmax,
+                pmin)
+            return render(request,'report.html',
+	            {
+	                'report': report,
+        	        'head': 'Informació alumnes' ,
+	            })
+    else:
+        form = alertaAssistenciaEstadistiquesForm()
+    return render(request,
+            "form.html",
+            {"form": form,
+            "head": 'Informació alumnes',
+            })
