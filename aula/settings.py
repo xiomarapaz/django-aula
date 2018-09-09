@@ -16,7 +16,7 @@ CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA = False
 CUSTOM_RETARD_PRIMERA_HORA_GESTIONAT_PEL_TUTOR = False
 CUSTOM_NIVELLS = { u"ESO": [u"ESO"],
                     u"BTX": [u"BTX"],
-                    u"CICLES": [u'GA',u'AF',u'SMX',u'DAW',u'FCT',u"CFA",u"CFI",],
+                    u"CICLES": [u'CAS',u'ITC',u'MEL',u'DPE',u'ECA',u"EDI",u"INS",u"ODL",u"LAC",u"DAM",u"ASIX",u"DAW",u"CAR",u"AUT",u"ADI",u"AFI",u"JUR",u"EMV",u"GAD"],
                     u"INFORMATICA": [u'SMX',u'DAW'],
                   }
 CUSTOM_TIMEOUT = 15*60
