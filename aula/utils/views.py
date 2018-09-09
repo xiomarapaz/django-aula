@@ -117,7 +117,8 @@ def about(request):
 
     capcelera = tools.classebuida()
     capcelera.amplade = 80
-    capcelera.contingut = u''
+    capcelera.contingut = u'prova'
+    capcelera.enllac = r'https://github.com/ctrl-alt-d/django-aula'
     taula.capceleres.append(capcelera)
 
     
@@ -259,4 +260,3 @@ def blanc( request ):
                 )
     
     
-         

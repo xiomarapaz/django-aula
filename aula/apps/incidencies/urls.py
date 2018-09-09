@@ -66,7 +66,5 @@ urlpatterns = [
     url(r'^blanc/$', incidencies_views.blanc,
         name="aula__incidencies__blanc"),
    
-                       
-    
 ]
 

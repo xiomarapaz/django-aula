@@ -12,7 +12,7 @@ CUSTOM_DIES_PRESCRIU_EXPULSIO = 90
 CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR = True
 CUSTOM_MODUL_SORTIDES_ACTIU = True
 CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU = True
-CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA = False
+CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA = True
 CUSTOM_RETARD_PRIMERA_HORA_GESTIONAT_PEL_TUTOR = False
 CUSTOM_NIVELLS = { u"ESO": [u"ESO"],
                     u"BTX": [u"BTX"],
@@ -21,11 +21,11 @@ CUSTOM_NIVELLS = { u"ESO": [u"ESO"],
                   }
 CUSTOM_TIMEOUT = 15*60
 CUSTOM_TIMEOUT_GROUP = { u"consergeria": 4*60*60, # 4h
-                         u"professors":    15*60, # 15'
+                         u"professors": 15*60, # 15'
                          }
 CUSTOM_RESERVES_API_KEY = '_default_api_aules_password_'
 
-DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'
+DEFAULT_FROM_EMAIL = 'Django Formacio Montilivi <no-reply@el-meu-centre.net>'
 
 CACHES = {
     'default': {
@@ -33,7 +33,7 @@ CACHES = {
     },
     'select2': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'TIMEOUT': max( CUSTOM_TIMEOUT, *[ CUSTOM_TIMEOUT_GROUP[x] for x in CUSTOM_TIMEOUT_GROUP] ),
+        'TIMEOUT': 0, # max( CUSTOM_TIMEOUT, *[ CUSTOM_TIMEOUT_GROUP[x] for x in CUSTOM_TIMEOUT_GROUP] ),
         'OPTIONS': {
             'MAX_ENTRIES': 200
         }

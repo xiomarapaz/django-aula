@@ -131,10 +131,10 @@ class FaltesAssistenciaEntreDatesForm(forms.Form):
         super(FaltesAssistenciaEntreDatesForm,self).__init__(*args,**kwargs)
         self.fields['assignatura'].queryset = self.assignatures
         self.fields['grup'].queryset = self.grups
-        self.fields['dataDesDe'].queryset = FranjaHoraria.objects.all()
-        self.fields['dataDesDe'].initial = _franjaHorariaIniciONone()
-        self.fields['dataFinsA'].queryset = FranjaHoraria.objects.all()
-        self.fields['dataFinsA'].initial = _franjaHorariaFiONone()
+        self.fields['horaDesDe'].queryset = FranjaHoraria.objects.all()
+        self.fields['horaDesDe'].initial = _franjaHorariaIniciONone()
+        self.fields['horaFinsA'].queryset = FranjaHoraria.objects.all()
+        self.fields['horaFinsA'].initial = _franjaHorariaFiONone()
 
 
 class FaltesAssistenciaEntreDatesUFsForm(forms.Form):

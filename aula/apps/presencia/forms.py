@@ -270,5 +270,39 @@ class ControlAssistenciaUFForm(ModelForm):
         model = ControlAssistencia
         fields = ('estat', 'uf')
 
+class alertaAssistenciaEstadistiquesForm(forms.Form):
+    data_inici = forms.DateField(label=u'Data inici', 
+                                       initial=datetime.today(),
+                                       required = True, 
+                                       help_text=u'Dia inicial pel càlcul',  
+                                       widget = DateTextImput() )
+    
+    data_fi = forms.DateField(label=u'Data fi', 
+                                       initial=datetime.today(),
+                                       required = True, 
+                                       help_text=u'Dia final pel càlcul',  
+                                       widget = DateTextImput() )
+    
+    tpcMin = forms.IntegerField( label = u'Assistència superior a %', 
+                              max_value=100, 
+                              min_value=0, initial = 0,
+                              help_text=u'''Descompte de l'estadística alumnes que tinguin un % d\'assistència inferior a aquest valor.''' ,
+                              widget = TextInput(attrs={'class':"slider"} )  )
 
+    tpc = forms.IntegerField( label = u'Assistència inferior a %', 
+                              max_value=100, 
+                              min_value=1, initial = 80  ,
+                              help_text=u'''Assistència superior a aquest valor.''' ,
+                              widget = TextInput(attrs={'class':"slider"} )  )
 
+    def clean(self):
+        #https://docs.djangoproject.com/en/1.11/ref/forms/validation/#raising-validation-error
+        #Cleaning and validating fields that depend on each other
+        cleaned_data = super(alertaAssistenciaEstadistiquesForm, self).clean() #type:dict
+        if not('tpcMin' in cleaned_data.keys() and 'tpc' in cleaned_data.keys()):
+            return cleaned_data
+        tpcMin = cleaned_data['tpcMin']
+        tpcMax = cleaned_data['tpc']
+        if not(tpcMin < tpcMax):
+            raise forms.ValidationError(u'Error el min < max d\'assistència')
+        return cleaned_data

@@ -53,6 +53,8 @@ urlpatterns = [
     url(r'^desanularImpartir/(?P<pk>\d+)/$', presencia_views.desanularImpartir,
        name="aula__horari__desanularImpartir"),
 
+     url(r'^alertaAssistenciaEstadistiques/$', presencia_views.alertaAssistenciaEstadistiques,
+        name="coordinacio_alumnes__assistencia_aa" ),
 ]
 
 

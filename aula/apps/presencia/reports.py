@@ -5,6 +5,7 @@ from django.db.models.aggregates import Count
 from django.db.models import Q
 from itertools import chain
 from aula.apps.presencia.models import ControlAssistencia
+from aula.apps.alumnes.models import Grup
 
 def alertaAssitenciaReport( data_inici, data_fi, nivell, tpc , ordenacio ):
     report = []
@@ -161,3 +162,150 @@ def alertaAssitenciaReport( data_inici, data_fi, nivell, tpc , ordenacio ):
     report.append(taula)
 
     return report
+
+def alertaAssitenciaEstadistiquesReport (data_inici, data_fi, percent, percentMinimATenirEnCompte=0):
+    #Informe d'assistència del número d'alumnes que han superat el % de faltes. 
+    #percent: En tant per 1. Ex: 0.8 no superen el 80% de faltes.
+    #percentMinimATenirEnCompte: Si supera aquest % d'assistència no el tenim en compte a l'estadística.
+    #Recorrer per tots els grups.
+    estadistiques = []
+    for grup in Grup.objects.all():
+        estadistiques.append( \
+            _processarGrupAlertaAssitenciaEstadistiques( \
+                grup, data_inici, data_fi, percent, percentMinimATenirEnCompte))
+    
+    report = []
+    taula = tools.classebuida()
+    
+    taula.capceleres = []
+    lenCol = 1/5*100
+
+    taula.titol = tools.classebuida()
+    capcelera = tools.classebuida()
+    capcelera.amplade = lenCol
+    capcelera.contingut = u'Alumnes'
+    taula.capceleres.append( capcelera )
+
+    capcelera = tools.classebuida()
+    capcelera.amplade = lenCol
+    capcelera.contingut = u'Num. Alumnes'
+    taula.capceleres.append( capcelera )
+
+    capcelera = tools.classebuida()
+    capcelera.amplade = lenCol
+    capcelera.contingut = u'Assisteixen menys del ' + unicode(percent*100) + u'% de les hores'
+    taula.capceleres.append( capcelera )
+
+    capcelera = tools.classebuida()
+    capcelera.amplade = lenCol
+    capcelera.contingut = u'Assisteixen menys del ' + \
+        unicode(percentMinimATenirEnCompte*100) + u'% de les hores'
+    taula.capceleres.append( capcelera )
+
+    capcelera = tools.classebuida()
+    capcelera.amplade = lenCol
+    capcelera.contingut = u'Assisteixen entre un {}% i un {}% de les hores'.format(
+        unicode(percentMinimATenirEnCompte*100),
+        unicode(percent*100))
+    taula.capceleres.append( capcelera )
+
+    taula.fileres = []
+    
+    for estadistica in estadistiques:
+        filera = []
+        camp = tools.classebuida()
+        camp.contingut = u'{}'.format(estadistica['nomGrup']) 
+        filera.append(camp)
+
+        camp = tools.classebuida()
+        camp.contingut = u'{}'.format(estadistica['nAlumnes']) 
+        filera.append(camp)
+
+        camp = tools.classebuida()
+        camp.contingut = u'{}'.format(estadistica['noSuperenPercent']) 
+        filera.append(camp)
+
+        camp = tools.classebuida()
+        camp.contingut = u'{}'.format(estadistica['noSuperenPercentMinim']) 
+        filera.append(camp)
+
+        camp = tools.classebuida()
+        camp.contingut = u'{}'.format(estadistica['totalSenseCasosMinims']) 
+        filera.append(camp)
+
+        taula.fileres.append(filera)
+
+    report.append(taula)
+    return report
+
+
+def _processarGrupAlertaAssitenciaEstadistiques(
+    grup, data_inici, data_fi, percent, percentMinimATenirEnCompte=0):
+    #Funció que calcula les estadístiques generals d'un grup.
+    #Passem un model grup:Grup.
+    if not (percent >= 0 and percent <= 1):
+        raise Exception(u"percent cal que estigui entre 0 i 1, ara és:{}" \
+            .format(percent))
+
+    if not (percentMinimATenirEnCompte >= 0 and percentMinimATenirEnCompte <= 1):
+        raise Exception(u"percentMinimATenirEnCompte cal que estigui entre 0 i 1, ara és:{}" \
+            .format(percentMinimATenirEnCompte))
+
+    if not (percentMinimATenirEnCompte < percent):
+        raise Exception(u"No pot ser que el percentatge mínim superi al màxim")
+
+    casPresencia = ControlAssistencia.objects.filter(impartir__horari__grup__pk=grup.pk) \
+        .filter(estat__codi_estat__isnull=False) \
+        .filter(estat__codi_estat__in = ['P','R']) \
+        .filter(impartir__dia_impartir__lte=data_fi) \
+        .filter(impartir__dia_impartir__gte=data_inici) \
+        .values('alumne') \
+        .annotate(Count('id')) #type: ControlAssistencia
+    
+    cas = ControlAssistencia.objects.filter(impartir__horari__grup__pk=grup.pk) \
+        .filter(estat__codi_estat__isnull=False) \
+        .filter(impartir__dia_impartir__lte=data_fi) \
+        .filter(impartir__dia_impartir__gte=data_inici) \
+        .values('alumne') \
+        .annotate(Count('id')) #type: ControlAssistencia
+
+    #Posar els alumnes en un diccionari d'alumnes.
+    #format per el codi de l'alumne i com a valor una tupla (horesPresent,horesTotals)
+    dictAlumnes = {}
+    for c in casPresencia:
+        idAlumne = c['alumne']
+        if idAlumne in dictAlumnes.keys():
+            dictAlumnes[idAlumne] = (c['id__count'],dictAlumnes[idAlumne][1])
+        else:
+            dictAlumnes[idAlumne] = (c['id__count'],0)
+    
+    for c in cas:
+        idAlumne = c['alumne']
+        if idAlumne in dictAlumnes.keys():
+            dictAlumnes[idAlumne] = (dictAlumnes[idAlumne][0],c['id__count'])
+        else:
+            dictAlumnes[idAlumne] = (0,c['id__count'])
+
+    noSuperenPercentMinim = 0
+    noSuperenElPercentatge = 0
+    for key in dictAlumnes.keys():
+        if float(dictAlumnes[key][1]) < float(dictAlumnes[key][0]):
+            raise Exception(u"Un alumne té més hores totals que assistències" + unicode(dictAlumnes[key]))
+
+        percentAssistencia = float(dictAlumnes[key][0]) / float(dictAlumnes[key][1])
+        
+        if percentAssistencia < percent:
+            noSuperenElPercentatge += 1
+            print u"No supera:", Alumne.objects.get(pk=key), \
+            "Hores present:", float(dictAlumnes[key][0]), \
+            "NTotal:" , float(dictAlumnes[key][1]), u"\n"
+        if percentAssistencia < percentMinimATenirEnCompte:
+            noSuperenPercentMinim += 1
+            #print u"Possible baixa:", Alumne.objects.get(pk=key), key, 
+            #"Hores present:", float(dictAlumnes[key][0]),
+            #"NTotal:" , float(dictAlumnes[key][1]),
+    
+    return {'nomGrup':grup.nom_grup, 'nAlumnes':len(dictAlumnes), 
+        'noSuperenPercent':noSuperenElPercentatge, 
+        'noSuperenPercentMinim': noSuperenPercentMinim,
+        'totalSenseCasosMinims': noSuperenElPercentatge - noSuperenPercentMinim}
