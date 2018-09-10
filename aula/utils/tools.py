@@ -5,9 +5,11 @@ from django import http
 from django.template.loader import get_template
 from django.template import Context
 from django.conf import settings
+from django.contrib import auth
 
 import cStringIO as StringIO
 import cgi
+import sys
 from django.core.validators import validate_ipv4_address
 from django.core.exceptions import ValidationError
 try:
@@ -21,8 +23,17 @@ def calculate_my_time_off(user):
     if user.is_anonymous():
         return settings.CUSTOM_TIMEOUT
     else:
-        return max(settings.CUSTOM_TIMEOUT_GROUP.get(g.name, settings.CUSTOM_TIMEOUT)
+        if user.groups.count() == 0:
+            return settings.CUSTOM_TIMEOUT
+        else:
+            try:
+                return max(settings.CUSTOM_TIMEOUT_GROUP.get(g.name, settings.CUSTOM_TIMEOUT)
                    for g in user.groups.all())
+            except:
+                import traceback
+                traceback.print_exc(file=sys.stdout)
+                #import ipdb
+                #ipdb.post_mortem(sys.exc_info()[2])
 
 
 def getClientAdress( request ):

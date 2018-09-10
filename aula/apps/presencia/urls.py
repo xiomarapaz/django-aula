@@ -54,7 +54,7 @@ urlpatterns = [
        name="aula__horari__desanularImpartir"),
 
      url(r'^alertaAssistenciaEstadistiques/$', presencia_views.alertaAssistenciaEstadistiques,
-        name="coordinacio_alumnes__assistencia_aa" ),
+        name="coordinacio_alumnes__assistencia_alertesaa__llistat" ),
 ]
 
 

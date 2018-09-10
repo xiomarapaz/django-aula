@@ -202,7 +202,7 @@ def calcula_menu( user , path ):
                   (
                       ("Alertes Incid.", 'coordinacio_alumnes__ranking__list', di, None, None ),
                       ("Alertes Assist.", 'coordinacio_alumnes__assistencia_alertes__llistat', di, None, None ),
-                      ("Estadístiques (A.A).", 'coordinacio_alumnes__assistencia_aa', di,None,None),
+                      ("Estadístiques (A.A).", 'coordinacio_alumnes__assistencia_alertesaa__llistat', di,None,None),
                       ("Cartes", 'coordinacio_alumnes__assistencia__cartes', di, None, None ),
                       ("Sancions", 'coordinacio_alumnes__sancions__sancions', di, None, None ),
                       ("Passa llista grup", 'coordinacio_alumnes__presencia__passa_llista_a_un_grup_tria', di, None, None ),
