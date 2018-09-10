@@ -21,3 +21,5 @@ aula/settings_local.py
 .idea/*
 .idea
 montilivi/horaris/horaris/media/*
+montilivi/horaris/horaris/settings.py
+

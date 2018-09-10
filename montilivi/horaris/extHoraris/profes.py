@@ -1,7 +1,7 @@
 # This Python file uses the following encoding: utf-8
 
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http.response import *
 from django.views.generic import TemplateView,ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -86,12 +86,10 @@ class ProfeDelete(DeleteView):
             self.object.delete()
             return HttpResponseRedirect(self.get_success_url())
         except Exception:
-            return render_to_response("extHoraris/profe_error.html", {
+            return render(request, "extHoraris/profe_error.html", {
                 'errormsg': 'Error al eliminar un professor que ja té hores assignades. ',
                 'idRetornHoraris': request.session.get('HorarisRetorn'),
-            },
-            context_instance=RequestContext(request))
-
+            })
 def addVariablesToContext(context, request):
     context['idRetornHoraris'] = request.session.get('HorarisRetorn')
     return context

@@ -13,10 +13,9 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
-import os
+import os, sys
 
-import sys
-sys.path.append('/var/djangofaltes/horaris/')
+sys.path.append('/opt/django-aula/montilivi/horaris/')
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use
@@ -29,3 +28,5 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "horaris.settings")
 # setting points here.
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
+
+

@@ -29,6 +29,8 @@ Configura settings
 
 Configura el fitxer "horaris/settings.py" apartat BD per tal que apunti a la BD corresponent amb el nom de l'usuari.
 
+Tens un exemple a settings_template.py
+
 
 Fes migració
 ---------------
@@ -66,6 +68,21 @@ Crear usuari universal a la consola Django, també es pot fer via administració
 
 	from django.contrib.auth.models import User
 	user = User.objects.create_user('horaris', '', 'horaris')
+
+Donar permisos directori mèdia
+-----------------------------------
+
+Cal donar permisos per escriure a media, si no la cosa no va bé.
+
+::
+
+	chmod 777 horaris/media -R
+
+Activar apache2
+------------------
+
+Dins el directori apache2, tens una plantilla per activar l'apache. És la versió de montilivi.
+
 
 Canvi any
 =============
