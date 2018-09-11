@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Ajuda django-aula{% endblock %}
+{% block head %}Ajuda django-aula{% endblock %}
+{% block content %}
+	{% if user.username %}
+		<p>Benvingut {{ user.username }}!</p>
+	{% else %}
+		<p>Hola, anòmim!
+		Has de fer <a href="/login/">login</a>
+		per entrar al programa.</p>
+	{% endif %}
+<p>Pots configuar l'ajuda canviant les url's tal i com diu el fitxer @ajuda de customizing.</p>
+{% endblock %}
+
+
+

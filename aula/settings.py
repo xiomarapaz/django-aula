@@ -57,6 +57,8 @@ CUSTOM_FALTES_ABSENCIA_PER_TIPUS_CARTA = { 'tipus1': 1 }
 #Codi unitat formativa discontinuada.
 CUSTOM_UNITAT_FORMATIVA_DISCONTINUADA='unitat formativa discontinuada'
 
+CUSTOM_MOSTRAR_AJUDA_ACTIU=True
+
 #Configuracions pel testeig, per fer-lo més ràpid
 #https://dizballanze.com/django-blazing-fast-tests/
 import sys

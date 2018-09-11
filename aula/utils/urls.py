@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from aula.utils.views import carregaInicial, calendariDevelop, blanc, about
+from aula.utils.views import carregaInicial, calendariDevelop, blanc, about, ajuda
 
 urlpatterns = [
                        
@@ -15,8 +15,8 @@ urlpatterns = [
     url(r'^opcionsSincro/$', blanc,
         name ="administracio__sincronitza__blanc" )    ,
 
+    url(r'^ajuda/$', ajuda,
+        name="varis__ajuda__ajuda")
 
-
-                       
 ]
 

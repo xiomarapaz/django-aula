@@ -52,7 +52,6 @@ urlpatterns = [
 ]
 
 try:
-    
     urlpatterns_custom = [
                             url(r'^customising/', include('customising.urls')),
                             ]
