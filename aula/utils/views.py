@@ -259,4 +259,5 @@ def blanc( request ):
                     {},
                 )
     
-    
+def ajuda(request):
+    return render(request, 'ajuda.html', {})

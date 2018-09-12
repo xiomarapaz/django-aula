@@ -263,15 +263,18 @@ def calcula_menu( user , path ):
 
                #--Varis--------------------------------------------------------------------------
                ('varis', 'Ajuda i Avisos', 'varis__about__about' if al else 'varis__elmur__veure', tots, nMissatges > 0,
-                  (
+                  [
                       ("Notificacions", 'varis__elmur__veure', di or pr or pl or co or pg , ( nMissatgesDelta, 'info' if nMissatgesDelta < 10 else 'danger' ) if nMissatgesDelta >0 else None, None ),
                       ("Missatge a professorat o PAS", 'varis__prof_i_pas__envia_professors_i_pas', pr or pl or co, None, None ),
                       ("Avisos de Seguretat", 'varis__avisos__envia_avis_administradors', tots, None, None ),
                       ("About", 'varis__about__about', tots, None, None ),
-                   )
+                   ]
                ),
 
              )
+
+    if hasattr(settings, 'CUSTOM_MOSTRAR_AJUDA_ACTIU') and settings.CUSTOM_MOSTRAR_AJUDA_ACTIU:
+        arbre2[0][5].append(("Ajuda", 'varis__ajuda__ajuda', tots, None, None))
     
     arbreSortides = ()
     if hasattr(settings, 'CUSTOM_MODUL_SORTIDES_ACTIU' ) and settings.CUSTOM_MODUL_SORTIDES_ACTIU and ( di or pr ):
