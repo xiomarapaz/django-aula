@@ -3,8 +3,8 @@
 from aula.apps.alumnes.models import *
 from datetime import date
 
-DATA_INICI = date(2018, 8, 27)
-DATA_FI = date(2018, 9, 30)
+DATA_INICI = date(2018, 9, 14)
+DATA_FI = date(2019, 6, 1)
 
 cursos = Curs.objects.all()
 for curs in cursos:

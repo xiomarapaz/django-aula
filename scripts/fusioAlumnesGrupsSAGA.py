@@ -20,7 +20,7 @@ class MyDialect(Dialect):
 dictAlumneGrup={}
 errors=[] #Llista alumnes amb error.
 
-with open('/home/administrador/Descargas/grups.csv', 'rb') as fGrups:
+with open('grups.csv', 'rb') as fGrups:
     csv_reader_grups = csv.reader(fGrups, dialect=MyDialect)
 
     for grup in csv_reader_grups:
@@ -29,8 +29,8 @@ with open('/home/administrador/Descargas/grups.csv', 'rb') as fGrups:
             nomAlumneSEspais = grup[1].replace(' ', '')
             dictAlumneGrup[nomAlumneSEspais] = grup[2]
 
-with open('/home/administrador/Descargas/alumnesBo.csv', 'wb') as fAlumnesBo:
-    with open('/home/administrador/Descargas/alumnes.csv', 'rb') as fAlumnes:
+with open('alumnesBo.csv', 'wb') as fAlumnesBo:
+    with open('alumnes.csv', 'rb') as fAlumnes:
         csv_reader_alumnes = csv.reader(fAlumnes, dialect=csv.excel)
         csv_writer_alumnesBo = csv.writer(fAlumnesBo, dialect=csv.excel)
 
@@ -38,6 +38,7 @@ with open('/home/administrador/Descargas/alumnesBo.csv', 'wb') as fAlumnesBo:
         for linia in csv_reader_alumnes:
             if primeraLinia:
                 primeraLinia = False
+                csv_writer_alumnesBo.writerow(linia)
             else:
                 if len(linia)==18:
                     nomAlumneSEspais=linia[2].replace(' ','')
