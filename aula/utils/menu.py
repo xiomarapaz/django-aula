@@ -319,7 +319,7 @@ def calcula_menu( user , path ):
     
     if hasattr(settings, 'CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU' ) and settings.CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU:
         arbrePresenciaSetmanal = \
-        ('presencia_setmanal', 'Presencia setmanal', 'presencia_setmanal__index__index', tots, None,
+        ('presencia_setmanal', 'Presencia setmanal', 'presencia_setmanal__index__index', di or pr, None,
             (
                 (u"Índex", 'presencia_setmanal__index__index', di or so, None, None ),
             )
