@@ -52,7 +52,7 @@ def enviaOneTimePasswdAlumne( alumne, force = False ):
     #comprovo que no s'hagi enviat més de 2 recuperacions en un dia:
     fa_24h = datetime.now() - timedelta( days = 1 )
     total_enviats = OneTimePasswd.objects.filter( usuari =alumne.user_associat, moment_expedicio__gte = fa_24h  ).count()
-    if total_enviats >= 3:
+    if total_enviats >= 10:
         errors.append( u'Màxim número de missatges enviats a aquest correu durant les darrers 24h.' )
     elif not correusFamilia:
         warnings.append( u"Comprova que l'adreça electrònica d'almenys un dels pares estigui informada")
@@ -126,7 +126,7 @@ def enviaOneTimePasswdProfessor( professor, force = False ):
     #comprovo que no s'hagi enviat més de 2 recuperacions en un dia:
     fa_24h = datetime.now() - timedelta( days = 1 )
     total_enviats = OneTimePasswd.objects.filter( usuari =professor.getUser(), moment_expedicio__gte = fa_24h  ).count()
-    if total_enviats >= 3:
+    if total_enviats >= 10:
         errors.append( u'Màxim número de missatges enviats a aquest correu durant les darrers 24h.' )
     elif not correu:
         warnings.append( u"Comprova que l'adreça electrònica d'aquest professor estigui informada")

@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^login/$', usuaris_views.loginUser,
      name="nologin__usuari__login"),
               
-    url(r'^recoverPasswd/(?P<username>\w{1,20})/(?P<oneTimePasswd>\w{1,50})/$', usuaris_views.recoverPasswd,
+    url(r'^recoverPasswd/(?P<username>[0-9a-zA-Z_\.]{1,20})/(?P<oneTimePasswd>\w{1,50})/$', usuaris_views.recoverPasswd,
      name="nologin__usuari__recover_password"),
               
     url(r'^sendPasswdByEmail/$', usuaris_views.sendPasswdByEmail,

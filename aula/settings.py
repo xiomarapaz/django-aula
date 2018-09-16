@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-CUSTOM_RETARD_PROVOCA_INCIDENCIA = False
+CUSTOM_RETARD_PROVOCA_INCIDENCIA = True
 CUSTOM_RETARD_TIPUS_INCIDENCIA = { 'tipus': u'Incidència', 'es_informativa': False }
 CUSTOM_RETARD_FRASE = u'Ha arribat tard a classe.'
 CUSTOM_TIPUS_INCIDENCIES = False
@@ -11,21 +11,20 @@ CUSTOM_DIES_PRESCRIU_INCIDENCIA = 30
 CUSTOM_DIES_PRESCRIU_EXPULSIO = 90
 CUSTOM_NOMES_TUTOR_POT_JUSTIFICAR = True
 CUSTOM_MODUL_SORTIDES_ACTIU = True
-CUSTOM_MODUL_PRESENCIA_SETMANAL_ACTIU = True
-CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA = True
+CUSTOM_PERMET_COPIAR_DES_DUNA_ALTRE_HORA = False
 CUSTOM_RETARD_PRIMERA_HORA_GESTIONAT_PEL_TUTOR = False
 CUSTOM_NIVELLS = { u"ESO": [u"ESO"],
                     u"BTX": [u"BTX"],
-                    u"CICLES": [u'CAS',u'ITC',u'MEL',u'DPE',u'ECA',u"EDI",u"INS",u"ODL",u"LAC",u"DAM",u"ASIX",u"DAW",u"CAR",u"AUT",u"ADI",u"AFI",u"JUR",u"EMV",u"GAD"],
+                    u"CICLES": [u'GA',u'AF',u'SMX',u'DAW',u'FCT',u"CFA",u"CFI",],
                     u"INFORMATICA": [u'SMX',u'DAW'],
                   }
 CUSTOM_TIMEOUT = 15*60
 CUSTOM_TIMEOUT_GROUP = { u"consergeria": 4*60*60, # 4h
-                         u"professors": 15*60, # 15'
+                         u"professors":    15*60, # 15'
                          }
 CUSTOM_RESERVES_API_KEY = '_default_api_aules_password_'
 
-DEFAULT_FROM_EMAIL = 'Django Formacio Montilivi <no-reply@el-meu-centre.net>'
+DEFAULT_FROM_EMAIL = 'El meu centre <no-reply@el-meu-centre.net>'
 
 CACHES = {
     'default': {
@@ -33,7 +32,7 @@ CACHES = {
     },
     'select2': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'TIMEOUT': 0, # max( CUSTOM_TIMEOUT, *[ CUSTOM_TIMEOUT_GROUP[x] for x in CUSTOM_TIMEOUT_GROUP] ),
+        'TIMEOUT': max( CUSTOM_TIMEOUT, *[ CUSTOM_TIMEOUT_GROUP[x] for x in CUSTOM_TIMEOUT_GROUP] ),
         'OPTIONS': {
             'MAX_ENTRIES': 200
         }
@@ -57,27 +56,10 @@ CUSTOM_FALTES_ABSENCIA_PER_TIPUS_CARTA = { 'tipus1': 1 }
 #Codi unitat formativa discontinuada.
 CUSTOM_UNITAT_FORMATIVA_DISCONTINUADA='unitat formativa discontinuada'
 
-CUSTOM_MOSTRAR_AJUDA_ACTIU=True
-
-#Configuracions pel testeig, per fer-lo més ràpid
-#https://dizballanze.com/django-blazing-fast-tests/
-import sys
-TESTING = 'test' in sys.argv
-
-if TESTING:
-    PASSWORD_HASHERS = [
-        'django.contrib.auth.hashers.MD5PasswordHasher',
-    ]
-
+#Mostrar una opció d'ajuda en el menú, que apunta a "customising/ajuda/"
+CUSTOM_MOSTRAR_AJUDA_ACTIU=False
 
 try:
     from settings_local import *
 except ImportError:
     from settings_dir.demo import *
-
-
-    
-
-
-
-
