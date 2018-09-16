@@ -1,0 +1,1 @@
+watchmedo shell-command --command="make.bat" --patterns="*.rst" --ignore-pattern="build" --recursive

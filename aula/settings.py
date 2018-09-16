@@ -18,9 +18,9 @@ CUSTOM_NIVELLS = { u"ESO": [u"ESO"],
                     u"CICLES": [u'GA',u'AF',u'SMX',u'DAW',u'FCT',u"CFA",u"CFI",],
                     u"INFORMATICA": [u'SMX',u'DAW'],
                   }
-CUSTOM_TIMEOUT = 15*60
+CUSTOM_TIMEOUT = 60*60
 CUSTOM_TIMEOUT_GROUP = { u"consergeria": 4*60*60, # 4h
-                         u"professors":    15*60, # 15'
+                         u"professors": 60*60, # 1h'
                          }
 CUSTOM_RESERVES_API_KEY = '_default_api_aules_password_'
 
