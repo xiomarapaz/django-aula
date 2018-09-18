@@ -40,5 +40,6 @@ class UF(models.Model):
             
 class UFAvisos(models.Model):
   assignatura = models.ForeignKey(Assignatura, null=False, blank=False)
+  uf = models.ForeignKey(UF, null=False, blank=False)
   alumne = models.ForeignKey(Alumne, null=False, blank=False)
   nAvis = models.PositiveSmallIntegerField(blank=False)

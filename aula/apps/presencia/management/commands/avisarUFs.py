@@ -56,20 +56,20 @@ class Command(BaseCommand):
 
             if tcpUF >= assig.percent_primer_avis:
               self.stdout.write (u"Primer avís a:" + unicode(alumn) + u"--->" + unicode(uf.nom))
-              avisos_realitzats = len(UFAvisos.objects.filter(assignatura=assig, alumne=alumn, nAvis=1))
+              avisos_realitzats = len(UFAvisos.objects.filter(assignatura=assig, uf=uf, alumne=alumn, nAvis=1))
               if avisos_realitzats == 0:
                 dadesAEnviar.append((alumn, uf, assig.percent_primer_avis, tcpUF))
                 self.stdout.write ("Envia mail!!")
-                avis = UFAvisos(assignatura=assig, alumne=alumn, nAvis=1)
+                avis = UFAvisos(assignatura=assig, alumne=alumn, uf=uf, nAvis=1)
                 avis.save()
 
             if tcpUF >= assig.percent_segon_avis:
               self.stdout.write (u"Segon avís a:" + unicode(alumn) + u"--->" + unicode(uf.nom))
-              avisos_realitzats = len(UFAvisos.objects.filter(assignatura=assig, alumne=alumn, nAvis=2))
+              avisos_realitzats = len(UFAvisos.objects.filter(assignatura=assig, uf=uf, alumne=alumn, nAvis=2))
               if avisos_realitzats == 0:
                 dadesAEnviar.append((alumn, uf, assig.percent_segon_avis, tcpUF))
                 self.stdout.write ("Envia mail!!")
-                avis = UFAvisos(assignatura=assig, alumne=alumn, nAvis=2)
+                avis = UFAvisos(assignatura=assig, alumne=alumn, uf=uf, nAvis=2)
                 avis.save()
         
         if len(dadesAEnviar) != 0:
