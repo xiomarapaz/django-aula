@@ -93,6 +93,7 @@ def calcula_menu( user , path ):
                       ("Informe", 'tutoria__alumne__informe_setmanal', tu, None, None ),                                      
                       ("Portal", 'tutoria__relacio_families__dades_relacio_families', tu, None, None ),
                       ("Seguiment", 'tutoria__seguiment_tutorial__formulari', tu, None, None ),
+                      ("Treure alumne del grup", 'tutoria__treure_alumne_grup__formulari', tu, None, None ),
                     )
     if settings.CUSTOM_TUTORS_INFORME:
         arbre_tutoria += (

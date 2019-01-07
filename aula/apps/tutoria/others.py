@@ -1,8 +1,10 @@
 # This Python file uses the following encoding: utf-8
-from aula.apps.presencia.models import Impartir, EstatControlAssistencia
+from aula.apps.presencia.models import Impartir, EstatControlAssistencia, ControlAssistencia
 from aula.apps.alumnes.models import Alumne
 from aula.apps.tutoria.models import ResumAnualAlumne, SeguimentTutorial
 from django.utils.datetime_safe import datetime
+from django.db.models import Q
+
 
 def calculaResumAnualProcess():
     linia = '\n-----------------------------------------------------\n'
@@ -69,5 +71,28 @@ def calculaResumAnualProcess():
         resum.text_resum = txt_presencia + txt_incidencies + txt_expulsions + txt_sancions + txt_actuacions + txt_qualitativa
         resum.save()
 
-    
+def horesAImpartirGrup(codiGrup, dataInici, dataActual):
+    #Selecciona les hores a impartir d'un determinat grup, que siguin superiors a una data marcada
+    #Cal que siguin també superiors a la data actual.
+    if (dataInici.date() < dataActual.date()):
+        raise Exception("Error la data d'inici ha de ser superior o igual a la data actual")
+
+    return Impartir.objects.filter(horari__grup_id = codiGrup).filter( 
+        dia_impartir__gte = dataInici).filter( 
+        dia_impartir__gte = dataActual) #type: QuerySet
+
+def treureAlumnesLlistaClasse(codiAlumneAEliminar, codiGrup, dataAEliminarAlumne):    
+    #Treu a un determinat alumne de tots els grups on fa classe a partir d'una data donada.
+    nElementsEliminats = 0
+    horesAImpartir = horesAImpartirGrup(
+        codiGrup, dataAEliminarAlumne, datetime.now()) #type: QuerySet
+
+    for _horaImpartir in horesAImpartir:
+        horaImpartir = _horaImpartir  #type: Impartir
+        registresAEliminar = ControlAssistencia.objects.filter(
+            impartir = horaImpartir).filter(estat__codi_estat=None).filter(
+            alumne__pk = codiAlumneAEliminar)
+        nElementsEliminats += registresAEliminar.count()
+        registresAEliminar.delete()
+    return nElementsEliminats
     
