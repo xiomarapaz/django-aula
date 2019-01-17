@@ -7,6 +7,7 @@ from django.db.models import Q
 
 def faltesAssistenciaEntreDatesProfessorRpt( 
                     professor,
+                    horesAltresProfes, 
                     grup ,
                     assignatures ,
                     dataDesDe ,
@@ -18,14 +19,17 @@ def faltesAssistenciaEntreDatesProfessorRpt(
     
     q_assignatures = Q(impartir__horari__assignatura__in = assignatures)
     
-    q_professor = Q(impartir__horari__professor = professor)
-    
     q_primer_dia = Q(impartir__dia_impartir = dataDesDe ) & Q(impartir__horari__hora__hora_inici__gte = horaDesDe.hora_inici)
     q_mig = Q(impartir__dia_impartir__gt = dataDesDe ) & Q(impartir__dia_impartir__lt = dataFinsA)
     q_darrer_dia = Q(impartir__dia_impartir = dataFinsA ) & Q(impartir__horari__hora__hora_fi__lte = horaFinsA.hora_fi)
     q_hores = q_primer_dia | q_mig | q_darrer_dia
     
-    controls = ControlAssistencia.objects.filter( q_grup & q_assignatures & q_hores & q_professor )
+    filtre = q_grup & q_assignatures & q_hores
+    if not horesAltresProfes:
+        q_professor = Q(impartir__horari__professor = professor)
+        filtre &=  q_professor
+
+    controls = ControlAssistencia.objects.filter( filtre )
     
     alumnes = Alumne.objects.filter( controlassistencia__pk__in = controls.values_list('pk', flat=True)
                                       ).distinct()

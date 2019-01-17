@@ -1220,16 +1220,16 @@ def faltesAssistenciaEntreDates(request):
         form = faltesAssistenciaEntreDatesForm( request.POST, assignatures = assignaturesProfessor, grups = grupsProfessor )
         
         if form.is_valid():            
-
             report = faltesAssistenciaEntreDatesProfessorRpt( 
                 professor = professor,
+                horesAltresProfes = form.cleaned_data['horesAltresProfes'],
                 grup = form.cleaned_data['grup'],
                 assignatures = form.cleaned_data['assignatura'],
                 dataDesDe = form.cleaned_data['dataDesDe'],
                 horaDesDe = form.cleaned_data['horaDesDe'],
                 dataFinsA = form.cleaned_data['dataFinsA'],
-                horaFinsA = form.cleaned_data['horaFinsA']                                       
-                                         )                
+                horaFinsA = form.cleaned_data['horaFinsA'])                
+                
             return render(
                     request,
                     'reportTabs.html',

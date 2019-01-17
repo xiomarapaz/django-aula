@@ -153,8 +153,6 @@ class SimpleTest(TestCase):
 
         Cal enviar un correu al finalitzar.
         """
-        print(ControlAssistencia.objects.all())
-        
         #Eliminació de l'alumne de les llistes.
         nAlumnes = others.treureAlumnesLlistaClasse(self.alumnes[0].pk, self.codiGrup, self.dataAEliminarAlumne)
         
@@ -162,8 +160,6 @@ class SimpleTest(TestCase):
         horesAImpartir = others.horesAImpartirGrup(
             self.codiGrup, self.dataAEliminarAlumne, datetime.datetime.now()) #type: QuerySet
 
-        print("ddddddd", ControlAssistencia.objects.all())
-        
         #Comprova que s'han eliminat i no queden dades.
         #Per tant només han de quedar estats presents i les faltes.
         for _horaImpartir in horesAImpartir:

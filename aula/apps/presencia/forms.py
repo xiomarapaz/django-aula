@@ -159,18 +159,25 @@ class faltesAssistenciaEntreDatesForm(forms.Form):
     
     grup = forms.ModelChoiceField( queryset = None )
     assignatura = forms.ModelMultipleChoiceField( queryset = None )
-    dataDesDe = forms.DateField(help_text=u'Data on començar a comptar', 
+    dataDesDe = forms.DateField(label=u"Des de:",
+                                help_text=u'Data on començar a comptar', 
                                        initial= datetime.today(),
                                        required = True,                                          
                                        widget = DateTextImput() )
-    horaDesDe = forms.ModelChoiceField( queryset = None,
+    horaDesDe = forms.ModelChoiceField( label=u'Hora inci',
+                                        queryset = None,
                                         initial = None)
-    dataFinsA = forms.DateField(help_text=u'Data on començar a comptar', 
+    dataFinsA = forms.DateField(label=u"Fins a:",
+                                help_text=u'Data on començar a comptar', 
                                        initial= datetime.today(),
                                        required = True,                                          
                                        widget = DateTextImput() )
-    horaFinsA = forms.ModelChoiceField( queryset = None,
+    horaFinsA = forms.ModelChoiceField( label=u'Hora fi',
+                                        queryset = None,
                                         initial = None)
+    horesAltresProfes = forms.BooleanField( label=u"Hores altres profes?",
+                                            help_text=u'Vols comptar hores d\'un altre profe, que faci la mateixa matèria?', 
+                                            required=False)
 
     def __init__(self, *args, **kwargs):
         self.assignatures = kwargs.pop('assignatures', None)
@@ -179,9 +186,9 @@ class faltesAssistenciaEntreDatesForm(forms.Form):
         self.fields['assignatura'].queryset = self.assignatures 
         self.fields['grup'].queryset = self.grups
         self.fields['horaDesDe'].queryset = FranjaHoraria.objects.all()
-        self.fields['horaDesDe'].initial = [FranjaHoraria.objects.all()[0]]
+        self.fields['horaDesDe'].initial = FranjaHoraria.objects.all()[0]
         self.fields['horaFinsA'].queryset = FranjaHoraria.objects.all()
-        self.fields['horaFinsA'].initial = [  FranjaHoraria.objects.reverse()[0] ]
+        self.fields['horaFinsA'].initial = FranjaHoraria.objects.reverse()[0]
 
 
 class alertaAssistenciaForm(forms.Form):

@@ -35,6 +35,12 @@ class NovaUFForm(forms.Form):
 class faltesAssistenciaEntreDatesForm(forms.Form):
   grup = forms.ModelChoiceField( queryset = None )
   assignatura = forms.ModelMultipleChoiceField( queryset = None )
+  horesAltresProfes = forms.BooleanField(
+    required=False, 
+    label=u"Hores altres profes?",
+    help_text=u'Vols comptar hores d\'un altre profe, que faci la mateixa matèria?', 
+    initial=False)
+
 
   def __init__(self, *args, **kwargs):
       self.assignatures = kwargs.pop('assignatures', None)
