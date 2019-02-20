@@ -6,6 +6,7 @@ from aula.utils.testing.seleniumTests import SeleniumTests
 from aula.apps.presencia.models import ControlAssistencia, Impartir, EstatControlAssistencia
 from aula.apps.assignatures.models import UF, Assignatura
 
+from selenium import webdriver
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -223,7 +224,9 @@ class MySeleniumTests(LiveServerTestCase):
         #Crea les UF's, passa llista via codi i comprova que el llistat sigui correcte amb selenium.
         try:
             self.db = TestDBCreator()
-            self.selenium = WebDriver()
+            options = webdriver.FirefoxOptions()
+            options.add_argument('-headless')
+            self.selenium = WebDriver(options=options)
             st = SeleniumTests(self.live_server_url, self.selenium)
             diesOrdenats = list(self.db.dies)
             diesOrdenats.reverse()
@@ -305,7 +308,9 @@ class MySeleniumTests(LiveServerTestCase):
         try:
             self.db = TestDBCreator()
             #Fa el recorregut complert, crear UFs, passar llista, comprovar que els llistats apareguin correctament, tot a cop de Selenium.
-            self.selenium = WebDriver()
+            options = webdriver.FirefoxOptions()
+            options.add_argument('-headless')
+            self.selenium = WebDriver(options=options)
             st = SeleniumTests(self.live_server_url, self.selenium)
             st.loginUsuari('SrProgramador', 'patata')
             
