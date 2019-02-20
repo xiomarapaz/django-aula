@@ -102,6 +102,14 @@ urlpatterns = [
                        
     url(r'^justificarSortidaAlumne/(?P<pk>\d+)/$', tutoria_views.justificarSortidaAlumne,
         name="tutoria__justificarSortida__detall"),
-                       
+
+    #Treure alumnes del grup.
+    url(r'^seguimentTreureAlumneGrupFormulari/$', tutoria_views.seguimentTreureAlumneGrupFormulari,
+        name="tutoria__treure_alumne_grup__formulari"),
+
+    url(r'^seguimentTreureAlumneGrupFormulari2/(.+)/([0-9]{4}-[0-9]{2}-[0-9]{2})/$', 
+        tutoria_views.seguimentTreureAlumneGrupFormulari2, 
+        name="tutoria__treure_alumne_grup__formulari2"),
+
 ]
 

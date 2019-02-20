@@ -1,5 +1,6 @@
 # This Python file uses the following encoding: utf-8
 import itertools
+import others
 
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -25,7 +26,7 @@ from aula.utils.decorators import group_required
 from aula.apps.tutoria.forms import  justificaFaltesW1Form, informeSetmanalForm,\
     seguimentTutorialForm, elsMeusAlumnesTutoratsEntreDatesForm, FaltesAssistenciaEntreDatesForm, \
     FaltesAssistenciaEntreDatesUFsForm
-import aula.apps.tutoria.forms as MyForms
+import aula.apps.tutoria.forms as myForms
 
 #helpers
 from aula.utils import tools
@@ -41,6 +42,7 @@ from aula.apps.alumnes.models import Alumne, Grup, AlumneGrupNom
 from django.forms.models import modelform_factory, modelformset_factory
 from django import forms
 from django.db.models import Min, Max, Q
+from django.core.mail import send_mail, get_connection
 
 #exceptions
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS,\
@@ -2666,7 +2668,7 @@ def seguimentTreureAlumneGrupFormulari(request):
 
     formset = [] #type: List[SeguimentTreureAlumneGrupForm]
     formset.append(formulari)
-    return render(render,
+    return render(request,
                 'formset.html',
                 {'formset': formset})
 
@@ -2702,6 +2704,7 @@ def seguimentTreureAlumneGrupFormulari2(request, _grup, _data):
                     fail_silently=False, connection=get_connection())
 
             except Exception as ex:
+                raise
                 msg = 'S\'ha produït un error {}.'.format(unicode(ex))
             
             return render(request,

@@ -116,8 +116,8 @@ def enviarMailAbsencies(llistaTo, dadesAEnviar):
     ]
 
     for (alumne, uf, percentFaltes, tpcUF) in dadesAEnviar:
-      liniaMsg = u"{0}, {1} ha superat el {2:.2f}% de faltes, ha realitzat un {3:.2f}%.".format(
-        alumne.cognoms, alumne.nom, percentFaltes, tpcUF)
+      liniaMsg = u"{0}, {1} ha superat el {2:.2f}% de faltes, ha realitzat un {3:.2f}%, en la UF:{4}.".format(
+        alumne.cognoms, alumne.nom, percentFaltes, tpcUF, uf.nom)
       missatge.append(liniaMsg)
 
     enviats = send_mail('Accés a infomes seguiment', 

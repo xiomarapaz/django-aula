@@ -11,6 +11,7 @@ from django.conf import settings
 from datetime import date, timedelta
 from aula.apps.presencia.test.testDBCreator import TestDBCreator
 
+from selenium import webdriver
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -133,7 +134,9 @@ class MySeleniumTests(LiveServerTestCase):
 
     def setUp(self):
         self.db = TestDBCreator()
-        self.selenium = WebDriver()
+	options = webdriver.FirefoxOptions()
+        options.add_argument('-headless')
+        self.selenium = WebDriver(options=options)
         self.selenium.implicitly_wait(5)
     
     def tearDown(self):

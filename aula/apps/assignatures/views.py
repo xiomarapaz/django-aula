@@ -136,6 +136,12 @@ def llistatAssistenciaUFs(request):
         if form.is_valid():
             #Comprovar el codi de l'assignatura,
             #Si es tracta del report convencional o bé amb UFs solapades.
+            
+            #Cal tenir en compte si comptabilitzem les hores d'altres professors.
+            horesAltresProfes= form.cleaned_data['horesAltresProfes']
+            if horesAltresProfes:
+                professor = None
+                
             assignatura = form.cleaned_data['assignatura'][0]
             if assignatura.tipus_assignatura.tipus_assignatura.lower() \
                 == settings.CUSTOM_UNITAT_FORMATIVA_DISCONTINUADA:
