@@ -191,6 +191,7 @@ INSTALLED_APPS_AULA = [
     'aula.apps.assignatures',
     'aula.apps.horaris',
     'aula.apps.presencia',
+    'aula.apps.presenciaRest',
     'aula.apps.incidencies',
     'aula.apps.tutoria',
     'aula.apps.extKronowin',

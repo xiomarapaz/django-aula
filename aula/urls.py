@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^promocions/nou-alumne', nouAlumnePromocionar, name = 'administracio__alumnes__noualumne'),
     url(r'^promocions/', llistaGrupsPromocionar, name = 'administracio__promocions__llista'),
     url(r'^presencia/', include('aula.apps.presencia.urls', ), ),
+    url(r'^presenciaRest/', include('aula.apps.presenciaRest.urls', ), ),
     url(r'^incidencies/', include('aula.apps.incidencies.urls')),
     url(r'^missatgeria/', include('aula.apps.missatgeria.urls')),
     url(r'^usuaris/', include('aula.apps.usuaris.urls')),

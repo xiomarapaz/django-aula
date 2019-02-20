@@ -7,6 +7,7 @@ from aula.apps.presencia.models import EstatControlAssistencia, Impartir, Contro
 from aula.apps.horaris.models import FranjaHoraria
 from typing import List, Dict, Union
 from datetime import date, time, datetime, timedelta
+from django.test import LiveServerTestCase
 
 import random
 
@@ -86,9 +87,27 @@ class TestUtils():
             franges.append(FranjaHoraria.objects.create(hora_inici = hi, hora_fi = hf))
         return franges
 
+    def obtenirDataLaborableAnterior(self, dataDiaActual):
+        #type: (TestUtils, date) -> None
+        if dataDiaActual.weekday == 0:
+            dataDiaAnterior = dataDiaActual + timedelta(days=-3)
+        elif dataDiaActual.weekday == 6:
+            dataDiaAnterior = dataDiaActual + timedelta(days=-2)
+        else:
+            dataDiaAnterior = dataDiaActual + timedelta(days=-1)
+        return dataDiaAnterior
+
     @staticmethod
     def llancaPostMortem():
         import ipdb, sys, traceback
         extype, value, tb = sys.exc_info()
         traceback.print_exc()
         ipdb.post_mortem(tb)
+
+class SeleniumLiveServerTestCase(LiveServerTestCase):
+    #Classe porqueria per tal que funcionin les traces en el codi de selenium.
+    #Altrament no et dona els settings i és complicat.
+    def __init__(self, *args, **kwargs):
+        super(SeleniumLiveServerTestCase, self).__init__(*args, **kwargs)
+        if settings.DEBUG == False:
+            settings.DEBUG = True
