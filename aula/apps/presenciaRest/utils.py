@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
-from datetime import date
 import datetime
+import json
+from datetime import date
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseServerError
 from typing import List
 from django.core import serializers
+from django.contrib.auth.models import User
 
 from aula.apps.presencia.models import ControlAssistencia
-
-
+from typing import Dict
 
 def add_secs_to_time(timeval, secs_to_add):
     dummy_date = datetime.date(1, 1, 1)
@@ -56,27 +57,45 @@ def convertirData(stringData):
     camps = stringData.split('-')
     return date(int(camps[0]),int(camps[1]), int(camps[2]))
 
-def faltaHoraAnterior(ca, tipus_retorn = 'W'):
-    #type: (ControlAssitencia, str)
-    '''
-    Comprova el codi de l'hora anterior, 2 Modes de retorn ('C', 'W'):
-    Torna: Present, Absent o bé NA. (Mode paraula original='W')
-    Torna: P o R -> P, F->F, J->J o N (Mode codi='C')
-
-    @type ca: ControlAssistencia | Control assistencia actual.
-    @type retorna: Indica si cal tornar un codi o bé una paraula ('C', 'W'), per defecte W=paraula.
-    '''
+def faltaHoraAnterior(ca):
+#     type: (ControlAssitencia)
+#     Comprova el codi de l'hora anterior, 2 Modes de retorn ('C', 'W'):
+#     Torna: Present, Absent o bé NA. (Mode paraula original='W')
+#     Torna: P o R -> P, F->F, J->J o N (Mode codi='C')
+    
     unaHora40abans = add_secs_to_time(ca.impartir.horari.hora.hora_inici, -100*60)
     controls_anteriors = ControlAssistencia.objects.filter(
-                                                         alumne = ca.alumne,
-                                                         impartir__horari__hora__hora_inici__lt = ca.impartir.horari.hora.hora_inici,
-                                                         impartir__horari__hora__hora_inici__gt = unaHora40abans,
-                                                         impartir__dia_impartir = ca.impartir.dia_impartir  )
-    if tipus_retorn == 'W':
-        esFaltaHoraAnterior = PresenciaQuerySet( controls_anteriors )
+        alumne = ca.alumne,
+        impartir__horari__hora__hora_inici__lt = ca.impartir.horari.hora.hora_inici,
+        impartir__horari__hora__hora_inici__gt = unaHora40abans,
+        impartir__dia_impartir = ca.impartir.dia_impartir  )
+
+    if controls_anteriors:
+        return controls_anteriors.all()[0].estat
     else:
-        esFaltaHoraAnterior = PresenciaQuerySetGetCode( controls_anteriors )
-    return esFaltaHoraAnterior
+        return None
+
+# def faltaHoraAnterior(ca, tipus_retorn = 'W'):
+#     #type: (ControlAssitencia, str)
+#     '''
+#     Comprova el codi de l'hora anterior, 2 Modes de retorn ('C', 'W'):
+#     Torna: Present, Absent o bé NA. (Mode paraula original='W')
+#     Torna: P o R -> P, F->F, J->J o N (Mode codi='C')
+
+#     @type ca: ControlAssistencia | Control assistencia actual.
+#     @type retorna: Indica si cal tornar un codi o bé una paraula ('C', 'W'), per defecte W=paraula.
+#     '''
+#     unaHora40abans = add_secs_to_time(ca.impartir.horari.hora.hora_inici, -100*60)
+#     controls_anteriors = ControlAssistencia.objects.filter(
+#                                                          alumne = ca.alumne,
+#                                                          impartir__horari__hora__hora_inici__lt = ca.impartir.horari.hora.hora_inici,
+#                                                          impartir__horari__hora__hora_inici__gt = unaHora40abans,
+#                                                          impartir__dia_impartir = ca.impartir.dia_impartir  )
+#     if tipus_retorn == 'W':
+#         esFaltaHoraAnterior = PresenciaQuerySet( controls_anteriors )
+#     else:
+#         esFaltaHoraAnterior = PresenciaQuerySetGetCode( controls_anteriors )
+#     return esFaltaHoraAnterior
 
 def obtenirUsuari(nomUsuari):
     try:
@@ -98,6 +117,23 @@ def tokenCorrecte(request, usuariTokens, pkUsuari):
 def deserialitzarUnElement(objecteSerialitzat):
     return serializers.deserialize('json', u'[' + objecteSerialitzat + u']').next()
 
+def deserialitzarUnElementAPartirObjectePython(objectePythonSerialitzat):
+    return serializers.deserialize('json', u'[' + 
+        json.dumps(objectePythonSerialitzat, ensure_ascii=False).encode('utf-8') + u']').next()
+
 def serialitzarUnElement(objecte):
     #type: (Object)->string
     return serializers.serialize('json', [objecte])[1:-1], 
+
+def comprovarUsuariIPermisos(request, idUsuari, usuariTokens):
+    #type: (HttpRequest, String, Dict[str])->HttpResponse
+    usuari = obtenirUsuari(idUsuari) #type: str
+    
+    if not usuari:
+        return False, HttpResponseNotFound('Usuari no localitzat')
+
+    if not tokenCorrecte(request, usuariTokens, usuari.pk):
+        return False, HttpResponseBadRequest("Token no trobat")
+    return True, None
+    
+

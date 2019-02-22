@@ -5,24 +5,27 @@
 
 from __future__ import unicode_literals
 import json, traceback, datetime
+from typing import Dict
 
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseServerError
+from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError, NON_FIELD_ERRORS
 from django.db.models import Q
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 
 from . import utils
-from aula.apps.presencia.models import Impartir, ControlAssistencia
-from aula.apps.usuaris.models import User2Professor, Accio
+from aula.apps.presencia.models import Impartir, ControlAssistencia, EstatControlAssistencia
+from aula.apps.usuaris.models import User2Professor, Accio, Professor
+from aula.apps.alumnes.models import Alumne
 from aula.apps.presencia.business_rules.impartir import impartir_despres_de_passar_llista
 from aula.apps.horaris.models import FranjaHoraria, Horari
 
-
-
 usuariTokens = {}
+
+API_LEVEL = 1
 
 def ajuda(request):
     return HttpResponse('API Rest framework, per usar en Android i altres sistemes.')
@@ -60,23 +63,26 @@ def getImpartirPerData(request, paramData, idUsuari):
             return HttpResponseNotFound('Usuari no localitzat')
 
         if not utils.tokenCorrecte(request, usuariTokens, usuari.pk):
-            return HttpResponseServerError("Token no trobat")
+            return HttpResponseBadRequest("Token no trobat")
         
         idProfe = usuari.pk
         #Sempre obtinc les classes a impartir dels profes que fan classe i els de guàrdia.
         classesAImpartirDelDia = Impartir.objects.filter(
             Q(horari__professor__id = idProfe, dia_impartir=data) |
-            Q(professor_guardia_id = idProfe, dia_impartir=data))
-        llistaClasseAImpartirHorari = []
+            Q(professor_guardia_id = idProfe, dia_impartir=data)).order_by('horari__hora')
+        llistaClasseAImpartirHorari = ''
         for classeAImpartir in classesAImpartirDelDia:
             horariSerialitzat = serializers.serialize('json', [classeAImpartir.horari.hora])[1:-1]
             classeAImpartirSerialitzada = serializers.serialize('json', [classeAImpartir])[1:-1]
-            llistaClasseAImpartirHorari.append(
-                {u'impartir': classeAImpartirSerialitzada,
-                u'horari': horariSerialitzat,
-                u'assignatura': classeAImpartir.horari.assignatura.nom_assignatura})
-        dadesAEnviar = json.dumps(llistaClasseAImpartirHorari, ensure_ascii=False).encode('utf-8')
-        print ("A enviar:", dadesAEnviar)
+            #print(classeAImpartirSerialitzada, horariSerialitzat, classeAImpartir.horari.assignatura.nom_assignatura)
+            tmp= u'''{"impartir": %s,
+                "horari": %s,
+                "assignatura": "%s"}''' % (classeAImpartirSerialitzada, horariSerialitzat, classeAImpartir.horari.assignatura.nom_assignatura)
+            if llistaClasseAImpartirHorari!='':
+                llistaClasseAImpartirHorari+=','
+            llistaClasseAImpartirHorari+=tmp
+        dadesAEnviar = '[' + llistaClasseAImpartirHorari + ']' #json.dumps(llistaClasseAImpartirHorari, ensure_ascii=False).encode('utf-8')
+        #print ("A enviar:", dadesAEnviar)
         return HttpResponse(dadesAEnviar)
     except:
         traceback.print_exc()
@@ -93,19 +99,26 @@ def getControlAssistencia(request, idImpartir, idUsuari):
             return HttpResponseNotFound('Usuari no localitzat')
 
         if not utils.tokenCorrecte(request, usuariTokens, usuari.pk):
-                return HttpResponseServerError("Token no trobat")
+                return HttpResponseBadRequest("Token no trobat")
         
-        assistencies = []
+        assistencies = ""
         cas = ControlAssistencia.objects.filter(
-        impartir__id=idImpartir).order_by('alumne__cognoms')
-        for ca in cas:
+            impartir__id=idImpartir).order_by('alumne__cognoms')
+        for ca in cas: #type: ControlAssistencia
             #print "CA:", ca.impartir.horari.hora.hora_inici
-            caIAlumneDict = {
-                'ca':serializers.serialize('json', [ca])[1:-1],
-                'estatHoraAnterior': utils.faltaHoraAnterior(ca, tipus_retorn = 'C')}
-            assistencies.append(caIAlumneDict)
+            if assistencies != "":
+                assistencies+=","
+            
+            estatHoraAnterior="-1"
+            if utils.faltaHoraAnterior(ca):
+                estatHoraAnterior = utils.faltaHoraAnterior(ca).pk
 
-        dadesAEnviar = json.dumps(assistencies)
+            assistencies+= '{ "ca":%s, "estatHoraAnterior":"%s", "alumne":%s }' % \
+                (serializers.serialize('json', [ca])[1:-1], 
+                estatHoraAnterior,
+                serializers.serialize('json', [ca.alumne])[1:-1])
+        dadesAEnviar = "[%s]" % assistencies
+        #print (dadesAEnviar)
         return HttpResponse(dadesAEnviar)
     except:
         traceback.print_exc()
@@ -121,7 +134,7 @@ def putControlAssistencia(request, idImpartir, idUsuari):
             return HttpResponseNotFound('Usuari no localitzat')
 
         if not utils.tokenCorrecte(request, usuariTokens, usuari.pk):
-            return HttpResponseServerError("Token no trobat")
+            return HttpResponseBadRequest("Token no trobat")
         
         impartir = Impartir.objects.get(pk=idImpartir)
         pertany_al_professor = usuari.pk in [impartir.horari.professor.pk, \
@@ -130,7 +143,9 @@ def putControlAssistencia(request, idImpartir, idUsuari):
             return HttpResponseServerError('No tens permissos per passar llista')    
 
         #Retorna una llista de controls d'assistència.
-        controlsAssistencia = list(serializers.deserialize('json', request.body))
+        #print ("DEBUG:", request.body, "..........")
+        #controlsAssistencia = list(serializers.deserialize('json', request.body))
+        controlsAssistencia = json.loads(request.body) #type: Dict
         
         #Modifica només en cas que hi hagi elements a modificar.
         if len(controlsAssistencia) > 0:
@@ -149,29 +164,32 @@ def putControlAssistencia(request, idImpartir, idUsuari):
             )
 
             #Modifica tots els controls d'assistència.
+            #Només modifiquem l'estat de cada control d'assistència.
             retorn = ''
-            for caDeserialitzat in controlsAssistencia:
-                ca = caDeserialitzat.object
-
-                # ca = ControlAssistencia.objects.filter(
-                #     alumne=controlAssistencia.alumne,
-                #     impartir=controlAssistencia.impartir)[0] #type: ControlAssistencia
+            for caEnviatPerXarxa in controlsAssistencia:
+                ca = ControlAssistencia.objects.get(pk=caEnviatPerXarxa['pk']) #type: ControlAssistencia
+                ca.estat = EstatControlAssistencia.objects.get(pk=caEnviatPerXarxa['estat'])
                 ca.currentUser = usuari
                 ca.professor = User2Professor(usuari)
                 ca.credentials = (usuari, False) #Usuari i L4.
-                caDeserialitzat.save()
+                print ("debug:", vars(ca))
+                #import ipdb; ipdb.set_trace()
+                ca.save()
                 impartir_despres_de_passar_llista(impartir)
-
+                
                 if (retorn != ''):
                     retorn += ', '
-                retorn += str(ca.pk)
+                retorn += str(ca.pk) + ", "
             msg = '{"ids": "' + str(retorn) + '"}'
             return HttpResponse(msg)
         else:
             return HttpResponseServerError('Cal passar informació en el body.')    
+    except ValidationError as excpt:
+        #import ipdb; ipdb.set_trace()
+        return HttpResponseServerError(excpt.message_dict[NON_FIELD_ERRORS])
     except Exception as excpt:
         traceback.print_exc()
-        import ipdb; ipdb.set_trace()
+        #import ipdb; ipdb.set_trace()
         return HttpResponseServerError('Error API')
 
 def getFrangesHoraries(request, idUsuari):
@@ -184,8 +202,66 @@ def getFrangesHoraries(request, idUsuari):
         return HttpResponse(serializers.serialize('json', franges))
     except Exception as excpt:
         traceback.print_exc()
-        import ipdb; ipdb.set_trace()
+        #import ipdb; ipdb.set_trace()
         return HttpResponseServerError('Error API')
+
+def getEstatControlAssistencia(request, idUsuari):
+    try:
+        usuari = utils.obtenirUsuari(idUsuari)
+        if not usuari:
+            return HttpResponseNotFound('Usuari no localitzat')
+
+        estats = EstatControlAssistencia.objects.all()
+        return HttpResponse(serializers.serialize('json', estats))
+    except Exception as excpt:
+        traceback.print_exc()
+        #import ipdb; ipdb.set_trace()
+        return HttpResponseServerError('Error API')
+
+def getProfes(request, idUsuari):
+    try:
+        correcte, HttpResponseOnError = utils.comprovarUsuariIPermisos(request, idUsuari, usuariTokens)
+        if not correcte:
+            return HttpResponseOnError
+
+        return HttpResponse(serializers.serialize('json', Professor.objects.all()))
+    except Exception as excpt:
+        traceback.print_exc()
+        #import ipdb; ipdb.set_trace()
+        return HttpResponseServerError('Error API')
+
+@csrf_exempt
+def putGuardia(request, idUsuari):
+        try:
+            correcte, HttpResponseOnError = utils.comprovarUsuariIPermisos(request, idUsuari, usuariTokens)
+            if not correcte:
+                return HttpResponseOnError
+
+            #import ipdb; ipdb.set_trace()
+            #print(request.body)
+            dadesJSON = json.loads(request.body) #type: Dict
+            usuariASubstituir = utils.obtenirUsuari(dadesJSON['idUsuariASubstituir'])
+            usuari = utils.obtenirUsuari(dadesJSON['idUsuari'])
+            idFranja = dadesJSON['idFranja']
+            professor_guardia = User2Professor( usuari )
+            professor = User2Professor( usuariASubstituir )
+            dataAImpartir = datetime.datetime.strptime(dadesJSON['diaAImpartir'], "%Y-%m-%d")
+            
+            franja = FranjaHoraria.objects.get(pk=idFranja)
+            dadesAModificar = Impartir.objects.filter( dia_impartir = dataAImpartir,
+                                        horari__professor = professor,
+                                        horari__hora__in = [franja]) #type: QuerySet
+            if len(dadesAModificar)==0:
+                return HttpResponseNotFound("Error, no existeix aquesta guàrdia")
+            dadesAModificar.update( professor_guardia = professor_guardia  )
+            return HttpResponse("ok")
+
+        except Exception as excpt:
+            traceback.print_exc()
+            return HttpResponseServerError('Error API')
+
+def getAPILevel(req):
+    return HttpResponse(API_LEVEL)
 
 def test(request):
     alumne = {"nom":'ó'}
