@@ -29,7 +29,7 @@ class Test(TestCase):
         # Crear un profe.
         self.profe = tUtils.crearProfessor('SrProgramador','patata')
         self.profe2 = tUtils.crearProfessor('Profe2', 'patata')
-
+        
         #Crear un horari, 
         dataDiaActual = date.today() #type: date
         dataDiaAnterior = tUtils.obtenirDataLaborableAnterior(dataDiaActual)
@@ -46,6 +46,7 @@ class Test(TestCase):
         franges = [
             FranjaHoraria.objects.create(hora_inici = u'9:00', hora_fi = u'10:00'), 
             FranjaHoraria.objects.create(hora_inici = u'10:00', hora_fi = u'11:00')]
+        self.franges = franges
         
         tipusAssigUF = TipusDAssignatura.objects.create(
             tipus_assignatura=u'Unitat Formativa')
@@ -103,7 +104,7 @@ class Test(TestCase):
     def test_login(self):
         c = Client()
         response = c.get('/presenciaRest/login/SrProgramador/')
-        print (response.status_code)
+        #print (response.status_code)
         self.assertTrue(response.status_code==200)
 
     def test_impartirPerData(self):
@@ -119,8 +120,85 @@ class Test(TestCase):
         response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
         dades = response.content.decode('utf-8')
         assistenciesJSON = json.loads(dades)
-        print (response)
+        #print (response)
         self.assertEqual(len(assistenciesJSON), len(self.alumnes))
+
+    def test_putControlAssistencia(self):
+        c = Client()
+        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
+        assistenciesJSON = json.loads(response.content.decode('utf-8'))
+        #caDeserialitzat =  serializers.deserialize('json', u'[' + assistenciesJSON[0]['ca'] + u']').next()
+        ca = utils.deserialitzarUnElementAPartirObjectePython(assistenciesJSON[0]['ca']).object
+        #ca.alumne = self.alumnes[0]
+        ca.estat = self.estats['r']
+        #ca.impartir = self.classesAImpartir[0]
+        ca.professor = self.profe
+        ca.save()
+        
+        caMinim = """
+        [{{
+            "pk": {}, 
+            "estat": {}
+        }}]""".format(ca.pk, ca.estat.pk)
+
+        response = c.post(
+            '/presenciaRest/putControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'), 
+            data=caMinim, 
+            content_type="application/json")
+        if response.status_code != 200:
+            raise Exception("Error:" + response.content)
+        #print ("DADES ENVIADES:", serializers.serialize('json', [ca]))
+        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
+        assistenciesJSON = json.loads(response.content.decode('utf-8'))
+        ca = utils.deserialitzarUnElementAPartirObjectePython(assistenciesJSON[0]['ca']).object
+        #print ("DADES MODIFICADES:", ca.estat)
+        self.assertEqual(ca.estat, self.estats['r'])
+
+    def test_putControlAssistenciaManual(self):
+        c = Client()
+        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
+        assistenciesJSON = json.loads(response.content.decode('utf-8'))
+        ca = utils.deserialitzarUnElementAPartirObjectePython(assistenciesJSON[0]['ca']).object #type: ControlAssistencia
+
+        #Doblo els {}
+        caMinim = """
+        [{{
+            "pk": {}, 
+            "estat": {}
+        }}]""".format(ca.pk, self.estats['f'].pk)
+        response = c.post(
+            '/presenciaRest/putControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'), 
+            data=caMinim, 
+            content_type="application/json")
+        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
+        #print ("--------------------------------------")
+        #print (response.content.decode('utf-8'))
+        assistenciesJSON = json.loads(response.content.decode('utf-8'))
+        ca = utils.deserialitzarUnElementAPartirObjectePython(assistenciesJSON[0]['ca']).object
+        self.assertEqual(ca.estat, self.estats['f'])
+
+    def test_putControlAssistenciaSensePermisos(self):
+        #Hauria de petar la API indicant que no tens permisos per fer el canvi.
+        c = Client()
+        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[-1].pk, 'SrProgramador'))
+        assistenciesJSON = json.loads(response.content.decode('utf-8'))
+        ca = utils.deserialitzarUnElementAPartirObjectePython(assistenciesJSON[0]['ca']).object #type: ControlAssistencia
+
+        #Doblo els {}
+        caMinim = """
+        [{{
+            "pk": {}, 
+            "estat": {}, 
+        }}]""".format(ca.pk, ca.alumne.pk, self.estats['f'].pk, ca.impartir.pk, self.profe.pk)
+
+        response = c.post(
+            '/presenciaRest/putControlAssistencia/{}/{}/'.format(self.classesAImpartir[-1].pk, 'SrProgramador'), 
+            data=caMinim, 
+            content_type="application/json")
+        self.assertEqual(response.status_code, 500)
 
     def test_getFrangesHoraries(self):
         #Hauria de petar la API indicant que no tens permisos per fer el canvi.
@@ -132,10 +210,68 @@ class Test(TestCase):
         count = 0
         for franja in franges:
             count +=1
-            print (franja)
+            #print (franja)
         self.assertEqual(count, 2)
 
+    def test_getProfes(self):
+        #Hauria de petar la API indicant que no tens permisos per fer el canvi.
+        c = Client()
+        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.get('/presenciaRest/getProfes/{}/'.format('SrProgramador'))
+        #print (response.content)
+        profes = serializers.deserialize('json', response.content.decode('utf-8'))
+        count = 0
+        count = 0
+        for profe in profes:
+            #print (profe)
+            count +=1
+        self.assertEqual(count, 2)
+
+    def test_putGuardia(self):
+        #Hauria de petar la API indicant que no tens permisos per fer el canvi.
+        c = Client()
+        response = c.get('/presenciaRest/login/SrProgramador/')
+        
+        #Doblo els {}
+        jsonAEnviar = """
+        {{
+            "idUsuariASubstituir":"{}", 
+            "idUsuari":"{}", 
+            "idFranja":"{}",
+            "diaAImpartir":"{}"
+        }}""".format(
+            self.profe2.username,
+            self.profe.username,
+            self.franges[0].pk,
+            self.dataTest.strftime("%Y-%m-%d"))
+
+        response = c.post(
+            '/presenciaRest/putGuardia/{}/'.format('SrProgramador'), 
+            data=jsonAEnviar,
+            content_type="application/json")
+        
+        response = c.get('/presenciaRest/login/Profe2/')
+        response = c.get('/presenciaRest/getImpartirPerData/{}/Profe2/'.format(self.dataTest.strftime('%Y-%m-%d')))
+        dades = json.loads(response.content.decode('utf-8'))
+        self.assertTrue(str(dades[0]['impartir']['fields']['professor_guardia'])==str(self.profe.pk))
+
     def test_test(self):
+        from .utils import faltaHoraAnterior
+        cas = ControlAssistencia.objects.filter(
+            impartir__id=self.classesAImpartir[0].pk)
+        ca= cas[0] #type: ControlAssistencia
+        
+        from django.db import transaction
+        with transaction.atomic():
+            ca.estat = self.estats['p']
+            ca.save()
+        
+        casActual = ControlAssistencia.objects.filter(
+            impartir__id=self.classesAImpartir[1].pk)
+
+        #print (cas)
+        #print (faltaHoraAnterior(casActual[0]))
+        '''
         c = Client()
         response = c.get('/presenciaRest/test/')
         print (u"DEBUG:", type(response.content), u"--ó")
@@ -143,88 +279,4 @@ class Test(TestCase):
         print ("String:", response.content)
         print ("Unicode:", unicodeContent)
         print(unicodeContent)
-
-'''
-    def test_putControlAssistencia(self):
-        c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
-        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
-        assistenciesJSON = json.loads(response.content.decode('utf-8'))
-        #caDeserialitzat =  serializers.deserialize('json', u'[' + assistenciesJSON[0]['ca'] + u']').next()
-        ca = utils.deserialitzarUnElement(assistenciesJSON[0]['ca']).object
-        #ca.alumne = self.alumnes[0]
-        ca.estat = self.estats['r']
-        #ca.impartir = self.classesAImpartir[0]
-        ca.professor = self.profe
-        ca.save()
-        
-        response = c.post(
-            '/presenciaRest/putControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'), 
-            data=serializers.serialize('json', [ca]), 
-            content_type="application/json")
-        print ("DADES ENVIADES:", serializers.serialize('json', [ca]))
-        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
-        assistenciesJSON = json.loads(response.content.decode('utf-8'))
-        ca = utils.deserialitzarUnElement(assistenciesJSON[0]['ca']).object
-        print ("DADES MODIFICADES:", ca.estat)
-        self.assertEqual(ca.estat, self.estats['r'])
-
-    def test_putControlAssistenciaManual(self):
-        c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
-        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
-        assistenciesJSON = json.loads(response.content.decode('utf-8'))
-        ca = utils.deserialitzarUnElement(assistenciesJSON[0]['ca']).object #type: ControlAssistencia
-
-        #Doblo els {}
-        caMinim = """
-        [{{
-            "model": "presencia.controlassistencia", 
-            "pk": {}, 
-            "fields": 
-            {{
-                "alumne": {}, 
-                "estat": {}, 
-                "impartir": {}, 
-                "professor": {}
-            }}
-        }}]""".format(ca.pk, ca.alumne.pk, self.estats['f'].pk, ca.impartir.pk, self.profe.pk)
-
-        response = c.post(
-            '/presenciaRest/putControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'), 
-            data=caMinim, 
-            content_type="application/json")
-        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
-        assistenciesJSON = json.loads(response.content.decode('utf-8'))
-        ca = utils.deserialitzarUnElement(assistenciesJSON[0]['ca']).object
-        self.assertEqual(ca.estat, self.estats['f'])
-
-    def test_putControlAssistenciaSensePermisos(self):
-        #Hauria de petar la API indicant que no tens permisos per fer el canvi.
-        c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
-        response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[-1].pk, 'SrProgramador'))
-        assistenciesJSON = json.loads(response.content.decode('utf-8'))
-        ca = utils.deserialitzarUnElement(assistenciesJSON[0]['ca']).object #type: ControlAssistencia
-
-        #Doblo els {}
-        caMinim = """
-        [{{
-            "model": "presencia.controlassistencia", 
-            "pk": {}, 
-            "fields": 
-            {{
-                "alumne": {}, 
-                "estat": {}, 
-                "impartir": {}, 
-                "professor": {}
-            }}
-        }}]""".format(ca.pk, ca.alumne.pk, self.estats['f'].pk, ca.impartir.pk, self.profe.pk)
-
-        response = c.post(
-            '/presenciaRest/putControlAssistencia/{}/{}/'.format(self.classesAImpartir[-1].pk, 'SrProgramador'), 
-            data=caMinim, 
-            content_type="application/json")
-        self.assertEqual(response.status_code, 500)
-'''
-
+        '''

@@ -59,6 +59,9 @@ CUSTOM_UNITAT_FORMATIVA_DISCONTINUADA='unitat formativa discontinuada'
 #Mostrar una opció d'ajuda en el menú, que apunta a "customising/ajuda/"
 CUSTOM_MOSTRAR_AJUDA_ACTIU=False
 
+#API Rest, prohibir uns tipus d'assignatura en concret (donarà error al intentar modificar quelcom).
+CUSTOM_PRESENCIA_VIEW_TIPUS_ASSIGNATURES_PROHIBIDES = [u'Unitat Formativa Discontinuada', 'ESO']
+
 try:
     from settings_local import *
 except ImportError:
