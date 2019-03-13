@@ -23,8 +23,10 @@ from aula.apps.usuaris.models import User2Professor, Accio, Professor
 from aula.apps.alumnes.models import Alumne
 from aula.apps.presencia.business_rules.impartir import impartir_despres_de_passar_llista
 from aula.apps.horaris.models import FranjaHoraria, Horari
+from django.contrib.auth import authenticate
 
 #Dicionari de tokens d'usuari indexats per id usuari.
+
 usuariTokens = {}
 
 API_LEVEL = 1
@@ -32,20 +34,24 @@ API_LEVEL = 1
 def ajuda(request):
     return HttpResponse('API Rest framework, per usar en Android i altres sistemes.')
 
-def login(request, idUsuari):
-    #type: (HttpRequest, str) -> HttpResponse
-    '''
-    Obtenir el body de la petició, generar un token, aquest token el rebrà l'usuari i podrà accedir a tota l'API a través seu, 
-    així no exposem el password. 
-    Guardarem el token en memòria i els que superin una hora des de que han estat creats'.
-    '''
-    try:
-        usuari = User.objects.get(username=idUsuari)
-    except ObjectDoesNotExist as ex:
-        return HttpResponseNotFound('Usuari no localitzat')
+@csrf_exempt
+def login(request):
+    #type: (HttpRequest) -> HttpResponse
+    #Obtenir el body de la petició, generar un token, aquest token el rebrà l'usuari i podrà accedir a tota l'API a través seu, 
+    #així no exposem el password. 
+    #Guardarem el token en memòria i esborrem els que superin una hora des de que han estat creats'.
+
+    idUsuari = request.POST.get('idusuari','')
+    passwd = request.POST.get('password','')
+    print (request.POST, request.content_type)
+    
+    usuari = authenticate(username=idUsuari, password=passwd)
+    if usuari is None:
+        return HttpResponseNotFound('Usuari no localitzat o password incorrecte.')
         
-    token = utils.gen_password(length=20)
-    usuariTokens[usuari.pk] = token
+    token = utils.gen_password(length=50)
+    dataExpiracioToken = datetime.datetime.now()+datetime.timedelta(minutes=60)
+    usuariTokens[usuari.pk] = utils.TokenICaducitat(token, dataExpiracioToken)
     
     response = HttpResponse(token)
     response.set_cookie('token', token)
@@ -179,7 +185,6 @@ def putControlAssistencia(request, idImpartir, idUsuari):
                 ca.currentUser = usuari
                 ca.professor = User2Professor(usuari)
                 ca.credentials = (usuari, False) #Usuari i L4.
-                print ("debug:", vars(ca))
                 #import ipdb; ipdb.set_trace()
                 ca.save()
                 impartir_despres_de_passar_llista(impartir)

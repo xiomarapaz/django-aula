@@ -46,7 +46,7 @@ def PresenciaQuerySet( qs ):
         esFaltaAnterior = 'NA'
     return esFaltaAnterior
 
-def gen_password(length=8, charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"):
+def gen_password(length=50, charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"):
     random_bytes = os.urandom(length)
     len_charset = len(charset)
     indices = [int(len_charset * (ord(byte) / 256.0)) for byte in random_bytes]
@@ -75,28 +75,6 @@ def faltaHoraAnterior(ca):
     else:
         return None
 
-# def faltaHoraAnterior(ca, tipus_retorn = 'W'):
-#     #type: (ControlAssitencia, str)
-#     '''
-#     Comprova el codi de l'hora anterior, 2 Modes de retorn ('C', 'W'):
-#     Torna: Present, Absent o bé NA. (Mode paraula original='W')
-#     Torna: P o R -> P, F->F, J->J o N (Mode codi='C')
-
-#     @type ca: ControlAssistencia | Control assistencia actual.
-#     @type retorna: Indica si cal tornar un codi o bé una paraula ('C', 'W'), per defecte W=paraula.
-#     '''
-#     unaHora40abans = add_secs_to_time(ca.impartir.horari.hora.hora_inici, -100*60)
-#     controls_anteriors = ControlAssistencia.objects.filter(
-#                                                          alumne = ca.alumne,
-#                                                          impartir__horari__hora__hora_inici__lt = ca.impartir.horari.hora.hora_inici,
-#                                                          impartir__horari__hora__hora_inici__gt = unaHora40abans,
-#                                                          impartir__dia_impartir = ca.impartir.dia_impartir  )
-#     if tipus_retorn == 'W':
-#         esFaltaHoraAnterior = PresenciaQuerySet( controls_anteriors )
-#     else:
-#         esFaltaHoraAnterior = PresenciaQuerySetGetCode( controls_anteriors )
-#     return esFaltaHoraAnterior
-
 def obtenirUsuari(nomUsuari):
     try:
         return User.objects.get(username=nomUsuari) # type: Usuari
@@ -104,13 +82,13 @@ def obtenirUsuari(nomUsuari):
         return None
 
 def tokenCorrecte(request, usuariTokens, pkUsuari):
-    #type: (HttpRequest, List, str) -> None
-    print (usuariTokens,pkUsuari)
+    #type: (HttpRequest, List[TokenICaducitat], str) -> None
     if not pkUsuari in usuariTokens:
         return False
-    print (usuariTokens,pkUsuari, request.COOKIES)
     if 'token' in request.COOKIES:
-        if request.COOKIES.get('token') == usuariTokens[pkUsuari]:
+        tokenICaducitat = usuariTokens[pkUsuari] 
+        if request.COOKIES.get('token') == tokenICaducitat.token \
+            and datetime.datetime.now() < tokenICaducitat.caducitat: 
             return True
     return False
 
@@ -135,3 +113,8 @@ def comprovarUsuariIPermisos(request, idUsuari, usuariTokens):
     if not tokenCorrecte(request, usuariTokens, usuari.pk):
         return False, HttpResponseBadRequest("Token no trobat")
     return True, None
+
+class TokenICaducitat:
+    def __init__(self,token, caducitat):
+        self.token = token
+        self.caducitat = caducitat

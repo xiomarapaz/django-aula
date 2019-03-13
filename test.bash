@@ -6,4 +6,6 @@ python manage.py test aula.apps.assignatures.tests.MySeleniumTests
 python manage.py test aula.apps.presencia.tests.MySeleniumTests --keepdb --parallel
 python manage.py test aula.apps.presencia.tests.SimpleTest --keepdb --parallel
 python manage.py test aula.apps.presenciaSetmanal.tests --keepdb --parallel
+python manage.py test aula.apps.presenciaRest.tests
+
 

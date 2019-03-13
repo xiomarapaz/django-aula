@@ -103,20 +103,21 @@ class Test(TestCase):
         
     def test_login(self):
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
-        #print (response.status_code)
+        response = c.post('/presenciaRest/login/', data={'idusuari': 'SrProgramador', 'password': 'patata'})
+        print (response.status_code)
         self.assertTrue(response.status_code==200)
 
     def test_impartirPerData(self):
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
+        data = {'idusuari': 'SrProgramador', 'password': 'patata'}
+        response = c.post('/presenciaRest/login/', data={'idusuari': 'SrProgramador', 'password': 'patata'})
         response = c.get('/presenciaRest/getImpartirPerData/{}/SrProgramador/'.format(self.dataTest.strftime('%Y-%m-%d')))
         dades = response.content.decode('utf-8')
         self.assertTrue(u'"assignatura": "Programació"' in dades)
         
     def test_getControlAssistencia(self):
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.post('/presenciaRest/login/', data={'idusuari': 'SrProgramador', 'password': 'patata'})
         response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
         dades = response.content.decode('utf-8')
         assistenciesJSON = json.loads(dades)
@@ -125,7 +126,7 @@ class Test(TestCase):
 
     def test_putControlAssistencia(self):
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.post('/presenciaRest/login/', data={'idusuari': 'SrProgramador', 'password': 'patata'})
         response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
         assistenciesJSON = json.loads(response.content.decode('utf-8'))
         #caDeserialitzat =  serializers.deserialize('json', u'[' + assistenciesJSON[0]['ca'] + u']').next()
@@ -157,7 +158,8 @@ class Test(TestCase):
 
     def test_putControlAssistenciaManual(self):
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.post('/presenciaRest/login/', 
+            data={'idusuari': 'SrProgramador', 'password': 'patata'})
         response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[0].pk, 'SrProgramador'))
         assistenciesJSON = json.loads(response.content.decode('utf-8'))
         ca = utils.deserialitzarUnElementAPartirObjectePython(assistenciesJSON[0]['ca']).object #type: ControlAssistencia
@@ -182,7 +184,8 @@ class Test(TestCase):
     def test_putControlAssistenciaSensePermisos(self):
         #Hauria de petar la API indicant que no tens permisos per fer el canvi.
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.post('/presenciaRest/login/', 
+            data={'idusuari': 'SrProgramador', 'password': 'patata'})
         response = c.get('/presenciaRest/getControlAssistencia/{}/{}/'.format(self.classesAImpartir[-1].pk, 'SrProgramador'))
         assistenciesJSON = json.loads(response.content.decode('utf-8'))
         ca = utils.deserialitzarUnElementAPartirObjectePython(assistenciesJSON[0]['ca']).object #type: ControlAssistencia
@@ -203,7 +206,8 @@ class Test(TestCase):
     def test_getFrangesHoraries(self):
         #Hauria de petar la API indicant que no tens permisos per fer el canvi.
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.post('/presenciaRest/login/', 
+            data={'idusuari': 'SrProgramador', 'password': 'patata'})
         response = c.get('/presenciaRest/getFrangesHoraries/{}/'.format('SrProgramador'))
         
         franges = serializers.deserialize('json', response.content.decode('utf-8'))
@@ -216,7 +220,8 @@ class Test(TestCase):
     def test_getProfes(self):
         #Hauria de petar la API indicant que no tens permisos per fer el canvi.
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.post('/presenciaRest/login/', 
+            data={'idusuari': 'SrProgramador', 'password': 'patata'})
         response = c.get('/presenciaRest/getProfes/{}/'.format('SrProgramador'))
         #print (response.content)
         profes = serializers.deserialize('json', response.content.decode('utf-8'))
@@ -230,7 +235,8 @@ class Test(TestCase):
     def test_putGuardia(self):
         #Hauria de petar la API indicant que no tens permisos per fer el canvi.
         c = Client()
-        response = c.get('/presenciaRest/login/SrProgramador/')
+        response = c.post('/presenciaRest/login/', 
+            data={'idusuari': 'SrProgramador', 'password': 'patata'})
         
         #Doblo els {}
         jsonAEnviar = """
@@ -250,7 +256,7 @@ class Test(TestCase):
             data=jsonAEnviar,
             content_type="application/json")
         
-        response = c.get('/presenciaRest/login/Profe2/')
+        response = c.post('/presenciaRest/login/', data={'idusuari': 'Profe2', 'password': 'patata'})
         response = c.get('/presenciaRest/getImpartirPerData/{}/Profe2/'.format(self.dataTest.strftime('%Y-%m-%d')))
         dades = json.loads(response.content.decode('utf-8'))
         self.assertTrue(str(dades[0]['impartir']['fields']['professor_guardia'])==str(self.profe.pk))
@@ -269,14 +275,3 @@ class Test(TestCase):
         casActual = ControlAssistencia.objects.filter(
             impartir__id=self.classesAImpartir[1].pk)
 
-        #print (cas)
-        #print (faltaHoraAnterior(casActual[0]))
-        '''
-        c = Client()
-        response = c.get('/presenciaRest/test/')
-        print (u"DEBUG:", type(response.content), u"--ó")
-        unicodeContent = response.content.decode('utf-8') #unicode(response.content, 'utf-8')
-        print ("String:", response.content)
-        print ("Unicode:", unicodeContent)
-        print(unicodeContent)
-        '''
