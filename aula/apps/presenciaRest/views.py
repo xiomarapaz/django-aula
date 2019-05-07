@@ -155,12 +155,26 @@ def putControlAssistencia(request, idImpartir, idUsuari):
             return HttpResponseServerError(u"No pots actualitzar assignatures de tipus: " + unicode(settings.CUSTOM_PRESENCIA_VIEW_TIPUS_ASSIGNATURES_PROHIBIDES))
 
         #Retorna una llista de controls d'assistència.
-        #print ("DEBUG:", request.body, "..........")
-        #controlsAssistencia = list(serializers.deserialize('json', request.body))
         controlsAssistencia = json.loads(request.body) #type: Dict
         
         #Modifica només en cas que hi hagi elements a modificar.
         if len(controlsAssistencia) > 0:
+
+            #Modifica tots els controls d'assistència.
+            #Només modifiquem l'estat de cada control d'assistència.
+            #Si falla quelcom no modifiquem impartir.
+            retornIdsCAsModificats = ''
+            for caEnviatPerXarxa in controlsAssistencia:
+                ca = ControlAssistencia.objects.get(pk=caEnviatPerXarxa['pk']) #type: ControlAssistencia
+                ca.estat = EstatControlAssistencia.objects.get(pk=caEnviatPerXarxa['estat'])
+                ca.currentUser = usuari
+                ca.professor = User2Professor(usuari)
+                ca.credentials = (usuari, False) #Usuari i L4.
+                ca.save()
+                if (retornIdsCAsModificats != ''):
+                    retornIdsCAsModificats += ', '
+                retornIdsCAsModificats += str(ca.pk)
+
             impartir.dia_passa_llista = datetime.datetime.now()
             impartir.professor_passa_llista = User2Professor(usuari)
             impartir.currentUser = usuari
@@ -174,25 +188,10 @@ def putControlAssistencia(request, idImpartir, idUsuari):
                 impersonated_from=None,
                 text=u"""Passar llista API presenciaRest: {0}.""".format(impartir)
             )
+                                
+            msg = '{"ids": "' + str(retornIdsCAsModificats) + '"}'
+            impartir_despres_de_passar_llista(impartir)
 
-            #Modifica tots els controls d'assistència.
-            #Només modifiquem l'estat de cada control d'assistència.
-            retorn = ''
-            for caEnviatPerXarxa in controlsAssistencia:
-                print(caEnviatPerXarxa)
-                ca = ControlAssistencia.objects.get(pk=caEnviatPerXarxa['pk']) #type: ControlAssistencia
-                ca.estat = EstatControlAssistencia.objects.get(pk=caEnviatPerXarxa['estat'])
-                ca.currentUser = usuari
-                ca.professor = User2Professor(usuari)
-                ca.credentials = (usuari, False) #Usuari i L4.
-                #import ipdb; ipdb.set_trace()
-                ca.save()
-                impartir_despres_de_passar_llista(impartir)
-                
-                if (retorn != ''):
-                    retorn += ', '
-                retorn += str(ca.pk) + ", "
-            msg = '{"ids": "' + str(retorn) + '"}'
             return HttpResponse(msg)
         else:
             return HttpResponseServerError('Cal passar informació en el body.')    

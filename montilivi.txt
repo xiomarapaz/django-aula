@@ -18,6 +18,14 @@ Adapto codi de montilvi a la nova versió
 - Afegir un apartat d'ajuda. Personalitzar alguna pàgina amb el montidemo.
 
 
+- Comprovar enviar correus de notificacions de faltes.
+    - Treure ajuda.
+
+
+
+
+
+
 
 
 Revisar
