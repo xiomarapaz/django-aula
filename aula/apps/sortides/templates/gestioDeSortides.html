@@ -10,11 +10,12 @@
 	<div class="row row-padded" style="background-color:white">
 	<div class="col-sm-12 col-xs-12">
 	<div class="form-group">
-	    <label for="url_cal">URL per importar calendari:</label>
+		{% for url in urls %}
+	    <label for="url_cal">URL per importar calendari del departament:<b> {{url.1}}</b></label>
 			<input id="url_cal" 
 				   type="text" 
 				   name="url_cal" 
-				   value="{{url}}"		
+				   value="{{url.0}}"		
 				   class="form-control" 
 				   data-toggle="popover" 
 				   data-trigger="hover" 
@@ -22,6 +23,7 @@
 				   data-content="ctrl-c per copiar"
 				   >
 			</input>       
+		{% endfor %}
     </div>
     </div> 
     </div> 

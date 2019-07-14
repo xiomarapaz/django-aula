@@ -29,7 +29,7 @@ from django.contrib.auth import authenticate
 
 usuariTokens = {}
 
-API_LEVEL = 1
+API_LEVEL = "1"
 
 def ajuda(request):
     return HttpResponse('API Rest framework, per usar en Android i altres sistemes.')

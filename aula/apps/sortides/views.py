@@ -239,13 +239,25 @@ def sortidesGestioList( request ):
     
     RequestConfig(request, paginate={"klass":DiggPaginator , "per_page": 10}).configure(table)
         
-    url = r"{0}{1}".format( settings.URL_DJANGO_AULA, reverse( 'sortides__sortides__ical' ) )    
+    from aula.apps.usuaris.models import Departament
+    from django.db.models import QuerySet
+
+    dep = Departament.objects #type: QuerySet
+    departaments = dep.all()
+
+    urls = []
+    for departament in departaments:
+        urls.append([
+            r"{0}{1}".format( settings.URL_DJANGO_AULA, reverse( 'sortides__sortides__ical_per_departament', args=[departament.pk])),
+            departament])
+
+    #url = r"{0}{1}".format( settings.URL_DJANGO_AULA, reverse( 'sortides__sortides__ical' ) )    
         
     return render(
                   request, 
                   'gestioDeSortides.html', 
                   {'table': table,
-                   'url': url,
+                   'urls': urls,
                    }
                  )       
         
@@ -473,7 +485,7 @@ def alumnesConvocats( request, pk , origen ):
     choices = []
     for k, g in groupby(q_base, lambda x: x.grup.descripcio_grup):
         choices.append(( k , [ ( o.id, unicode(o) ) for o in g] ))
-        
+
     form.fields['alumnes_convocats'].queryset = q_base
     form.fields['alumnes_convocats'].widget.choices = choices
 
@@ -708,6 +720,7 @@ def professorsAcompanyants( request, pk , origen ):
         
         if form.is_valid(): 
             try:
+                  
                 form.save()
 
                 if instance.estat in ['R','G']:
@@ -844,6 +857,35 @@ def sortidaiCal( request):
     return HttpResponse( cal.to_ical() )
     
     
+def sortidaiCalPerDepartament(request, pkDep):
+     # type: (HttpRequest, str) -> HttpResponse
+    
+    cal = Calendar()
+    cal.add('method','PUBLISH' ) # IE/Outlook needs this
+
+    for instance in Sortida.objects.filter( calendari_desde__isnull = False )  \
+        .exclude(estat__in = ['E', 'P', ]) \
+        .filter(departament_que_organitza = pkDep) \
+        .all():
+        event = Event()
+        
+        summary = u"{ambit}: {titol}".format(ambit=instance.ambit ,
+                                                   titol= instance.titol_de_la_sortida)
+        
+        event.add('dtstart',localtime(instance.calendari_desde) )
+        event.add('dtend' ,localtime(instance.calendari_finsa) )
+        event.add('summary',summary)
+        organitzador = u"\nOrganitza: "
+        organitzador += u"{0}".format( u"Departament" + instance.departament_que_organitza.nom if instance.departament_que_organitza_id else u"" )
+        organitzador += " " + instance.comentari_organitza
+        event.add('organizer',  vText( u"{0} {1}".format( u"Departament " + instance.departament_que_organitza.nom  if instance.departament_que_organitza_id else u"" , instance.comentari_organitza )))
+        event.add('description',instance.programa_de_la_sortida + organitzador)
+        event.add('uid', 'djau-ical-{0}'.format( instance.id ) )
+        event['location'] = vText( instance.ciutat )
+        cal.add_component(event)
+
+    return HttpResponse( cal.to_ical() )
+
     
 
 @login_required

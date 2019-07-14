@@ -40,8 +40,8 @@ urlpatterns = [
     url(r'^sortidaExcel/(?P<pk>\d+)/$', sortides_views.sortidaExcel, name = 'sortides__sortides__sortidaExcel'),
 
 
-
     url(r'^sortidaiCal/', sortides_views.sortidaiCal, name = 'sortides__sortides__ical'),
+    url(r'^sortidaiCalPerDepartament/(?P<pkDep>\d+)/$', sortides_views.sortidaiCalPerDepartament, name = 'sortides__sortides__ical_per_departament'),
 
     url(r'^imprimir/(?P<pk>\d+)/$', sortides_views.imprimir, name = 'sortides__sortides__imprimir' ),
 
